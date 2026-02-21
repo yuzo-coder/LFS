@@ -7,12 +7,12 @@
 # Possible values: "amd64", "i686", "i586"
 # Default: "amd64"
 #
-LFS_TARGET_ARCH=amd
+LFS_TARGET_ARCH=
 #
 # Target init 
 #
 # Possible values: "sysv", "systemd"
 # Default: "sysv"
 #
-LFS_TARGET_INIT=systemd
+LFS_TARGET_INIT=
 
