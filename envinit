@@ -74,7 +74,7 @@ cat > "$BUILD_DIR/env.sh" << EOF
 # Host (root) environment
 LFS="$LFS"
 MAKEFLAGS="-j$(nproc)"
-PARTITION="sda1"
+PARTITION="sdb1"
 DISK=\$(echo \$PARTITION | sed -e "s/[0-9]*$//")
 export LFS MAKEFLAGS PARTITION DISK
 EOF
