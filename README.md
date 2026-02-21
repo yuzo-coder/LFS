@@ -110,7 +110,7 @@ LiveCD/DVD (/dev/sr0) or VirtIO(/dev/vda) drives can be used.
 
 Target disk is disk which used to build a LFS system. disk should be used.
 
-20GB or more IDE or SATA drive (/dev/sda) should be used.
+20GB or more IDE or SATA drive (/dev/sdb) should be used.
 
 Durinig a build proccess MBR partition table will be created.
 
@@ -295,9 +295,9 @@ It's possible to use tmux version:
 - vmautomonitor - script that call *vmautoinfo* script in loop after delay.
 - vmcmds.txt - one click target building scenario.
 - vmfinish - like finish but with root password deletion and grub bootloader installation.
-- vmstart - formats /dev/sda1 partition WITHOUT PROMPT and mout it on mount point **(DANGEROUS*)** 
+- vmstart - formats /dev/sdb1 partition WITHOUT PROMPT and mout it on mount point **(DANGEROUS*)** 
 
-**(DANGEROUS)** - running this script cause /dev/sda1 formatting therefore don't run this script on physical computer.
+**(DANGEROUS)** - running this script cause /dev/sdb1 formatting therefore don't run this script on physical computer.
 
 Scripts with "vm" prefix is intended to run only in virtual machine. Be careful!
 
