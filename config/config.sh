@@ -7,7 +7,7 @@
 # Possible values: "amd64", "i686", "i586"
 # Default: "amd64"
 #
-LFS_TARGET_ARCH=amd
+LFS_TARGET_ARCH=amd64
 #
 # Target init 
 #
