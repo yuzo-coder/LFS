@@ -1,178 +1,146 @@
 #!/bin/bash
+set -euo pipefail
 
-# Read config file
+########################################
+# 安全な基準ディレクトリ確定
+########################################
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+
+########################################
+# 設定読み込み
+########################################
 . config/config.sh
-# Get values
 . data/configparser.sh
 
-echo -e "Preparing for building $LFS_TARGET_ARCH disk image...\n"
+BUILD_DIR="$SCRIPT_DIR/build"
+SRC_DIR="$SCRIPT_DIR/src/packages"
+LFS="$BUILD_DIR/builddir"
 
-echo -e "Unmounting build/builddir mount point...\n"
+echo -e "\nPreparing for building $LFS_TARGET_ARCH disk image...\n"
 
-umount build/builddir
-echo
-echo -e "Deleting buid directory contents...\n"
-rm -rfv build/*
-echo
+########################################
+# build ディレクトリ保証
+########################################
+mkdir -p "$BUILD_DIR"
 
-if [[ $LFS_TARGET_ARCH = "amd64" ]]
-then
-echo "Preparing for building amd64..."
+########################################
+# マウント解除（安全）
+########################################
+if mountpoint -q "$LFS"; then
+    echo "Unmounting $LFS..."
+    umount "$LFS"
 fi
 
-if [[ $LFS_TARGET_ARCH = "i686" ]]
-then
-echo "Preparing for building i686..."
+########################################
+# build 完全初期化
+########################################
+echo -e "\nCleaning build directory...\n"
+rm -rf "${BUILD_DIR:?}/"*
+mkdir -p "$BUILD_DIR"
+
+########################################
+# アーキ判定表示
+########################################
+echo "Preparing for building $LFS_TARGET_ARCH..."
+
+########################################
+# スクリプトコピー
+########################################
+echo -e "\nCopying main scripts...\n"
+mkdir -p "$BUILD_DIR"
+cp -rv data/stages/* "$BUILD_DIR/"
+
+echo -e "\nCopying main user scripts...\n"
+cp -rv data/scripts "$BUILD_DIR/"
+
+########################################
+# initシステム別コピー
+########################################
+if [[ "$LFS_TARGET_INIT" == "sysv" ]]; then
+    echo -e "\nCopying SysV chroot scripts...\n"
+    cp -rv data/cscripts.sysv "$BUILD_DIR/cscripts"
 fi
 
-if [[ $LFS_TARGET_ARCH = "i586" ]]
-then
-echo "Preparing for building i586..."
+if [[ "$LFS_TARGET_INIT" == "systemd" ]]; then
+    echo -e "\nCopying Systemd chroot scripts...\n"
+    cp -rv data/cscripts.systemd "$BUILD_DIR/cscripts"
 fi
 
-echo -e "Copying main scripts... \n"
-cp -v data/stages/* build/
-echo
-echo -e "Copying main user scripts...  \n"
-cp -rfv data/scripts build
-echo
-if [[ $LFS_TARGET_INIT = "sysv" ]]
-then
-echo -e "Copying SysV specific chroot scripts ...\n"
-cp -rfv data/cscripts.sysv build/cscripts
-echo
+########################################
+# env.sh 作成（絶対パス固定）
+########################################
+cat > "$BUILD_DIR/env.sh" << EOF
+# Host (root) environment
+LFS="$LFS"
+MAKEFLAGS="-j$(nproc)"
+PARTITION="sda1"
+DISK=\$(echo \$PARTITION | sed -e "s/[0-9]*$//")
+export LFS MAKEFLAGS PARTITION DISK
+EOF
+
+########################################
+# userenv.sh 作成
+########################################
+if [[ "$LFS_TARGET_ARCH" == "amd64" ]]; then
+    LFS_TGT='$(uname -m)-lfs-linux-gnu'
+else
+    LFS_TGT="$LFS_TARGET_ARCH-lfs-linux-gnu"
 fi
 
-if [[ $LFS_TARGET_INIT = "systemd" ]]
-then
-echo -e "Copying Systemd specific chroot scripts ...\n"
-cp -rfv data/cscripts.systemd build/cscripts
-echo
-fi
-
-echo -e "Writing config file 'env.sh'...\n"
-echo '#Configuration file for scripts to run on host as root' > build/env.sh
-echo  >> build/env.sh
-echo 'PWD=`pwd`' >> build/env.sh
-echo 'LFS="$PWD/builddir"' >> build/env.sh
-echo 'MAKEFLAGS="-j`nproc`"' >> build/env.sh
-echo 'PARTITION="sda1"' >>  build/env.sh
-echo  >> build/env.sh
-echo 'echo $LFS' >> build/env.sh
-echo  >> build/env.sh
-echo 'export PWD LFS MAKEFLAGS' >> build/env.sh
-
-echo '---'
-cat build/env.sh
-echo '---'
-echo
-echo -e "Writing config file 'userenv.sh'...\n"
-
-cat > build/userenv.sh << "EOF"
-# Configuration file for scripts to run on target partition as lfs user
-
-# Load configuration file for scripts to run as root user
-. env.sh
-# Configutation from chapter 4.4.
+cat > "$BUILD_DIR/userenv.sh" << EOF
+# LFS user environment
+. ./env.sh
 set +h
 umask 022
 LC_ALL=POSIX
-EOF
-
-if [[ $LFS_TARGET_ARCH = "amd64" ]]
-then
-
-echo 'LFS_TGT=$(uname -m)-lfs-linux-gnu' >> build/userenv.sh
-
-else
-
-echo "LFS_TGT=$LFS_TARGET_ARCH-lfs-linux-gnu" >> build/userenv.sh
-
-fi
-
-cat >> build/userenv.sh << "EOF"
+LFS_TGT=$LFS_TGT
 PATH=/usr/bin
-if [ ! -L /bin ]; then PATH=/bin:$PATH; fi
-PATH=$LFS/tools/bin:$PATH
-CONFIG_SITE=$LFS/usr/share/config.site
+[ ! -L /bin ] && PATH=/bin:\$PATH
+PATH=\$LFS/tools/bin:\$PATH
+CONFIG_SITE=\$LFS/usr/share/config.site
 export LFS LC_ALL LFS_TGT PATH CONFIG_SITE
 EOF
 
-echo '---'
-cat build/userenv.sh
-echo '---'
+########################################
+# cscripts.config
+########################################
+mkdir -p "$BUILD_DIR/cscripts.config"
 
-echo -e "Creating directory 'cscripts.config'...\n"
-
-mkdir -v 'build/cscripts.config'
-
-echo -e "Writing config file 'cscripts.config/config.sh'...\n"
-
-cat >> build/cscripts.config/config.sh << "EOF"
+cat > "$BUILD_DIR/cscripts.config/config.sh" << EOF
 ULFS_TESTS="NO"
 ULFS_CRITICAL_TESTS="NO"
 ULFS_DOCS="NO"
 ULFS_COPY_KERNEL_SOURCES="YES"
-
-MAKEFLAGS="-j`nproc`"
-NINJAJOBS=`nproc`
+MAKEFLAGS="-j$(nproc)"
+NINJAJOBS=$(nproc)
 EOF
 
-echo '---'
-cat build/cscripts.config/config.sh
-echo '---'
-
-echo -e "Writing config file 'cscripts.config/env.sh'...\n"
-
-cat > build/cscripts.config/env.sh << "EOF"
+cat > "$BUILD_DIR/cscripts.config/env.sh" << EOF
 . /cscripts/config.sh
 PATH=/usr/bin:/usr/sbin
 LC_ALL=POSIX
-EOF
-
-
-if [[ $LFS_TARGET_ARCH = "amd64" ]]
-then
-
-echo 'LFS_TGT=$(uname -m)-lfs-linux-gnu' >> build/cscripts.config/env.sh
-
-else
-
-echo "LFS_TGT=$LFS_TARGET_ARCH-lfs-linux-gnu" >> build/cscripts.config/env.sh
-
-fi
-
-cat >> build/cscripts.config/env.sh << "EOF"
+LFS_TGT=$LFS_TGT
 LANG=C
 export PATH LANG ULFS_TESTS ULFS_CRITICAL_TESTS ULFS_DOCS ULFS_COPY_KERNEL_SOURCES NINJAJOBS MAKEFLAGS LFS_TGT
-PWD=`pwd`
-echo "PWD DIR: $PWD"
-echo "RUN TESTS: $ULFS_TESTS"
-echo "RUN CRITICAL TESTS: $ULFS_CRITICAL_TESTS"
-echo "INSTALL DOCUMENTATION: $ULFS_DOCS"
-echo "COPY LINUX KERNEL SOURCES: $ULFS_COPY_KERNEL_SOURCES"
-echo
-echo "MAKE FLAGS: $MAKEFLAGS"
-echo "NINJA THREADS: $NINJAJOBS"
-sleep 1
 EOF
 
-echo '---'
-cat build/cscripts.config/env.sh
-echo '---'
+########################################
+# ソースリンク
+########################################
+ln -sfn ../src/packages "$BUILD_DIR/src"
 
-echo -e "\nCreating symlink to sources directory\n"
+########################################
+# 必須ディレクトリ
+########################################
+mkdir -p "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
 
-ln -sv ../src/packages build/src
+########################################
+# 権限（最小限）
+########################################
+chmod 755 "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
+chmod 644 "$BUILD_DIR/env.sh" "$BUILD_DIR/userenv.sh"
+chmod 644 "$BUILD_DIR/cscripts.config/"*.sh
 
-echo -e "\nCreating directories...\n"
-mkdir -v build/{builddir,log,tmp}
-
-echo -e "\nSetting permissions...\n"
-
-chmod -v 777 build/{builddir,log,tmp}
-chmod -v 777 build/{env.sh,userenv.sh,cscripts.config/{config.sh,env.sh}}
-
-echo -e "\nBuild directory created\n"
-
-
+echo -e "\nBuild directory initialized successfully.\n"
+echo "LFS = $LFS"
