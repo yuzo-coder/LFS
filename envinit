@@ -120,15 +120,6 @@ ln -sfn ../src/packages "$BUILD_DIR/src"
 mkdir -p "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
 
 ########################################
-# lfsユーザーが存在する場合は所有権付与
-########################################
-if id lfs &>/dev/null; then
-    # chown -R lfs:lfs "$LFS"
-    chown -R lfs:lfs "$BUILD_DIR/log"
-    chown -R lfs:lfs "$BUILD_DIR/tmp"
-fi
-
-########################################
 # 権限
 ########################################
 chmod 755 "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
