@@ -66,11 +66,11 @@ scripts/config --enable CONFIG_VLAN_8021Q
 scripts/config --enable CONFIG_NETFILTER
 
 # 依存関係自動解決
-$ARCH make olddefconfig
+# $ARCH make olddefconfig
 
 # ---------- ここまで追加 ----------
 
-# echo "$ARCH make defconfig" >> kernelbuilder
+echo "$ARCH make defconfig" >> kernelbuilder
 
 echo "$ARCH make" >> kernelbuilder
 
