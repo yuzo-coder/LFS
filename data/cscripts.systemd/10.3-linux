@@ -40,6 +40,7 @@ scripts/config --enable CONFIG_VIRTIO_PCI
 scripts/config --enable CONFIG_VIRTIO_BLK
 scripts/config --enable CONFIG_VIRTIO_NET
 
+# ネットワークブリッジ
 scripts/config --enable CONFIG_BRIDGE_NETFILTER
 scripts/config --enable CONFIG_VLAN_8021Q
 scripts/config --enable CONFIG_NETFILTER
