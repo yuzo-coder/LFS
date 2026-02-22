@@ -16,32 +16,11 @@ cd linux-6.16.1
 #FORCING ARCH 
 ARCH=""
 
-if [[ "$LFS_TGT" == "i486-lfs-linux-gnu" ]]
-then
-
-ARCH="ARCH=i386"
-
-fi
-
-if [[ "$LFS_TGT" == "i586-lfs-linux-gnu" ]]
-then
-
-ARCH="ARCH=i386"
-
-fi
-
-if [[ "$LFS_TGT" == "i686-lfs-linux-gnu" ]]
-then
-
-ARCH="ARCH=i386"
-
-fi
-
 make mrproper
 
 # ---------- ここから自動config追加 ----------
 
-$ARCH make defconfig
+make defconfig
 
 # framebuffer + console 拡張
 scripts/config --enable CONFIG_FB
@@ -66,15 +45,13 @@ scripts/config --enable CONFIG_VLAN_8021Q
 scripts/config --enable CONFIG_NETFILTER
 
 # 依存関係自動解決
-# $ARCH make olddefconfig
+make olddefconfig
 
 # ---------- ここまで追加 ----------
 
-echo "$ARCH make defconfig" >> kernelbuilder
+echo "make" >> kernelbuilder
 
-echo "$ARCH make" >> kernelbuilder
-
-echo "$ARCH make modules_install" >> kernelbuilder
+echo "make modules_install" >> kernelbuilder
 
 chmod +x kernelbuilder
 
