@@ -123,7 +123,7 @@ mkdir -p "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
 # lfsユーザーが存在する場合は所有権付与
 ########################################
 if id lfs &>/dev/null; then
-    chown -R lfs:lfs "$LFS"
+    # chown -R lfs:lfs "$LFS"
     chown -R lfs:lfs "$BUILD_DIR/log"
     chown -R lfs:lfs "$BUILD_DIR/tmp"
 fi
@@ -131,9 +131,9 @@ fi
 ########################################
 # 権限
 ########################################
-chmod 777 "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
-chmod 777 "$BUILD_DIR/env.sh" "$BUILD_DIR/userenv.sh"
-chmod 777 "$BUILD_DIR/cscripts.config/"*.sh
+chmod 755 "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
+chmod 755 "$BUILD_DIR/env.sh" "$BUILD_DIR/userenv.sh"
+chmod 755 "$BUILD_DIR/cscripts.config/"*.sh
 
 echo -e "\nBuild directory initialized successfully.\n"
 echo "LFS = $LFS"
