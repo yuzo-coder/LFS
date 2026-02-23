@@ -22,17 +22,12 @@ make mrproper
 
 make defconfig
 
-# framebuffer + console 拡張
-scripts/config --enable CONFIG_FB
-scripts/config --enable CONFIG_FB_VESA
-scripts/config --enable CONFIG_FRAMEBUFFER_CONSOLE
-scripts/config --enable CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY
-
-# QEMU / 仮想GPU向け
+# DRM
 scripts/config --enable CONFIG_DRM
 scripts/config --enable CONFIG_DRM_VIRTIO_GPU
-scripts/config --enable CONFIG_SYSFB_SIMPLEFB
-scripts/config --enable CONFIG_FB_SIMPLE
+scripts/config --enable CONFIG_FRAMEBUFFER_CONSOLE
+scripts/config --enable CONFIG_DRM_KMS_HELPER
+scripts/config --enable CONFIG_DRM_BOCHS
 
 # virtio デバイス（安定用）
 scripts/config --enable CONFIG_VIRTIO
