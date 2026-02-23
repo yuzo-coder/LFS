@@ -22,18 +22,34 @@ make mrproper
 
 make defconfig
 
-# DRM
-scripts/config --enable CONFIG_DRM
-scripts/config --enable CONFIG_DRM_VIRTIO_GPU
-scripts/config --enable CONFIG_FRAMEBUFFER_CONSOLE
-scripts/config --enable CONFIG_DRM_KMS_HELPER
-scripts/config --enable CONFIG_DRM_BOCHS
+# 必須（GPUまわり）
+CONFIG_DRM=y
+CONFIG_DRM_KMS_HELPER=y
+CONFIG_DRM_VIRTIO_GPU=y
+CONFIG_DRM_SIMPLEDRM=y
+CONFIG_FRAMEBUFFER_CONSOLE=y
+CONFIG_FB=y
+CONFIG_FB_EFI=y
+CONFIG_VT=y
+CONFIG_VGA_CONSOLE=y
 
-# virtio デバイス（安定用）
-scripts/config --enable CONFIG_VIRTIO
-scripts/config --enable CONFIG_VIRTIO_PCI
-scripts/config --enable CONFIG_VIRTIO_BLK
-scripts/config --enable CONFIG_VIRTIO_NET
+# virtio系（rootがvdaなら絶対必要）
+CONFIG_VIRTIO=y
+CONFIG_VIRTIO_PCI=y
+CONFIG_VIRTIO_BLK=y
+CONFIG_VIRTIO_NET=y
+
+# PCI / 基本
+CONFIG_PCI=y
+CONFIG_PCI_MSI=y
+CONFIG_ACPI=y
+CONFIG_X86_IO_APIC=y
+
+# 安定用（推奨）
+CONFIG_TMPFS=y
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_UNIX=y
 
 # ネットワークブリッジ
 scripts/config --enable CONFIG_BRIDGE_NETFILTER
