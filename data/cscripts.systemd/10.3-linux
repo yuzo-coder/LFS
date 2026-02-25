@@ -57,6 +57,30 @@ scripts/config --enable CONFIG_BRIDGE_NETFILTER
 scripts/config --enable CONFIG_VLAN_8021Q
 scripts/config --enable CONFIG_NETFILTER
 
+# X
+scripts/config --enable CONFIG_DRM_NOUVEAU
+scripts/config --enable CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT
+scripts/config --enable CONFIG_DRM_TTM
+scripts/config --enable CONFIG_DRM_SCHED
+scripts/config --enable CONFIG_I2C
+scripts/config --enable CONFIG_I2C_ALGOBIT
+
+scripts/config --enable CONFIG_INPUT_EVDEV
+scripts/config --enable CONFIG_INPUT_KEYBOARD
+scripts/config --enable CONFIG_INPUT_MOUSE
+scripts/config --enable CONFIG_UNIX
+scripts/config --enable CONFIG_TMPFS
+scripts/config --enable CONFIG_TMPFS_POSIX_ACL
+scripts/config --enable CONFIG_CGROUPS
+scripts/config --enable CONFIG_CGROUP_BPF
+scripts/config --enable CONFIG_INOTIFY_USER
+
+scripts/config --enable CONFIG_AUTOFS4_FS
+scripts/config --enable CONFIG_FHANDLE
+scripts/config --enable CONFIG_SIGNALFD
+scripts/config --enable CONFIG_TIMERFD
+scripts/config --enable CONFIG_EPOLL
+
 # 依存関係自動解決
 make olddefconfig
 
