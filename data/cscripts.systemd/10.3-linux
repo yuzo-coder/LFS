@@ -57,7 +57,7 @@ scripts/config --enable CONFIG_BRIDGE_NETFILTER
 scripts/config --enable CONFIG_VLAN_8021Q
 scripts/config --enable CONFIG_NETFILTER
 
-# X
+# nouveau
 scripts/config --enable CONFIG_DRM_NOUVEAU
 scripts/config --enable CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT
 scripts/config --enable CONFIG_DRM_TTM
@@ -65,6 +65,7 @@ scripts/config --enable CONFIG_DRM_SCHED
 scripts/config --enable CONFIG_I2C
 scripts/config --enable CONFIG_I2C_ALGOBIT
 
+# Wayland安定用 追加推奨
 scripts/config --enable CONFIG_INPUT_EVDEV
 scripts/config --enable CONFIG_INPUT_KEYBOARD
 scripts/config --enable CONFIG_INPUT_MOUSE
@@ -75,6 +76,7 @@ scripts/config --enable CONFIG_CGROUPS
 scripts/config --enable CONFIG_CGROUP_BPF
 scripts/config --enable CONFIG_INOTIFY_USER
 
+# sway
 scripts/config --enable CONFIG_AUTOFS4_FS
 scripts/config --enable CONFIG_FHANDLE
 scripts/config --enable CONFIG_SIGNALFD
