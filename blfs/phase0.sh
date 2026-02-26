@@ -4,7 +4,7 @@ set -euo pipefail
 JOBS=$(nproc)
 PREFIX=/usr
 ROOT=$PWD
-SRC=$ROOT/source
+SRC=$ROOT/sources
 LOG=$ROOT/logs
 
 mkdir -p "$LOG"
