@@ -21,16 +21,16 @@ SWAY_VER=1.9
 # ダウンロード
 ############################
 
-wget https://dri.freedesktop.org/libdrm/libdrm-${LIBDRM_VER}.tar.xz
-wget https://archive.mesa3d.org/mesa-${MESA_VER}.tar.xz
-wget https://wayland.freedesktop.org/releases/wayland-${WAYLAND_VER}.tar.xz
-wget https://wayland.freedesktop.org/releases/wayland-protocols-${WAYLAND_PROTOCOLS_VER}.tar.xz
-wget https://xkbcommon.org/download/libxkbcommon-${LIBXKBCOMMON_VER}.tar.xz
-wget https://www.cairographics.org/releases/pixman-${PIXMAN_VER}.tar.gz
-wget https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VER}.tar.gz -O seatd-${SEATD_VER}.tar.gz
-wget https://www.x.org/pub/individual/xserver/xorg-server-${XORG_VER}.tar.xz
-wget https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/${WLROOTS_VER}/wlroots-${WLROOTS_VER}.tar.gz
-wget https://github.com/swaywm/sway/releases/download/${SWAY_VER}/sway-${SWAY_VER}.tar.gz
+wget https://dri.freedesktop.org/libdrm/libdrm-${LIBDRM_VER}.tar.xz --no-check-certificate
+wget https://archive.mesa3d.org/mesa-${MESA_VER}.tar.xz --no-check-certificate
+wget https://wayland.freedesktop.org/releases/wayland-${WAYLAND_VER}.tar.xz --no-check-certificate
+wget https://wayland.freedesktop.org/releases/wayland-protocols-${WAYLAND_PROTOCOLS_VER}.tar.xz --no-check-certificate
+wget https://xkbcommon.org/download/libxkbcommon-${LIBXKBCOMMON_VER}.tar.xz --no-check-certificate
+wget https://www.cairographics.org/releases/pixman-${PIXMAN_VER}.tar.gz --no-check-certificate
+wget https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VER}.tar.gz -O seatd-${SEATD_VER}.tar.gz --no-check-certificate
+wget https://www.x.org/pub/individual/xserver/xorg-server-${XORG_VER}.tar.xz --no-check-certificate
+wget https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/${WLROOTS_VER}/wlroots-${WLROOTS_VER}.tar.gz --no-check-certificate
+wget https://github.com/swaywm/sway/releases/download/${SWAY_VER}/sway-${SWAY_VER}.tar.gz --no-check-certificate
 
 ############################
 # 1. libdrm
