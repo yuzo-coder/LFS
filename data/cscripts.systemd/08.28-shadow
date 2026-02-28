@@ -23,6 +23,7 @@ touch /usr/bin/passwd
             --disable-static    \
             --with-{b,yes}crypt \
             --without-libbsd    \
+            --disable-logind    \
             --with-group-name-max-length=32
 
 make
