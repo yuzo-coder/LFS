@@ -119,7 +119,36 @@ scripts/config --enable CONFIG_BRIDGE_NETFILTER
 scripts/config --enable CONFIG_VLAN_8021Q
 scripts/config --enable CONFIG_NETFILTER
 
+# VirtIO GPUの3D加速を支えるメモリ管理
+scripts/config --enable CONFIG_DRM_TTM
+scripts/config --enable CONFIG_DMA_SHARED_BUFFER
 
+# コンソールからSwayに切り替える際の画面保護
+scripts/config --enable CONFIG_BACKLIGHT_CLASS_DEVICE
+
+scripts/config --enable CONFIG_VIRTIO_INPUT
+scripts/config --enable CONFIG_INPUT_MOUSEDEV
+
+# systemd-networkd や Firewall 関連
+scripts/config --enable CONFIG_NET_CORE
+scripts/config --enable CONFIG_IP_NF_IPTABLES
+scripts/config --enable CONFIG_NET_SCHED
+scripts/config --enable CONFIG_NET_CLS_BPF
+
+# systemd のセキュリティ機能 (RestrictAddressFamilies など) に必須
+scripts/config --enable CONFIG_AF_UNIX
+scripts/config --enable CONFIG_IPV6
+
+# システムの監査・ログ
+scripts/config --enable CONFIG_AUDIT
+scripts/config --enable CONFIG_AUDITSYSCALL
+
+# 仮想マシンとホスト間での共有ディレクトリ用 (もし将来使うなら)
+scripts/config --enable CONFIG_VIRTIO_9P
+scripts/config --enable CONFIG_9P_FS
+
+# QEMU内の乱数生成器 (起動速度の向上: Entropy不足を回避)
+scripts/config --enable CONFIG_HW_RANDOM_VIRTIO
 
 # 依存関係自動解決
 make olddefconfig
