@@ -118,16 +118,16 @@ build_meson_feature libdisplay-info "https://gitlab.freedesktop.org/emersion/lib
 # 5. D-Bus
 # =============================
 # D-Bus 1.16.2 のビルド例
-build_meson_feature dbus "https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz" \
-    "-Druntime_dir=/run \
-     -Dsystemd=enabled \
-     -Dsystemd_system_unitdir=/usr/lib/systemd/system \
-     -Dsystemd_user_unitdir=/usr/lib/systemd/user \
-     -Duser_session=true \
-     -Dselinux=disabled \
-     -Dxml_docs=disabled \
-     -Ddoxygen_docs=disabled \
-     -Ddbus_user=dbus"
+# build_meson_feature dbus "https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz" \
+#    "-Druntime_dir=/run \
+#     -Dsystemd=enabled \
+#     -Dsystemd_system_unitdir=/usr/lib/systemd/system \
+#     -Dsystemd_user_unitdir=/usr/lib/systemd/user \
+#     -Duser_session=true \
+#     -Dselinux=disabled \
+#     -Dxml_docs=disabled \
+#     -Ddoxygen_docs=disabled \
+#     -Ddbus_user=dbus"
 
 # =============================
 # 6. Input stack
