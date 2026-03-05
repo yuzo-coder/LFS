@@ -3,21 +3,7 @@ set -uo pipefail
 
 echo "===== Sway & Session Environment ULTIMATE Setup ====="
 
-# 1. ライブラリ不整合の強制修正
-echo "Step 1: Fixing library links..."
 ldconfig
-if [ -f /usr/lib/libdbus-1.so.3.38.3 ]; then
-    ln -sf libdbus-1.so.3.38.3 /usr/lib/libdbus-1.so.3
-fi
-ldconfig
-
-# 2. D-Bus ユーザー/グループの完全再構築 (217/USERエラー対策)
-echo "Step 2: Reconstructing dbus user/group..."
-# 既存の残骸を一度リセットして確実に作成
-userdel dbus 2>/dev/null || true
-groupdel dbus 2>/dev/null || true
-groupadd -g 81 dbus
-useradd -c "System Message Bus" -d /run/dbus -u 81 -g 81 -s /bin/false dbus
 
 # 一般ユーザー(user)の権限付与
 for grp in video input render seat; do
@@ -46,11 +32,11 @@ EOF
 fi
 
 # 4. D-Bus / machine-id の確立
-echo "Step 4: Setting up machine-id..."
-mkdir -p /var/lib/dbus
-dbus-uuidgen --ensure
-dbus-uuidgen > /var/lib/dbus/machine-id
-cp -f /var/lib/dbus/machine-id /etc/machine-id
+# echo "Step 4: Setting up machine-id..."
+# mkdir -p /var/lib/dbus
+# dbus-uuidgen --ensure
+# dbus-uuidgen > /var/lib/dbus/machine-id
+# cp -f /var/lib/dbus/machine-id /etc/machine-id
 
 # 5. seatd サービスユニット作成
 echo "Step 5: Creating seatd service..."
