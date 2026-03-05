@@ -70,7 +70,7 @@ mkdir -p /usr/lib/systemd/system
 cat > /etc/ssh/sshd_config << "EOF"
 Port 22
 PasswordAuthentication yes
-PermitRootLogin  yes
+PermitRootLogin yes
 EOF
 
 # cat > /usr/lib/systemd/system/sshd.service << "EOF"
