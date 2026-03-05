@@ -92,6 +92,7 @@ EOF
 # 反映と有効化
 systemctl daemon-reload
 # 既に有効化されている場合のエラーを避けるため
+systemctl restart sshd
 systemctl enable sshd || true
 
 echo "===== PHASE0 COMPLETE ====="
