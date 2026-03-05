@@ -67,21 +67,27 @@ echo "===== Installing systemd unit ====="
 # /usr/lib/systemd/system/ ディレクトリが存在することを確認
 mkdir -p /usr/lib/systemd/system
 
-cat > /usr/lib/systemd/system/sshd.service << "EOF"
-[Unit]
-Description=OpenSSH Daemon
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/sbin/sshd -D
-ExecReload=/bin/kill -HUP $MAINPID
-KillMode=process
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
+cat > /etc/ssh/sshd_config << "EOF"
+Port 22
+PasswordAuthentication yes
+PermitRootLogin  yes
 EOF
+
+# cat > /usr/lib/systemd/system/sshd.service << "EOF"
+# [Unit]
+# Description=OpenSSH Daemon
+# After=network.target
+
+# [Service]
+# Type=simple
+# ExecStart=/usr/sbin/sshd -D
+# ExecReload=/bin/kill -HUP $MAINPID
+# KillMode=process
+# Restart=on-failure
+
+# [Install]
+# WantedBy=multi-user.target
+# EOF
 
 # 反映と有効化
 systemctl daemon-reload
