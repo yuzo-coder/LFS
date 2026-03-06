@@ -12,6 +12,9 @@ mkdir -p "$SOURCE_DIR" "$LOG_DIR"
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/local/lib/pkgconfig
 export MAKEFLAGS="-j$JOBS"
 
+echo "===== Installing Build Dependencies ====="
+pip3 install --break-system-packages mako pyserpent 2>/dev/null || true
+
 # 2. ユーティリティ関数
 download_extract() {
     local URL=$1
