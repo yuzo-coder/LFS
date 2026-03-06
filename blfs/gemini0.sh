@@ -22,8 +22,8 @@ cd wget-1.25.0
     --with-ssl=openssl \
     > "$LOG/wget.log" 2>&1
 
-make -j"$JOBS" >> "$LOG/wget.log" 2>&1
-make install >> "$LOG/wget.log" 2>&1
+make -j"$JOBS" 2>&1 | tee -a "$LOG/wget.log"
+make install 2>&1 | tee -a "$LOG/wget.log"
 
 cd "$SRC"
 rm -rf wget-1.25.0
@@ -49,8 +49,8 @@ cd openssh-10.2p1
     --with-mdns \
     > "$LOG/openssh.log" 2>&1
 
-make -j"$JOBS" >> "$LOG/openssh.log" 2>&1
-make install >> "$LOG/openssh.log" 2>&1
+make -j"$JOBS" 2>&1 | tee -a "$LOG/openssh.log"
+make install 2>&1 | tee -a "$LOG/openssh.log"
 
 # 【追加】ホストキーの生成 (これがないと起動しません)
 if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
