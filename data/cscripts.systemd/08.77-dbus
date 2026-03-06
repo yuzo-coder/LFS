@@ -1,94 +1,54 @@
 cd /sources
+# 既存のディレクトリがあれば削除してクリーンな状態から
+rm -rf dbus-1.16.2
 tar -xf dbus-1.16.2.tar.xz
 cd dbus-1.16.2
 
-# 1. ビルド前にユーザーとグループが確実に存在することを確認 (GID/UID 81)
-# これを怠ると、インストール時のファイルの所有権が狂います
+# 1. ユーザーとグループの作成 (IDはBLFS標準の18を推奨)
 if ! getent group dbus >/dev/null; then
-    groupadd -g 81 dbus
+    groupadd -g 18 dbus
 fi
 if ! getent passwd dbus >/dev/null; then
-    useradd -c "System Message Bus" -d /run/dbus -u 81 -g 81 -s /bin/false dbus
+    useradd -c "System Message Bus" -d /var/run/dbus -u 18 -g dbus -s /bin/false dbus
 fi
 
-# 2. ビルドディレクトリの作成
+# 2. ビルドディレクトリ
 mkdir -v build
-cd       build
+cd build
 
-# 3. Meson Setup (Sway/systemd完全対応版)
-# ポイント: 
-# - systemd=enabled (Combo型)
-# - user_session=true (Boolean型)
-# - runtime_dir=/run (現代的なパス)
+# 3. Meson Setup
+# -Dxml_docs=false, -Ddoxygen_docs=false (Mesonではdisabledではなくfalseの場合が多い)
 meson setup .. \
     --prefix=/usr \
     --sysconfdir=/etc \
     --localstatedir=/var \
     --buildtype=release \
-    --wrap-mode=nofallback \
     -Druntime_dir=/run \
     -Dsystemd=enabled \
     -Dsystemd_system_unitdir=/usr/lib/systemd/system \
     -Dsystemd_user_unitdir=/usr/lib/systemd/user \
     -Duser_session=true \
     -Dselinux=disabled \
-    -Dxml_docs=disabled \
-    -Ddoxygen_docs=disabled \
+    -Dxml_docs=false \
+    -Ddoxygen_docs=false \
     -Ddbus_user=dbus
 
 # 4. コンパイル
 ninja 
 
-# 5. テスト (ULFS_TESTSがYESの場合)
-if [[ "${ULFS_TESTS:-NO}" == "YES" ]]; then
-    ninja test
-fi
-
-# 6. インストール
+# 5. インストール
 ninja install
 
-# 7. 事後設定 (重要)
-# 共有ライブラリのキャッシュを更新
+# 6. 【重要】実行権限の修正 (SUIDの設定)
+# これを行わないと、特定のサービスが起動権限を持てません
+chown -v root:dbus /usr/libexec/dbus-daemon-launch-helper
+chmod -v 4750      /usr/libexec/dbus-daemon-launch-helper
+
+# 7. 事後設定
 ldconfig
 
-# machine-id の作成 (前回の不整合を防ぐため)
-# 手順: dbus-uuidgen で生成 -> /etc に配置 -> /var/lib/dbus にリンク
-dbus-uuidgen --ensure
-dbus-uuidgen > /etc/machine-id
+# machine-id の確立
+dbus-uuidgen --ensure=/etc/machine-id
 mkdir -pv /var/lib/dbus
 ln -sfv /etc/machine-id /var/lib/dbus/machine-id
-
-# 8. クリーンアップ (任意)
-# cd /sources
-# rm -rf dbus-1.16.2
-
-
-
-
-
-# . /cscripts/env.sh
-
-#cd /sources
-
-#tar -xf dbus-1.16.2.tar.xz
-
-#cd dbus-1.16.2
-
-#mkdir build
-#cd    build
-
-#meson setup --prefix=/usr --buildtype=release --wrap-mode=nofallback ..
-
-#ninja 
-
-#if [[ "$ULFS_TESTS" == "YES" ]]
-#then
-
-#ninja test
-
-#fi
-
-#ninja install
-
-#ln -sfv /etc/machine-id /var/lib/dbus
 
