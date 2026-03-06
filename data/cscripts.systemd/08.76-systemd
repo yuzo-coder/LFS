@@ -26,7 +26,6 @@ meson setup ..                \
       -D userdb=false         \
       -D man=disabled         \
       -D mode=release         \
-      -D pam=true             \
       -D pamconfdir=no        \
       -D dev-kvm-mode=0660    \
       -D nobody-group=nogroup \
