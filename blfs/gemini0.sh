@@ -83,9 +83,17 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
+# SSH設定 ROOT許可
+cat > /etc/ssh/sshd_config << "EOF"
+Port 22
+PasswordAuthentication yes
+PermitRootLogin  yes
+EOF
+
 # 反映と有効化
 systemctl daemon-reload
 # 既に有効化されている場合のエラーを避けるため
+systemctl restart sshd || true
 systemctl enable sshd || true
 
 echo "===== PHASE0 COMPLETE ====="
