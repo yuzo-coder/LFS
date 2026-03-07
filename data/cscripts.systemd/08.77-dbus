@@ -29,8 +29,8 @@ meson setup .. \
     -Dsystemd_user_unitdir=/usr/lib/systemd/user \
     -Duser_session=true \
     -Dselinux=disabled \
-    -Dxml_docs=false \
-    -Ddoxygen_docs=false \
+    -Dxml_docs=disabled \
+    -Ddoxygen_docs=disabled \
     -Ddbus_user=dbus
 
 # 4. コンパイル
