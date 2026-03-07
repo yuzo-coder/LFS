@@ -70,6 +70,11 @@ build_autotools() {
 # -Ddoc=disabled: ドキュメント生成エラーを回避
 build_meson linux-pam "https://github.com/linux-pam/linux-pam/releases/download/v1.7.2/Linux-PAM-1.7.2.tar.xz" "-Ddocs=disabled"
 
+# B. 【最重要】PAM を認識させて Shadow を再ビルド
+# --with-libpam が無いと login コマンドが PAM を無視します
+build_autotools shadow "https://github.com/shadow-maint/shadow/releases/download/4.18.0/shadow-4.18.0.tar.xz" \
+    "--sysconfdir=/etc --disable-static --with-group-name-max-length=32 --with-libpam --without-libbsd"
+    
 # systemd (PAM有効化)
 build_meson systemd "https://github.com/systemd/systemd/archive/v257.8/systemd-257.8.tar.gz" "-Dpam=enabled -Dmode=release"
 
