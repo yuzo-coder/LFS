@@ -36,6 +36,14 @@ session    required    pam_unix.so
 session    optional    pam_systemd.so
 EOF
 
+# /etc/pam.d/sshd があるか確認し、無ければ作成
+cat > /etc/pam.d/sshd << "EOF"
+auth      include     system-auth
+account   include     system-auth
+password  include     system-auth
+session   include     system-session
+EOF
+
 # 3. D-Bus ユニットファイルの作成と強制有効化
 echo "Step 3: Creating and forcing D-Bus units..."
 cat > /lib/systemd/system/dbus.socket << "EOF"
