@@ -88,6 +88,7 @@ cat > /etc/ssh/sshd_config << "EOF"
 Port 22
 PasswordAuthentication yes
 PermitRootLogin  yes
+Subsystem sftp internal-sftp
 EOF
 
 # 反映と有効化
