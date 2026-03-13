@@ -7,6 +7,12 @@ ROOT=$PWD
 SRC=$ROOT/sources
 LOG=$ROOT/logs
 
+cat >> /etc/profile << "EOF"
+# pkg-config の検索パスを追加
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
+export PKG_CONFIG_PATH
+EOF
+
 mkdir -p "$LOG"
 cd "$SRC"
 
