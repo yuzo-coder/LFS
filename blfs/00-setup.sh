@@ -134,7 +134,7 @@ cd "$SRC" && rm -rf "$DIR"
 
 # 5-2. sudo
 echo "===== Building sudo ====="
-DIR=$(download_extract "https://www.sudo.ws/dist/sudo-1.9.16p1.tar.gz")
+DIR=$(download_extract "https://www.sudo.ws/dist/sudo-1.9.17p2.tar.gz")
 cd "$DIR"
 ./configure --prefix=/usr \
             --libexecdir=/usr/lib \
@@ -142,7 +142,9 @@ cd "$DIR"
             --with-all-insults \
             --with-env-editor \
             --docdir=/usr/share/doc/sudo-1.9.16p1 \
-            --with-passprompt="[sudo] password for %p: " > "$LOG/sudo.log" 2>&1
+            --with-passprompt="[sudo] password for %p: " \
+	    CFLAGS="-g -O2 -Wno-error=incompatible-pointer-types" > "$LOG/sudo.log" 2>&1
+
 make -j"$JOBS" >> "$LOG/sudo.log" 2>&1
 make install >> "$LOG/sudo.log" 2>&1
 
