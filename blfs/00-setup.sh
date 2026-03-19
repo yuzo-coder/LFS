@@ -33,6 +33,25 @@ download_extract() {
     echo "$SRC/$DIR"
 }
 
+# --- wget ---
+echo "===== Building wget ====="
+rm -rf wget-1.25.0
+tar xf wget-1.25.0.tar.gz  # zオプションはなくてもtarが自動判別します
+cd wget-1.25.0
+
+./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --with-ssl=openssl \
+    > "$LOG/wget.log" 2>&1
+
+make -j"$JOBS" 2>&1 | tee -a "$LOG/wget.log"
+make install 2>&1 | tee -a "$LOG/wget.log"
+
+cd "$SRC"
+rm -rf wget-1.25.0
+echo "===== wget complete ====="
+
 # --- 3. SSL/証明書基盤 ---
 
 # 3-1. libtasn1
@@ -62,8 +81,8 @@ cd "$DIR"
 make install >> "$LOG/make-ca.log" 2>&1
 # Mozillaの最新証明書データ取得
 wget https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt --no-check-certificate
-mkdir -p /etc/pki/anchors
-cp certdata.txt /etc/pki/anchors/
+# mkdir -p /etc/pki/anchors
+cp certdata.txt /etc/ssl/
 /usr/sbin/make-ca -r >> "$LOG/make-ca.log" 2>&1
 cd "$SRC" && rm -rf "$DIR"
 
@@ -71,8 +90,10 @@ cd "$SRC" && rm -rf "$DIR"
 
 # 4-1. wget (SSL対応再ビルド)
 echo "===== Building wget (SSL support) ====="
-DIR=$(download_extract "https://ftp.gnu.org/gnu/wget/wget-1.25.0.tar.gz")
-cd "$DIR"
+# DIR=$(download_extract "https://ftp.gnu.org/gnu/wget/wget-1.25.0.tar.gz")
+# cd "$DIR"
+tar xf wget-1.25.0.tar.gz
+cd wget-1.25.0
 ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl > "$LOG/wget.log" 2>&1
 make -j"$JOBS" >> "$LOG/wget.log" 2>&1
 make install >> "$LOG/wget.log" 2>&1
