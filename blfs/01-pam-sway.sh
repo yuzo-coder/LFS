@@ -126,7 +126,7 @@ build_meson mesa "https://archive.mesa3d.org/mesa-24.0.5.tar.xz" \
 build_autotools libevdev "https://www.freedesktop.org/software/libevdev/libevdev-1.13.1.tar.xz" "--disable-static"
 build_autotools mtdev "https://bitmath.org/code/mtdev/mtdev-1.1.6.tar.gz" "--disable-static"
 build_meson libgudev "https://download.gnome.org/sources/libgudev/238/libgudev-238.tar.xz" ""
-build_meson libinput "https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.25.0/libinput-1.25.0.tar.gz" "-Ddebug-gui=false -Dtests=false -Ddocumentation=false"
+build_meson libinput "https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.25.0/libinput-1.25.0.tar.gz" "-Ddebug-gui=false -Dtests=false -Ddocumentation=false -Dlibwacom=false"
 
 # --- 8. Font & Drawing Stack (Pango Chain) ---
 build_meson pixman "https://www.cairographics.org/releases/pixman-0.43.4.tar.gz" ""
