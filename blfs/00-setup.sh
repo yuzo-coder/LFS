@@ -20,6 +20,84 @@ export PKG_CONFIG_PATH
 EOF
 fi
 
+
+cat > /etc/profile.d/bash_colors.sh << "EOF"
+# --- 1. dircolors の設定 (lsの色) ---
+if [ -x /usr/bin/dircolors ]; then
+    # システム共通設定があれば読み込み、なければデフォルトを生成
+    if [ -f /etc/dircolors ]; then
+        eval "$(dircolors -b /etc/dircolors)"
+    else
+        eval "$(dircolors -b)"
+    fi
+
+    # エイリアス設定
+    alias ls='ls --color=auto'
+    alias ll='ls -l --color=auto'
+    alias la='ls -A --color=auto'
+    alias grep='grep --color=auto'
+    alias diff='diff --color=auto'
+fi
+
+# --- 2. プロンプト (PS1) の色分け設定 ---
+# 色コードの定義
+RED='\[\e[1;31m\]'
+GREEN='\[\e[1;32m\]'
+BLUE='\[\e[1;34m\]'
+RESET='\[\e[0m\]'
+
+# ユーザーIDによって色を分岐
+if [ $(id -u) -eq 0 ]; then
+    # rootユーザーは名前を「赤」にして警告
+    PS1="${RED}\u${RESET}@\h:${BLUE}\w${RESET}# "
+else
+    # 一般ユーザーは名前を「緑」にする
+    PS1="${GREEN}\u${RESET}@\h:${BLUE}\w${RESET}$ "
+fi
+
+# ターミナルが 256色に対応している場合の微調整（任意）
+export TERM=xterm-256color
+EOF
+
+# 実行権限の付与
+chmod +x /etc/profile.d/bash_colors.sh
+
+# 共通の dircolors ファイルがなければ作成しておく
+if [ ! -f /etc/dircolors ]; then
+    dircolors -p > /etc/dircolors
+fi
+source /etc/profile
+echo "===== Bash Color Setup Complete ====="
+
+
+# ---  systemd-networkd 設定 (追加分) ---
+echo "===== Configuring Network (systemd-networkd) ====="
+
+# 物理インターフェースの有効化
+# ens3 をアップ状態にします
+ip link set ens3 up || echo "Warning: ens3 not found or already up"
+
+#  ネットワーク設定ファイルの作成
+mkdir -p /etc/systemd/network
+cat > /etc/systemd/network/10-ens3.network << "EOF"
+[Match]
+Name=ens3
+
+[Network]
+DHCP=yes
+DNS=8.8.8.8
+EOF
+
+#  systemd-resolved の設定 (DNS解決に必要)
+# DNS=8.8.8.8 を反映させるため、resolved も有効化し、/etc/resolv.conf をリンクします
+systemctl enable systemd-resolved
+systemctl start systemd-resolved
+ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+#  サービスの有効化と開始
+systemctl enable systemd-networkd
+systemctl restart systemd-networkd
+
 # --- 2. 共通関数 ---
 download_extract() {
     local URL=$1
@@ -67,7 +145,6 @@ cd "$SRC" && rm -rf "$DIR"
 echo "===== Building p11-kit ====="
 DIR=$(download_extract "https://github.com/p11-glue/p11-kit/releases/download/0.25.5/p11-kit-0.25.5.tar.xz")
 cd "$DIR"
-# mkdir build && cd build
 cd build
 meson setup .. --prefix=/usr --buildtype=release -Dtrust_module=enabled -Dtrust_paths=/etc/pki/anchors > "$LOG/p11-kit.log" 2>&1
 ninja >> "$LOG/p11-kit.log" 2>&1
@@ -82,7 +159,6 @@ cd "$DIR"
 make install >> "$LOG/make-ca.log" 2>&1
 # Mozillaの最新証明書データ取得
 wget https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt --no-check-certificate
-# mkdir -p /etc/pki/anchors
 cp certdata.txt /etc/ssl/
 /usr/sbin/make-ca -r >> "$LOG/make-ca.log" 2>&1
 cd "$SRC" && rm -rf "$DIR"
@@ -91,8 +167,6 @@ cd "$SRC" && rm -rf "$DIR"
 
 # 4-1. wget (SSL対応再ビルド)
 echo "===== Building wget (SSL support) ====="
-# DIR=$(download_extract "https://ftp.gnu.org/gnu/wget/wget-1.25.0.tar.gz")
-# cd "$DIR"
 tar xf wget-1.25.0.tar.gz
 cd wget-1.25.0
 ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl > "$LOG/wget.log" 2>&1
