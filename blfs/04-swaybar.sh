@@ -100,18 +100,65 @@ build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.
 
 # 4-2. C++ ユーティリティ
 build_cmake fmt "https://github.com/fmtlib/fmt/archive/11.0.2.tar.gz" "-DBUILD_SHARED_LIBS=ON -DFMT_TEST=OFF"
-build_cmake spdlog "https://github.com/gabime/spdlog/archive/v1.14.1.tar.gz" "-DSPDLOG_FMT_EXTERNAL=ON -DBUILD_SHARED_LIBS=ON"
+
+build_cmake spdlog "https://github.com/gabime/spdlog/archive/v1.14.1.tar.gz" \
+    "-DSPDLOG_FMT_EXTERNAL=ON -DBUILD_SHARED_LIBS=ON -DSPDLOG_BUILD_EXAMPLE=OFF"
+
 build_meson jsoncpp "https://github.com/open-source-parsers/jsoncpp/archive/1.9.5.tar.gz" "-Dtests=false"
 
 # 4-3. MMシリーズ (C++ Wrappers)
 build_mm_lib libsigc++ "https://download.gnome.org/sources/libsigc++/2.12/libsigc++-2.12.0.tar.xz" ""
 build_mm_lib cairomm "https://www.cairographics.org/releases/cairomm-1.14.5.tar.xz" ""
+build_mm_lib libsigc++3 "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz" ""
+echo "===== Building glibmm (Tutorial script bypass) ====="
+DIR=$(download_extract "https://download.gnome.org/sources/glibmm/2.84/glibmm-2.84.0.tar.xz")
+cd "$DIR"
+
+mkdir -p subprojects/libsigcplusplus/tools/
+# エラーの原因となっているスクリプトを「何もしない」内容で上書き
+cat > subprojects/libsigcplusplus/tools/tutorial-custom-cmd.py << "EOF"
+#!/usr/bin/env python3
+import sys
+# 何もせずに正常終了(exit 0)を返す
+sys.exit(0)
+EOF
+
+# 実行権限を付与
+chmod +x subprojects/libsigcplusplus/tools/tutorial-custom-cmd.py
+
+# ビルドの再試行
+rm -rf build
+mkdir build && cd build
+
+meson setup .. \
+    --prefix=/usr \
+    --libdir=/usr/lib \
+    --buildtype=release \
+    -Dbuild-documentation=false \
+    > "$LOG/glibmm.log" 2>&1
+
+ninja -j"$JOBS" >> "$LOG/glibmm.log" 2>&1
+ninja install >> "$LOG/glibmm.log" 2>&1
+cd "$ROOT_DIR"
+
+# build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.84/glibmm-2.84.0.tar.xz" "-Dbuild-documentation=false"
+
+# build_mm_lib mm-common "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz" ""
+echo "===== Building mm-common ====="
+DIR=$(download_extract "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz")
+cd "$DIR"
+
+rm -rf build && mkdir build && cd build
+meson setup .. --prefix=/usr --buildtype=release > "$LOG/mm-common.log" 2>&1
+ninja install >> "$LOG/mm-common.log" 2>&1
+cd "$ROOT_DIR"
+
 build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz" ""
 build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" ""
 build_mm_lib gtkmm "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" ""
 
 # 4-4. その他依存 (iniparser, date)
-build_cmake iniparser "https://github.com/ndevilla/iniparser/archive/v4.1.tar.gz" "-DBUILD_SHARED_LIBS=ON"
+build_cmake iniparser "https://github.com/ndevilla/iniparser/archive/v4.2.4.tar.gz" "-DBUILD_SHARED_LIBS=ON"
 
 echo "===== Building HowardHinnant date ====="
 DATE_DIR=$(download_extract "https://github.com/HowardHinnant/date/archive/v3.0.1.tar.gz")
