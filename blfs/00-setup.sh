@@ -20,6 +20,21 @@ export PKG_CONFIG_PATH
 EOF
 fi
 
+# 1. /etc/profile の基盤設定 (profile.d を読み込む仕組みを強制的に追加)
+if ! grep -q "profile.d" /etc/profile; then
+cat >> /etc/profile << 'EOF'
+
+# /etc/profile.d/ 内の全 .sh ファイルを読み込む設定
+if [ -d /etc/profile.d ]; then
+  for i in /etc/profile.d/*.sh; do
+    if [ -r "$i" ]; then
+      . "$i"
+    fi
+  done
+  unset i
+fi
+EOF
+fi
 
 cat > /etc/profile.d/bash_colors.sh << "EOF"
 # --- 1. dircolors の設定 (lsの色) ---
