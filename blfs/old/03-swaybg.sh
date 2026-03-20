@@ -9,9 +9,8 @@ SRC=$ROOT_DIR/sources
 LOG=$ROOT_DIR/logs
 
 mkdir -p "$SRC" "$LOG"
-export MAKEFLAGS="-j$JOBS"
 
-# --- 2. ユーティリティ関数 ---
+# --- 2. ユーティリティ関数（既存） ---
 download_extract() {
     local URL=$1
     local TAR=${URL##*/}
@@ -24,21 +23,10 @@ download_extract() {
     echo "$SRC/$DIR"
 }
 
-# [FIX] GitとURL両方に対応できるよう拡張
 build_meson() {
-    local NAME=$1; local SRC_URL=$2; local EXTRA=$3
+    local NAME=$1; local URL=$2; local EXTRA=$3
     echo "===== Building $NAME (meson) ====="
-    
-    local DIR=""
-    if [[ "$SRC_URL" == *.git ]]; then
-        cd "$SRC"
-        rm -rf "$NAME"
-        git clone "$SRC_URL" "$NAME"
-        DIR="$SRC/$NAME"
-    else
-        DIR=$(download_extract "$SRC_URL")
-    fi
-
+    local DIR=$(download_extract "$URL")
     cd "$DIR"
     rm -rf build
     meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
@@ -71,8 +59,7 @@ fc-cache -fv
 echo "Monospace font match:"
 fc-match monospace
 
-
-# --- 4. 依存関係のビルド ---
+# --- 4. 依存関係のビルド (libxslt -> xmlto -> shared-mime-info) ---
 
 # 4-1. libxslt
 echo "===== Building libxslt ====="
@@ -81,52 +68,80 @@ cd "$DIR"
 ./configure --prefix=/usr --disable-static > "$LOG/libxslt.log" 2>&1
 make -j"$JOBS" >> "$LOG/libxslt.log" 2>&1
 make install >> "$LOG/libxslt.log" 2>&1
-ldconfig # [FIX] 追加
 cd "$ROOT_DIR"
 
-# 4-2. xmlto (一時的なダミー作成)
-# [FIX] /usr/bin 直接ではなく、一時ディレクトリを作成して PATH の先頭に置くのが安全
-mkdir -p "$SRC/bin"
-cat > "$SRC/bin/xmlto" << "EOF"
+# 4-2. xmlto (ダミースクリプトの作成)
+# ビルド依存を解決するためのプレースホルダ
+echo "===== Creating dummy xmlto ====="
+cat > /usr/bin/xmlto << "EOF"
 #!/bin/sh
+echo "Dummy xmlto called with: $@"
 exit 0
 EOF
-chmod +x "$SRC/bin/xmlto"
-export PATH="$SRC/bin:$PATH"
+chmod +x /usr/bin/xmlto
 
-# 4-3. shared-mime-info
+# 4-3. shared-mime-info (Git版)
+echo "===== Building shared-mime-info ====="
+cd "$SRC"
+rm -rf shared-mime-info
 git config --global http.sslVerify false
-build_meson "shared-mime-info" "https://gitlab.freedesktop.org/xdg/shared-mime-info.git" ""
+git clone https://gitlab.freedesktop.org/xdg/shared-mime-info.git
+cd shared-mime-info
+meson setup build --prefix=/usr --buildtype=release > "$LOG/shared-mime-info.log" 2>&1
+ninja -C build >> "$LOG/shared-mime-info.log" 2>&1
+ninja -C build install >> "$LOG/shared-mime-info.log" 2>&1
 chmod -R ugo+rX /usr/share/mime
 update-mime-database /usr/share/mime
+ldconfig
+cd "$ROOT_DIR"
 
-# --- 5. 画像処理スタック ---
+# --- 5. 画像処理スタック (libjpeg-turbo -> gdk-pixbuf) ---
 
 # 5-1. libjpeg-turbo
 echo "===== Building libjpeg-turbo ====="
 DIR=$(download_extract "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz")
 cd "$DIR"
 rm -rf build && mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_BUILD_TYPE=RELEASE \
-      -DENABLE_STATIC=FALSE \
-      -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. > "$LOG/libjpeg-turbo.log" 2>&1
+cmake -D CMAKE_INSTALL_PREFIX=/usr           \
+      -D CMAKE_BUILD_TYPE=RELEASE            \
+      -D ENABLE_STATIC=FALSE                 \
+      -D CMAKE_INSTALL_DEFAULT_LIBDIR=lib    \
+      -D CMAKE_SKIP_INSTALL_RPATH=ON         \
+      -D CMAKE_POLICY_VERSION_MINIMUM=3.5    \
+      -D CMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-3.0.1 \
+      .. > "$LOG/libjpeg-turbo.log" 2>&1
 make -j"$JOBS" >> "$LOG/libjpeg-turbo.log" 2>&1
 make install >> "$LOG/libjpeg-turbo.log" 2>&1
-ldconfig # [FIX] 追加
 cd "$ROOT_DIR"
 
-# 5-2. gdk-pixbuf
-# [FIX] build_meson関数を使用し、jpegを明示的に有効化
-build_meson "gdk-pixbuf" "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dbuiltin_loaders=all -Djpeg=enabled -Dothers=enabled -Dman=false -Dintrospection=disabled -Dtests=false"
+# 5-2. gdk-pixbuf (Git版)
+echo "===== Building gdk-pixbuf ====="
+cd "$SRC"
+rm -rf gdk-pixbuf
+git clone https://gitlab.gnome.org/GNOME/gdk-pixbuf.git
+cd gdk-pixbuf
+meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
+    -Dbuiltin_loaders=none \
+    -Dothers=enabled \
+    -Dman=false \
+    -Dintrospection=disabled \
+    -Dglycin=disabled \
+    -Dtests=false > "$LOG/gdk-pixbuf.log" 2>&1
+ninja -C build >> "$LOG/gdk-pixbuf.log" 2>&1
+ninja -C build install >> "$LOG/gdk-pixbuf.log" 2>&1
+cd "$ROOT_DIR"
 
 # --- 6. swaybg (Final) ---
-build_meson "swaybg" "https://github.com/swaywm/swaybg.git" ""
+echo "===== Building swaybg ====="
+cd "$SRC"
+rm -rf swaybg
+git clone https://github.com/swaywm/swaybg.git
+cd swaybg
+meson setup build --prefix=/usr --buildtype=release > "$LOG/swaybg.log" 2>&1
+ninja -C build >> "$LOG/swaybg.log" 2>&1
+ninja -C build install >> "$LOG/swaybg.log" 2>&1
 
-# 後処理
+# Git設定を元に戻す
 git config --global http.sslVerify true
-rm -f "$SRC/bin/xmlto" # [FIX] ダミーの削除
 
 echo "===== ALL PHASES COMPLETE: swaybg is ready ====="
