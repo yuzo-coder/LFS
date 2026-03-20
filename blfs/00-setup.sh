@@ -67,7 +67,8 @@ cd "$SRC" && rm -rf "$DIR"
 echo "===== Building p11-kit ====="
 DIR=$(download_extract "https://github.com/p11-glue/p11-kit/releases/download/0.25.5/p11-kit-0.25.5.tar.xz")
 cd "$DIR"
-mkdir build && cd build
+# mkdir build && cd build
+cd build
 meson setup .. --prefix=/usr --buildtype=release -Dtrust_module=enabled -Dtrust_paths=/etc/pki/anchors > "$LOG/p11-kit.log" 2>&1
 ninja >> "$LOG/p11-kit.log" 2>&1
 ninja install >> "$LOG/p11-kit.log" 2>&1
