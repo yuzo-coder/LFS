@@ -129,7 +129,7 @@ cat > /home/user/.config/foot/foot.ini << EOF
 [main]
 font=Noto Sans Mono CJK JP:size=12
 
-[colors]
+[colors-dark]
 alpha=0.8
 EOF
 
