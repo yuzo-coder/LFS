@@ -66,6 +66,10 @@ cp $ROOT_DIR/fonts/dejavu/*.ttf /usr/share/fonts/truetype/dejavu/ 2>/dev/null ||
 mkdir -p /usr/share/fonts/truetype/noto
 cp $ROOT_DIR/fonts/noto/*.ttf /usr/share/fonts/truetype/noto/ 2>/dev/null || true
 
+# フォントの配置 (Noto)
+mkdir -p /usr/share/fonts/truetype/font-awesome
+cp $ROOT_DIR/fonts/font-awesome/*.ttf /usr/share/fonts/truetype/font-awesome/ 2>/dev/null || true
+
 # フォントキャッシュの更新
 fc-cache -fv
 echo "Monospace font match:"
