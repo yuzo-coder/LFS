@@ -20,7 +20,7 @@ export PKG_CONFIG_PATH
 EOF
 fi
 
-# UDEV非表示
+# UDEV非表示 "info" に変更すると表示されます
 cat >> /etc/udev/udev.conf << 'EOF'
 udev_log="err"
 EOF
