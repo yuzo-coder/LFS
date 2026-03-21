@@ -20,6 +20,9 @@ export PKG_CONFIG_PATH
 EOF
 fi
 
+# タイムゾーンを「日本」に設定する
+ln -sfv /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
 # UDEV非表示 "info" に変更すると表示されます
 cat >> /etc/udev/udev.conf << 'EOF'
 udev_log="err"
