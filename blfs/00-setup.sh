@@ -17,6 +17,8 @@ cat >> /etc/profile << "EOF"
 # pkg-config の検索パスを追加
 PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
 export PKG_CONFIG_PATH
+export LANG=ja_JP.UTF-8
+export LC_ALL=ja_JP.UTF-8
 EOF
 fi
 
