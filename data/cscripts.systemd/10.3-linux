@@ -164,6 +164,12 @@ scripts/config --enable CONFIG_SND_HDA_CODEC_REALTEK # 汎用的に必要
 
 scripts/config --enable CONFIG_PREEMPT
 
+# ブラウザのサンドボックス機能に必須
+scripts/config --enable CONFIG_USER_NS
+scripts/config --enable CONFIG_SECCOMP
+scripts/config --enable CONFIG_SECCOMP_FILTER
+scripts/config --enable CONFIG_NAMESPACES
+
 # 依存関係自動解決
 make olddefconfig
 
