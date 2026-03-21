@@ -150,6 +150,20 @@ scripts/config --enable CONFIG_9P_FS
 # QEMU内の乱数生成器 (起動速度の向上: Entropy不足を回避)
 scripts/config --enable CONFIG_HW_RANDOM_VIRTIO
 
+# ALSA 本体
+scripts/config --enable CONFIG_SND
+scripts/config --enable CONFIG_SND_OSSEMUL
+scripts/config --enable CONFIG_SND_PCM_OSS
+scripts/config --enable CONFIG_SND_SEQUENCER
+
+# QEMU の intel-hda 用ドライバ
+scripts/config --enable CONFIG_SND_HDA_INTEL
+scripts/config --enable CONFIG_SND_HDA_HWDEP
+scripts/config --enable CONFIG_SND_HDA_RECONFIG
+scripts/config --enable CONFIG_SND_HDA_CODEC_REALTEK # 汎用的に必要
+
+scripts/config --enable CONFIG_PREEMPT
+
 # 依存関係自動解決
 make olddefconfig
 
