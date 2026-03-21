@@ -20,6 +20,11 @@ export PKG_CONFIG_PATH
 EOF
 fi
 
+# UDEV非表示
+cat >> /etc/udev/udev.conf << 'EOF'
+udev_log="err"
+EOF
+
 # 1. /etc/profile の基盤設定 (profile.d を読み込む仕組みを強制的に追加)
 if ! grep -q "profile.d" /etc/profile; then
 cat >> /etc/profile << 'EOF'
