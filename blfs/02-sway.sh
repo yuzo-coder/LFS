@@ -123,6 +123,16 @@ build_meson tllist "https://codeberg.org/dnkl/tllist.git" ""
 build_meson fcft "https://codeberg.org/dnkl/fcft.git" "-Ddocs=disabled"
 build_meson foot "https://codeberg.org/dnkl/foot.git" "-Dterminfo=enabled -Ddocs=disabled -Dtests=false"
 
+# foot設定ファイル
+mkdir -p /home/user/.config/foot
+cat > /home/user/.config/foot/foot.ini << EOF
+[main]
+font=Noto Sans Mono CJK JP:size=12
+
+[colors]
+alpha=0.8
+EOF
+
 # --- 8. 完了処理 ---
 echo "---"
 echo "===== ALL PHASES COMPLETE: Sway & foot are ready ====="
