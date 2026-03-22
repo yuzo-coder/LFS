@@ -162,13 +162,96 @@ scripts/config --enable CONFIG_SND_HDA_HWDEP
 scripts/config --enable CONFIG_SND_HDA_RECONFIG
 scripts/config --enable CONFIG_SND_HDA_CODEC_REALTEK # 汎用的に必要
 
+# プリエンプション（低遅延デスクトップ用）を最強に設定
 scripts/config --enable CONFIG_PREEMPT
+scripts/config --disable CONFIG_PREEMPT_NONE
+scripts/config --disable CONFIG_PREEMPT_VOLUNTARY
 
 # ブラウザのサンドボックス機能に必須
 scripts/config --enable CONFIG_USER_NS
 scripts/config --enable CONFIG_SECCOMP
 scripts/config --enable CONFIG_SECCOMP_FILTER
 scripts/config --enable CONFIG_NAMESPACES
+
+# HID 汎用サポート（USB Tablet/Mouse用）
+scripts/config --enable CONFIG_HID
+scripts/config --enable CONFIG_HID_GENERIC
+scripts/config --enable CONFIG_USB_HID
+
+# USB コントローラ本体（QEMUの xhci/uhci 用）
+scripts/config --enable CONFIG_USB
+scripts/config --enable CONFIG_USB_SUPPORT
+scripts/config --enable CONFIG_USB_XHCI_HCD
+scripts/config --enable CONFIG_USB_EHCI_HCD
+
+# メモリ管理の最適化
+scripts/config --enable CONFIG_MEMORY_HOTPLUG
+scripts/config --enable CONFIG_MEMORY_HOTREMOVE
+
+# タイマーベースのスケジューリング（PipeWire/PulseAudioで重要）
+scripts/config --enable CONFIG_SND_HRTIMER
+scripts/config --enable CONFIG_SND_SEQ_HRTIMER_DEFAULT
+
+# 汎用的なオーディオコーデック（Intel HDA以外のUSBオーディオ等も想定）
+scripts/config --enable CONFIG_SND_USB_AUDIO
+
+# 動画再生時の共有メモリ管理をより強固に
+scripts/config --enable CONFIG_CMA
+scripts/config --enable CONFIG_DMA_CMA
+
+# 大容量メモリの効率的な管理（動画編集やブラウザで有効）
+scripts/config --enable CONFIG_TRANSPARENT_HUGEPAGE
+scripts/config --enable CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS
+
+# 実行中のプログラムの「作業ディレクトリ」を tmpfs で高速化するために必須
+scripts/config --enable CONFIG_MEMCG
+
+# サウンドのリアルタイム性向上
+scripts/config --enable CONFIG_SND_HRTIMER
+scripts/config --enable CONFIG_SND_SEQ_HRTIMER_DEFAULT
+
+# 将来の拡張性（USBオーディオ等）
+scripts/config --enable CONFIG_SND_USB_AUDIO
+
+# メモリ管理の最適化（動画・ブラウザ用）
+scripts/config --enable CONFIG_CMA
+scripts/config --enable CONFIG_DMA_CMA
+scripts/config --enable CONFIG_MEMCG
+scripts/config --enable CONFIG_TRANSPARENT_HUGEPAGE
+
+# Firefoxの内部通信（IPC）やプラグイン管理に推奨
+scripts/config --enable CONFIG_CHECKPOINT_RESTORE
+
+# フォント描画やキャッシュのメモリ管理を最適化
+scripts/config --enable CONFIG_SHMEM
+
+# ネットワークのプロトコルスタック（Firefoxの高速通信用）
+scripts/config --enable CONFIG_INET
+scripts/config --enable CONFIG_TCP_CONG_ADVANCED
+scripts/config --enable CONFIG_TCP_CONG_CUBIC
+
+# Firefoxの安定動作とネットワーク最適化
+scripts/config --enable CONFIG_CHECKPOINT_RESTORE
+
+# --- ブラウザ・サンドボックス & セキュリティ ---
+# リソースの隔離 (Namespaces)
+scripts/config --enable CONFIG_NAMESPACES
+scripts/config --enable CONFIG_UTS_NS
+scripts/config --enable CONFIG_IPC_NS
+scripts/config --enable CONFIG_USER_NS
+scripts/config --enable CONFIG_PID_NS
+scripts/config --enable CONFIG_NET_NS
+
+# システムコールの制限 (SECCOMP)
+scripts/config --enable CONFIG_SECCOMP
+scripts/config --enable CONFIG_SECCOMP_FILTER
+
+# プロセス間通信とチェックポイント (Firefoxの内部動作に推奨)
+scripts/config --enable CONFIG_SYSVIPC
+scripts/config --enable CONFIG_SYSVIPC_SYSCTL
+scripts/config --enable CONFIG_POSIX_MQUEUE
+scripts/config --enable CONFIG_CHECKPOINT_RESTORE
+
 
 # 依存関係自動解決
 make olddefconfig
