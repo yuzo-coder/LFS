@@ -1,0 +1,25 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf libxcrypt-4.4.38.tar.xz
+
+cd libxcrypt-4.4.38
+
+./configure --prefix=/usr                \
+            --enable-hashes=strong,glibc \
+            --enable-obsolete-api=no     \
+            --disable-static             \
+            --disable-failure-tokens
+
+make
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+
+make check
+
+fi
+
+
+make install

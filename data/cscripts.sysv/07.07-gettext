@@ -1,0 +1,13 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf gettext-0.26.tar.xz
+
+cd gettext-0.26
+
+./configure --disable-shared
+
+make
+
+cp -v gettext-tools/src/{msgfmt,msgmerge,xgettext} /usr/bin

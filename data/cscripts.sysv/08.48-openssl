@@ -1,0 +1,62 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf openssl-3.5.2.tar.gz
+
+cd openssl-3.5.2
+
+#FORCING ARCH
+ARCH=""
+
+if [[ "$LFS_TGT" == "i486-lfs-linux-gnu" ]]
+then
+
+ARCH="linux-x86"
+
+fi
+
+if [[ "$LFS_TGT" == "i586-lfs-linux-gnu" ]]
+then
+
+ARCH="linux-x86"
+
+fi
+
+
+if [[ "$LFS_TGT" == "i686-lfs-linux-gnu" ]]
+then
+
+ARCH="linux-x86"
+
+fi
+
+
+
+
+./config $ARCH --prefix=/usr         \
+         --openssldir=/etc/ssl \
+         --libdir=lib          \
+         shared                \
+         zlib-dynamic
+
+make
+
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+
+HARNESS_JOBS=$(nproc) make test
+
+fi
+
+sed -i '/INSTALL_LIBS/s/libcrypto.a libssl.a//' Makefile
+make MANSUFFIX=ssl install
+
+mv -v /usr/share/doc/openssl /usr/share/doc/openssl-3.5.2
+
+if [[ "$ULFS_DOCS" == "YES" ]]
+then
+cp -vfr doc/* /usr/share/doc/openssl-3.5.2
+fi
+

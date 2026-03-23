@@ -1,0 +1,22 @@
+. /cscripts/env.sh
+
+cd /sources
+
+rm -rfv findutils-4.10.0
+
+tar -xf findutils-4.10.0.tar.xz
+
+cd findutils-4.10.0
+
+./configure --prefix=/usr --localstatedir=/var/lib/locate
+
+make
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+
+chown -Rv tester .
+su tester -c "PATH=$PATH make check"
+fi
+
+make install

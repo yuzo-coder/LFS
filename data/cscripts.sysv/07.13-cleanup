@@ -1,0 +1,10 @@
+. /cscripts/env.sh
+
+
+rm -rfv /usr/share/{info,man,doc}/*
+
+find /usr/{lib,libexec} -name \*.la -delete
+
+rm -rfv /tools
+
+touch /tmp/07.13-cleanup
