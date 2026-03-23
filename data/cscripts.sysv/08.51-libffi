@@ -1,0 +1,20 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf libffi-3.5.2.tar.gz
+
+cd libffi-3.5.2
+
+./configure --prefix=/usr          \
+            --disable-static       \
+            --with-gcc-arch=native
+
+make
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+make check
+fi
+
+make install

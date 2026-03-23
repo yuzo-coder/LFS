@@ -1,0 +1,21 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf psmisc-23.7.tar.xz
+
+cd psmisc-23.7
+
+./configure --prefix=/usr
+
+make
+
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+make check
+fi
+
+
+make install
+

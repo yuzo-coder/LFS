@@ -1,0 +1,16 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf Python-3.14.3.tar.xz
+
+cd Python-3.14.3
+
+./configure --prefix=/usr       \
+            --enable-shared     \
+            --without-ensurepip \
+            --without-static-libpython
+
+make
+
+make install

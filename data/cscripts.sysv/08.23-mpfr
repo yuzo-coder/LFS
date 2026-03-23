@@ -1,0 +1,31 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf mpfr-4.2.2.tar.xz
+
+cd mpfr-4.2.2
+
+./configure --prefix=/usr        \
+            --disable-static     \
+            --enable-thread-safe \
+            --docdir=/usr/share/doc/mpfr-4.2.2
+make
+
+if [[ "$ULFS_DOCS" == "YES" ]]
+then
+make html
+fi
+
+#critical
+if [[ "$ULFS_CRITICAL_TESTS" == "YES" ]]
+then
+make check
+fi
+
+make install
+
+if [[ "$ULFS_DOCS" == "YES" ]]
+then
+make install-html
+fi

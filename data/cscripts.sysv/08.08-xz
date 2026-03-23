@@ -1,0 +1,24 @@
+. /cscripts/env.sh
+
+cd /sources
+
+rm -rfv xz-5.8.2
+
+tar -xf xz-5.8.2.tar.xz
+
+cd xz-5.8.2
+
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/xz-5.8.2
+
+make
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+
+make check
+
+fi
+
+make install

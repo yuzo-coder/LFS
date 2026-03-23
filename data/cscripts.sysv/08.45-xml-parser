@@ -1,0 +1,23 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf XML-Parser-2.47.tar.gz
+
+cd XML-Parser-2.47
+
+perl Makefile.PL
+
+make
+
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+
+make test
+
+fi
+
+
+make install
+

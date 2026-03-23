@@ -1,0 +1,12 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf man-pages-6.17.tar.xz
+
+cd man-pages-6.17
+
+rm -v man3/crypt*
+
+make -R GIT=false prefix=/usr install
+

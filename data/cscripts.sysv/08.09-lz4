@@ -1,0 +1,17 @@
+. /cscripts/env.sh
+
+cd /sources
+
+tar -xf lz4-1.10.0.tar.gz
+
+cd lz4-1.10.0
+
+make BUILD_STATIC=no PREFIX=/usr
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+make -j1 check
+fi
+
+make BUILD_STATIC=no PREFIX=/usr install
+

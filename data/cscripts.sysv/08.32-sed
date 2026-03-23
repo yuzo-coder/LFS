@@ -1,0 +1,34 @@
+. /cscripts/env.sh
+
+cd /sources
+
+rm -rfv sed-4.9
+
+tar -xf sed-4.9.tar.xz
+
+cd sed-4.9
+
+./configure --prefix=/usr
+
+make
+
+if [[ "$ULFS_DOCS" == "YES" ]]
+then
+make html
+fi
+
+if [[ "$ULFS_TESTS" == "YES" ]]
+then
+chown -Rv tester .
+su tester -c "PATH=$PATH make check"
+fi
+
+
+make install
+
+if [[ "$ULFS_DOCS" == "YES" ]]
+then
+install -d -m755           /usr/share/doc/sed-4.9
+install -m644 doc/sed.html /usr/share/doc/sed-4.9
+fi
+
