@@ -1,9 +1,0 @@
-. /cscripts/env.sh
-
-cd /sources
-
-tar -xf iana-etc-20260202.tar.gz
-
-cd iana-etc-20260202
-
-cp -v services protocols /etc
