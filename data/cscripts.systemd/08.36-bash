@@ -6,22 +6,29 @@ tar -xf bash-5.3.tar.gz
 
 cd bash-5.3
 
-# 2. Configure (PIE関連のリンクエラーを回避するフラグを付与)
-# LDFLAGS="-no-pie" は実行ファイルには有効ですが、loadables(共有ライブラリ)でコケるため
-# ここではコンパイラに任せるか、環境に合わせた最小限の設定にします。
+# 1. 環境設定
+
 ./configure --prefix=/usr             \
             --without-bash-malloc     \
             --with-installed-readline \
             --docdir=/usr/share/doc/bash-5.3
 
+# 2. シグナル定義の「種」を作る
 make mksignames
 ./mksignames signames.c
-# signames.c が 0 バイトでないことを確認
-ls -l signames.c
 
+# 3. signames.o を「自前」でビルド (NSIG不足を補填)
+# これを先に作っておくことで、次の make bash がこれを引用します
+gcc -DNSIG=70 -c signames.c -o signames.o
+
+# 4. 本体ビルド
+# ターゲットを bash に絞ることで、ドキュメント生成エラーを回避
 make -j1 bash
 
+# 5. インストール
 cp -v bash /usr/bin/bash
 chown root:root /usr/bin/bash
 chmod 755 /usr/bin/bash
+
+# shリンクの作成
 ln -svf bash /usr/bin/sh
