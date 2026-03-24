@@ -14,20 +14,14 @@ cd bash-5.3
             --with-installed-readline \
             --docdir=/usr/share/doc/bash-5.3
 
-# 3. シグナル定義ファイルを「手動で先に」生成（これが undefined reference 回避の鍵）
 make mksignames
 ./mksignames signames.c
-make signames.o
+# signames.c が 0 バイトでないことを確認
+ls -l signames.c
 
-# 4. 本体ビルド (エラーが出やすい並列数を抑える)
-make -j$(nproc)
+make -j1 bash
 
-# 6. インストール
-# examples/loadables でエラーが出ても無視して進む設定
-make install || {
-    echo "Warning: Make install reported errors (likely in examples), but checking binary..."
-    [ -f /usr/bin/bash ] && echo "Bash binary installed successfully!" || exit 1
-}
-
-# 7. 必須のシンボリックリンク作成
+cp -v bash /usr/bin/bash
+chown root:root /usr/bin/bash
+chmod 755 /usr/bin/bash
 ln -svf bash /usr/bin/sh
