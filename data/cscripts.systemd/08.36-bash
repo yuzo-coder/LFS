@@ -14,12 +14,30 @@ cd bash-5.3
             --docdir=/usr/share/doc/bash-5.3
 
 # 2. シグナル定義の「種」を作る
-make mksignames
-./mksignames signames.c
+# make mksignames
+# ./mksignames signames.c
 
 # 3. signames.o を「自前」でビルド (NSIG不足を補填)
 # これを先に作っておくことで、次の make bash がこれを引用します
-gcc -DNSIG=70 -c signames.c -o signames.o
+# gcc -DNSIG=70 -c signames.c -o signames.o
+
+# signames.c が不完全な場合、中身を強引に流し込む（ヒアドキュメント）
+cat << 'EOF' > signames.c
+#include <config.h>
+#include <stdio.h>
+#include <signal.h>
+char *signal_names[NSIG + 4] = {
+    "EXIT", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS",
+    "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM",
+    "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN",
+    "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH",
+    "SIGIO", "SIGPWR", "SIGSYS", (char *)0x0
+};
+#define initialize_signames()
+EOF
+
+# その後、手動でコンパイル
+gcc -g -O2 -I. -I./include -I./lib -DNSIG=70 -c signames.c -o signames.o
 
 # 4. 本体ビルド
 # ターゲットを bash に絞ることで、ドキュメント生成エラーを回避
