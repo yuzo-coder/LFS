@@ -21,19 +21,27 @@ cd bash-5.3
 # これを先に作っておくことで、次の make bash がこれを引用します
 # gcc -DNSIG=70 -c signames.c -o signames.o
 
+# 2. Makefile の修正 (sed を使用)
+# 2-1. signames.c を自動生成するルールを無効化 (先頭に # を入れる)
+sed -i 's/^signames.c:/#signames.c:/' Makefile
+
+# 2-2. リンク対象 (OBJECTS) に signames.o を強制追加
+# xmalloc.o の後ろに signames.o を差し込む
+sed -i 's/xmalloc.o/xmalloc.o signames.o/' Makefile
+
 # signames.c が不完全な場合、中身を強引に流し込む（ヒアドキュメント）
 cat << 'EOF' > signames.c
 #include <config.h>
 #include <stdio.h>
 #include <signal.h>
-char *signal_names[NSIG + 4] = {
+__attribute__((weak)) char *signal_names[NSIG + 4] = {
     "EXIT", "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS",
     "SIGFPE", "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM",
     "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN",
     "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH",
     "SIGIO", "SIGPWR", "SIGSYS", (char *)0x0
 };
-#define initialize_signames()
+void initialize_signames () {}
 EOF
 
 # その後、手動でコンパイル
