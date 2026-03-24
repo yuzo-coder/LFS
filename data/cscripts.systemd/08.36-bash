@@ -52,9 +52,12 @@ gcc -g -O2 -I. -I./include -I./lib -DNSIG=70 -c signames.c -o signames.o
 make -j1 bash
 
 # 5. インストール
-cp -v bash /usr/bin/bash
-chown root:root /usr/bin/bash
-chmod 755 /usr/bin/bash
+# 実行中のバイナリを unlink して置き換える
+rm -f /usr/bin/bash
+install -v -m755 bash /usr/bin/bash
 
-# shリンクの作成
-ln -svf bash /usr/bin/sh
+# 所有者の設定
+chown root:root /usr/bin/bash
+
+# shリンクの作成（絶対パスで指定するのが最も確実）
+ln -svf /usr/bin/bash /usr/bin/sh
