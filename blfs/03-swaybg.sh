@@ -75,6 +75,14 @@ cp $ROOT_DIR/fonts/font-awesome/*.ttf /usr/share/fonts/truetype/font-awesome/ 2>
 mkdir -p /usr/share/fonts/truetype/jetbrains-mono
 cp $ROOT_DIR/fonts/jetbrains-mono/*.ttf /usr/share/fonts/truetype/jetbrains-mono/ 2>/dev/null || true
 
+mkdir -p /usr/share/fonts/opentype/
+
+mkdir -p /usr/share/fonts/opentype/ipaexfont-gothic
+cp $ROOT_DIR/fonts/ipaexfont-gothic/* /usr/share/fonts/opentype/ipaexfont-gothic/ 2>/dev/null || true
+
+mkdir -p /usr/share/fonts/opentype/ipaexfont-mincho
+cp $ROOT_DIR/fonts/ipaexfont-mincho/* /usr/share/fonts/opentype/ipaexfont-mincho/ 2>/dev/null || true
+
 # フォントキャッシュの更新
 fc-cache -fv
 echo "Monospace font match:"
