@@ -50,39 +50,35 @@ fi
 cat > /etc/profile.d/bash_colors.sh << "EOF"
 # --- 1. dircolors の設定 (lsの色) ---
 if [ -x /usr/bin/dircolors ]; then
-    # システム共通設定があれば読み込み、なければデフォルトを生成
-    if [ -f /etc/dircolors ]; then
-        eval "$(dircolors -b /etc/dircolors)"
-    else
-        eval "$(dircolors -b)"
-    fi
-
-    # エイリアス設定
+    eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    alias ll='ls -l --color=auto'
-    alias la='ls -A --color=auto'
     alias grep='grep --color=auto'
-    alias diff='diff --color=auto'
 fi
 
-# --- 2. プロンプト (PS1) の色分け設定 ---
-# 色コードの定義
+# --- 2. vi の色を無効化する ---
+# 設定ファイルを読み込まず、プレーンな状態で起動
+alias vi='vi -u NONE'
+alias vim='vim -u NONE'
+
+# --- 3. プロンプト (PS1) の色分け設定 ---
+# 色コードの定義（BLUE を CYAN '36' に変えると見やすくなります）
+# BLUEは見えにくいので嫌や
 RED='\[\e[1;31m\]'
 GREEN='\[\e[1;32m\]'
-BLUE='\[\e[1;34m\]'
+CYAN='\[\e[1;36m\]'  # 見えにくい BLUE の代わりに
 RESET='\[\e[0m\]'
 
-# ユーザーIDによって色を分岐
 if [ $(id -u) -eq 0 ]; then
-    # rootユーザーは名前を「赤」にして警告
-    PS1="${RED}\u${RESET}@\h:${BLUE}\w${RESET}# "
+    PS1="${RED}\u${RESET}@\h:${CYAN}\w${RESET}# "
 else
-    # 一般ユーザーは名前を「緑」にする
-    PS1="${GREEN}\u${RESET}@\h:${BLUE}\w${RESET}$ "
+    PS1="${GREEN}\u${RESET}@\h:${CYAN}\w${RESET}$ "
 fi
 
-# ターミナルが 256色に対応している場合の微調整（任意）
+# 256color は vi などの色を誘発するので、
+# 色付きプロンプトだけが目的なら標準の xterm でも十分です
 export TERM=xterm-256color
+# ディレクトリの色を「太字のシアン」に変更する設定
+export LS_COLORS=$LS_COLORS:'di=01;36:'
 EOF
 
 # 実行権限の付与
