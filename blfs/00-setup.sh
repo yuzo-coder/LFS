@@ -15,7 +15,8 @@ cd "$SRC"
 if ! grep -q "PKG_CONFIG_PATH" /etc/profile; then
 cat >> /etc/profile << "EOF"
 # pkg-config の検索パスを追加
-PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
+# ${PKG_CONFIG_PATH:-}	変数が空（未定義）なら、右側の値（今回は空）を代入した体で進める。
+PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
 export PKG_CONFIG_PATH
 export LANG=ja_JP.UTF-8
 export LC_ALL=ja_JP.UTF-8
