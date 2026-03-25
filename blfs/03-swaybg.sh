@@ -58,9 +58,10 @@ if [ -f /etc/sway/config ]; then
     cp -v /etc/sway/config /home/user/.config/sway/config
 fi
 
+mkdir -p /usr/share/fonts/truetype/
 # フォントの配置 (DejaVu)
 mkdir -p /usr/share/fonts/truetype/dejavu
-cp $ROOT_DIR/fonts/dejavu/*.ttf /usr/share/fonts/truetype/dejavu/ 2>/dev/null || true
+cp $ROOT_DIR/fonts/dejavu/* /usr/share/fonts/truetype/dejavu/ 2>/dev/null || true
 
 # フォントの配置 (Noto)
 mkdir -p /usr/share/fonts/truetype/noto
@@ -69,6 +70,10 @@ cp $ROOT_DIR/fonts/noto/*.ttf /usr/share/fonts/truetype/noto/ 2>/dev/null || tru
 # フォントの配置 (Noto)
 mkdir -p /usr/share/fonts/truetype/font-awesome
 cp $ROOT_DIR/fonts/font-awesome/*.ttf /usr/share/fonts/truetype/font-awesome/ 2>/dev/null || true
+
+# フォントの配置 (JetBrainsMono)
+mkdir -p /usr/share/fonts/truetype/jetbrains-mono
+cp $ROOT_DIR/fonts/jetbrains-mono/*.ttf /usr/share/fonts/truetype/jetbrains-mono/ 2>/dev/null || true
 
 # フォントキャッシュの更新
 fc-cache -fv
