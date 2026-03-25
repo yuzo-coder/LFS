@@ -46,6 +46,7 @@ cp -rv data/stages/* "$BUILD_DIR/"
 cp -rv data/scripts "$BUILD_DIR/"
 mkdir -p "$LFS/blfs"
 cp -ar blfs/* "$LFS/blfs/"
+mkdir -p "$LFS/tools"
 
 if [[ "$LFS_TARGET_INIT" == "sysv" ]]; then
     cp -rv data/cscripts.sysv "$BUILD_DIR/cscripts"
