@@ -73,6 +73,7 @@ build_autotools expat "https://github.com/libexpat/libexpat/releases/download/R_
 build_autotools libffi "https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz" ""
 build_autotools pcre2 "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.43/pcre2-10.43.tar.gz" "--enable-unicode"
 build_meson glib2 "https://download.gnome.org/sources/glib/2.80/glib-2.80.4.tar.xz" "-Dtests=false"
+build_meson seatd "https://git.sr.ht/~kennylevinsen/seatd/archive/0.8.0.tar.gz" "-Dlibseat-builtin=enabled -Dserver=enabled -Dman-pages=disabled"
 
 # --- 4. ツールチェーン (CMake Bootstrap) ---
 if ! command -v cmake &> /dev/null; then
@@ -224,6 +225,8 @@ fi
 # 6. 反映
 # すでに systemd 環境で動いているなら daemon-reload
 systemctl daemon-reload 2>/dev/null || echo "Running in chroot? Skipping daemon-reload."
+systemctl start seatd dbus 2>/dev/null || true
+systemctl enable seatd dbus 2>/dev/null || true
 
 # 7. 環境変数の設定 (Sway起動に必須)
 # 次回ログイン時に自動適用されるよう profile.d に配置
