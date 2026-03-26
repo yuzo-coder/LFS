@@ -95,7 +95,7 @@ EOF
 cat > "$TARGET_HOME/.config/foot/foot.ini" << 'EOF'
 [main]
 font=JetBrainsMono Nerd Font:size=11, Noto Sans CJK JP:size=11
-[colors]
+[colors-dark]
 alpha=0.8
 EOF
 
