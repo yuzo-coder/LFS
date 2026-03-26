@@ -38,10 +38,21 @@ build_autotools() {
     cd "$ROOT_DIR"
 }
 
+# [FIX] GitとURL両方に対応できるよう拡張
 build_meson() {
-    local NAME=$1; local URL=$2; local EXTRA=$3
+    local NAME=$1; local SRC_URL=$2; local EXTRA=$3
     echo "===== Building $NAME (meson) ====="
-    local DIR=$(download_extract "$URL")
+    
+    local DIR=""
+    if [[ "$SRC_URL" == *.git ]]; then
+        cd "$SRC"
+        rm -rf "$NAME"
+        git clone "$SRC_URL" "$NAME"
+        DIR="$SRC/$NAME"
+    else
+        DIR=$(download_extract "$SRC_URL")
+    fi
+
     cd "$DIR"
     rm -rf build
     meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
@@ -94,9 +105,18 @@ build_mm_lib() {
 build_meson libepoxy "https://github.com/anholt/libepoxy/archive/1.5.10.tar.gz" "-Dx11=false -Degl=yes"
 build_meson at-spi2-core "https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-core-2.50.0.tar.xz" ""
 
+build_meson shared-mime-info "https://gitlab.freedesktop.org/xdg/shared-mime-info/-/archive/2.4/shared-mime-info-2.4.tar.gz" ""
+# インストール後、MIMEデータベースを更新します
+update-mime-database /usr/share/mime
+
+# 5-2. gdk-pixbuf
+# [FIX] build_meson関数を使用し、jpegを明示的に有効化
+build_meson "gdk-pixbuf" "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
+    "-Dglycin=disabled -Dbuiltin_loaders=all -Djpeg=enabled -Dothers=enabled -Dman=false -Dintrospection=disabled -Dtests=false"
+
 # GTK3 (Waylandのみ、内省/デモ無効)
 build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.xz" \
-    "-Dwayland_backend=true -Dx11_backend=false -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no"
+    "--wrap-mode=nofallback -Dwayland_backend=true -Dx11_backend=false -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no"
 
 # 4-2. C++ ユーティリティ
 build_cmake fmt "https://github.com/fmtlib/fmt/archive/11.0.2.tar.gz" "-DBUILD_SHARED_LIBS=ON -DFMT_TEST=OFF"
@@ -152,6 +172,10 @@ rm -rf build && mkdir build && cd build
 meson setup .. --prefix=/usr --buildtype=release > "$LOG/mm-common.log" 2>&1
 ninja install >> "$LOG/mm-common.log" 2>&1
 cd "$ROOT_DIR"
+
+# 4-1. libxslt
+echo "===== Building libxslt ====="
+build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz" "--disable-static"
 
 build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz" ""
 build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" ""
