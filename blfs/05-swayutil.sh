@@ -98,9 +98,9 @@ if ! command -v cargo &> /dev/null; then
 fi
 
 # 基礎ライブラリ群
-build_cmake "oneTBB" "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.11.0.tar.gz" "-DTBB_TEST=OFF"
+build_cmake "oneTBB" "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.11.0.tar.gz" "-DTBB_TEST=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 build_cmake "extra-cmake-modules" "https://github.com/KDE/extra-cmake-modules/archive/refs/tags/v5.115.0.tar.gz" ""
-build_meson "libvips" "https://github.com/libvips/libvips/releases/download/v8.15.2/v8.15.2.tar.xz" ""
+build_meson "libvips" "https://github.com/libvips/libvips.git" ""
 build_meson "libsixel" "https://github.com/libsixel/libsixel/archive/refs/tags/v1.10.3.tar.gz" ""
 
 # Chafa (Autotools)
