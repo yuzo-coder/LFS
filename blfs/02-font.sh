@@ -65,11 +65,20 @@ build_meson() {
 
 build_autotools libpng "https://downloads.sourceforge.net/libpng/libpng-1.6.43.tar.xz" ""
 
-# 1回目のFreetype (harfbuzzなし)
-build_autotools freetype "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz" "--disable-static"
+# --- 2. FreeType (1回目: HarfBuzzなしでビルド) ---
+# --without-harfbuzz を明示的に指定して、中途半端なリンクを防ぎます
+build_autotools freetype "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz" \
+    "--disable-static --without-harfbuzz"
 
-# HarfBuzz (日本語の合字などを正しく処理するために必要)
-build_meson harfbuzz "https://github.com/harfbuzz/harfbuzz/releases/download/8.3.1/harfbuzz-8.3.1.tar.xz" "-Dbenchmark=disabled"
+# --- 3. HarfBuzz (文字配置エンジン) ---
+# 先に入れた Freetype を使って HarfBuzz をビルドします
+build_meson harfbuzz "https://github.com/harfbuzz/harfbuzz/releases/download/8.3.1/harfbuzz-8.3.1.tar.xz" \
+    "-Dbenchmark=disabled"
+
+# --- 4. FreeType (2回目: HarfBuzzを有効にして再ビルド) ---
+# 今度は HarfBuzz がシステムにあるので、自動的に認識して高品質な描画が可能になります
+build_autotools freetype "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz" \
+    "--disable-static"
 
 # Fontconfig (fc-cache コマンドを含む)
 build_autotools fontconfig "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.15.0.tar.xz" \
