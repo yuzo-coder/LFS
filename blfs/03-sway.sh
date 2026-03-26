@@ -113,13 +113,33 @@ build_meson wlroots "https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/0.
 
 build_meson sway "https://github.com/swaywm/sway/releases/download/1.9/sway-1.9.tar.gz" "-Dxwayland=disabled"
 
+# --- 3. Sway初期設定 & フォント配置 ---
+echo "===== Configuring Sway & Fonts ====="
+# ユーザー設定ディレクトリの準備
+mkdir -pv /root/.config/sway
+mkdir -pv /home/user/.config/sway
+if [ -f /etc/sway/config ]; then
+    cp -v /etc/sway/config /root/.config/sway/config
+    cp -v /etc/sway/config /home/user/.config/sway/config
+fi
+
+
 # --- 7. foot ターミナルスタック ---
 build_meson tllist "https://codeberg.org/dnkl/tllist.git" ""
 build_meson fcft "https://codeberg.org/dnkl/fcft.git" "-Ddocs=disabled"
 build_meson foot "https://codeberg.org/dnkl/foot.git" "-Dterminfo=enabled -Ddocs=disabled -Dtests=false"
 
 # foot設定ファイル
+mkdir -p /root/.config/foot
 mkdir -p /home/user/.config/foot
+cat > /root/.config/foot/foot.ini << EOF
+[main]
+font=Noto Sans Mono CJK JP:size=12
+
+[colors-dark]
+alpha=0.8
+EOF
+
 cat > /home/user/.config/foot/foot.ini << EOF
 [main]
 font=Noto Sans Mono CJK JP:size=12
