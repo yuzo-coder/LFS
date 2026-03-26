@@ -54,14 +54,14 @@ build_meson() {
 # --- 4. 依存関係のビルド ---
 
 # 4-1. libxslt
-echo "===== Building libxslt ====="
-DIR=$(download_extract "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.43.tar.xz")
-cd "$DIR"
-./configure --prefix=/usr --disable-static > "$LOG/libxslt.log" 2>&1
-make -j"$JOBS" >> "$LOG/libxslt.log" 2>&1
-make install >> "$LOG/libxslt.log" 2>&1
-ldconfig # [FIX] 追加
-cd "$ROOT_DIR"
+# echo "===== Building libxslt ====="
+# DIR=$(download_extract "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.43.tar.xz")
+# cd "$DIR"
+# ./configure --prefix=/usr --disable-static > "$LOG/libxslt.log" 2>&1
+# make -j"$JOBS" >> "$LOG/libxslt.log" 2>&1
+# make install >> "$LOG/libxslt.log" 2>&1
+# ldconfig # [FIX] 追加
+# cd "$ROOT_DIR"
 
 # 4-2. xmlto (一時的なダミー作成)
 # [FIX] /usr/bin 直接ではなく、一時ディレクトリを作成して PATH の先頭に置くのが安全
@@ -74,10 +74,10 @@ chmod +x "$SRC/bin/xmlto"
 export PATH="$SRC/bin:$PATH"
 
 # 4-3. shared-mime-info
-git config --global http.sslVerify false
-build_meson "shared-mime-info" "https://gitlab.freedesktop.org/xdg/shared-mime-info.git" ""
-chmod -R ugo+rX /usr/share/mime
-update-mime-database /usr/share/mime
+# git config --global http.sslVerify false
+# build_meson "shared-mime-info" "https://gitlab.freedesktop.org/xdg/shared-mime-info.git" ""
+# chmod -R ugo+rX /usr/share/mime
+# update-mime-database /usr/share/mime
 
 # --- 5. 画像処理スタック ---
 
@@ -99,7 +99,7 @@ cd "$ROOT_DIR"
 # 5-2. gdk-pixbuf
 # [FIX] build_meson関数を使用し、jpegを明示的に有効化
 build_meson "gdk-pixbuf" "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dbuiltin_loaders=all -Djpeg=enabled -Dothers=enabled -Dman=false -Dintrospection=disabled -Dtests=false"
+    "-Dglycin=disabled -Dbuiltin_loaders=all -Djpeg=enabled -Dothers=enabled -Dman=false -Dintrospection=disabled -Dtests=false"
 
 # --- 6. swaybg (Final) ---
 build_meson "swaybg" "https://github.com/swaywm/swaybg.git" ""
