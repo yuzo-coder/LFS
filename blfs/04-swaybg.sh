@@ -48,15 +48,6 @@ build_meson() {
     cd "$ROOT_DIR"
 }
 
-# --- 3. Sway初期設定 & フォント配置 ---
-echo "===== Configuring Sway & Fonts ====="
-# ユーザー設定ディレクトリの準備
-mkdir -pv ~/.config/sway
-mkdir -pv /home/user/.config/sway
-if [ -f /etc/sway/config ]; then
-    cp -v /etc/sway/config ~/.config/sway/config
-    cp -v /etc/sway/config /home/user/.config/sway/config
-fi
 
 
 
