@@ -86,15 +86,22 @@ build_autotools fontconfig "https://www.freedesktop.org/software/fontconfig/rele
 
 # --- 4. フォントの配置 ---
 echo "===== Installing Fonts ====="
-mkdir -p /usr/share/fonts/truetype/{dejavu,noto,font-awesome,jetbrains-mono}
+mkdir -p /usr/share/fonts/truetype/{dejavu,noto,font-awesome,JetBrainsMono}
 mkdir -p /usr/share/fonts/opentype/{ipaexfont-gothic,ipaexfont-mincho}
 
+cp $ROOT_DIR/fonts/noto/* /usr/share/fonts/truetype/noto/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/dejavu/* /usr/share/fonts/truetype/dejavu/ 2>/dev/null || true
-cp $ROOT_DIR/fonts/noto/*.ttf         /usr/share/fonts/truetype/noto/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/font-awesome/*.ttf /usr/share/fonts/truetype/font-awesome/ 2>/dev/null || true
-cp $ROOT_DIR/fonts/jetbrains-mono/*.ttf /usr/share/fonts/truetype/jetbrains-mono/ 2>/dev/null || true
+cp $ROOT_DIR/fonts/JetBrainsMono/*.ttf /usr/share/fonts/truetype/JetBrainsMono/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/ipaexfont-gothic/* /usr/share/fonts/opentype/ipaexfont-gothic/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/ipaexfont-mincho/* /usr/share/fonts/opentype/ipaexfont-mincho/ 2>/dev/null || true
+
+chmod 644 /usr/share/fonts/truetype/noto/*
+chmod 644 /usr/share/fonts/truetype/dejavu/*
+chmod 644 /usr/share/fonts/truetype/font-awesome/*
+chmod 644 /usr/share/fonts/truetype/JetBrainsMono/*
+chmod 644 /usr/share/fonts/opentype/ipaexfont-gothic/ *
+chmod 644 /usr/share/fonts/opentype/ipaexfont-mincho/*
 
 # フォントキャッシュの更新
 if command -v fc-cache &> /dev/null; then
