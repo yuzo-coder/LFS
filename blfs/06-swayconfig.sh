@@ -118,7 +118,15 @@ EOF
 
 # --- 6. Waybar Style ---
 cat > "$TARGET_HOME/.config/waybar/style.css" << 'EOF'
-* { font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK JP", sans-serif; font-size: 13px; }
+* {
+    /* 1. アイコン用の Nerd Font (もし入っていれば)
+       2. アイコン用の Font Awesome (ログにあったので追加)
+       3. 英数字用の JetBrainsMono
+       4. 日本語用の IPAexGothic
+    */
+    font-family: "JetBrainsMono Nerd Font", "FontAwesome", "JetBrains Mono", "Noto Sans CJK JP", "IPAexGothic", sans-serif;
+    font-size: 13px;
+}
 window#waybar { background-color: rgba(30, 30, 46, 0.7); color: #cdd6f4; }
 #cpu, #memory, #clock, #pulseaudio, #network, #tray, #custom-power {
     padding: 0 12px; margin: 4px 2px; border-radius: 8px; background-color: #313244;
