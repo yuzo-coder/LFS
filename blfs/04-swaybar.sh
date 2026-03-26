@@ -109,10 +109,28 @@ build_meson shared-mime-info "https://gitlab.freedesktop.org/xdg/shared-mime-inf
 # インストール後、MIMEデータベースを更新します
 update-mime-database /usr/share/mime
 
+# --- 5. 画像処理スタック ---
+
+# 5-1. libjpeg-turbo
+echo "===== Building libjpeg-turbo ====="
+DIR=$(download_extract "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz")
+cd "$DIR"
+rm -rf build && mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=RELEASE \
+      -DENABLE_STATIC=FALSE \
+      -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. > "$LOG/libjpeg-turbo.log" 2>&1
+make -j"$JOBS" >> "$LOG/libjpeg-turbo.log" 2>&1
+make install >> "$LOG/libjpeg-turbo.log" 2>&1
+ldconfig # [FIX] 追加
+cd "$ROOT_DIR"
+
 # 5-2. gdk-pixbuf
 # [FIX] build_meson関数を使用し、jpegを明示的に有効化
 build_meson "gdk-pixbuf" "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
     "-Dglycin=disabled -Dbuiltin_loaders=all -Djpeg=enabled -Dothers=enabled -Dman=false -Dintrospection=disabled -Dtests=false"
+
 
 # GTK3 (Waylandのみ、内省/デモ無効)
 build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.xz" \
@@ -222,5 +240,22 @@ meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
 
 ninja -C build -j"$JOBS" >> "$LOG/waybar.log" 2>&1
 ninja -C build install >> "$LOG/waybar.log" 2>&1
+
+# 4-2. xmlto (一時的なダミー作成)
+# [FIX] /usr/bin 直接ではなく、一時ディレクトリを作成して PATH の先頭に置くのが安全
+mkdir -p "$SRC/bin"
+cat > "$SRC/bin/xmlto" << "EOF"
+#!/bin/sh
+exit 0
+EOF
+chmod +x "$SRC/bin/xmlto"
+export PATH="$SRC/bin:$PATH"
+
+# --- 6. swaybg (Final) ---
+build_meson "swaybg" "https://github.com/swaywm/swaybg.git" ""
+
+# 後処理
+git config --global http.sslVerify true
+rm -f "$SRC/bin/xmlto" # [FIX] ダミーの削除
 
 echo "===== ALL COMPLETE: Waybar installed ====="
