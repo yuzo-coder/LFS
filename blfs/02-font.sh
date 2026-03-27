@@ -93,26 +93,25 @@ cp $ROOT_DIR/fonts/noto/* /usr/share/fonts/truetype/noto/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/dejavu/* /usr/share/fonts/truetype/dejavu/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/font-awesome/*.ttf /usr/share/fonts/truetype/font-awesome/ 2>/dev/null || true
 cp $ROOT_DIR/fonts/JetBrainsMono/*.ttf /usr/share/fonts/truetype/JetBrainsMono/ 2>/dev/null || true
-cp $ROOT_DIR/fonts/ipaexfont-gothic/* /usr/share/fonts/opentype/ipaexfont-gothic/ 2>/dev/null || true
-cp $ROOT_DIR/fonts/ipaexfont-mincho/* /usr/share/fonts/opentype/ipaexfont-mincho/ 2>/dev/null || true
 
 chmod 644 /usr/share/fonts/truetype/noto/*
 chmod 644 /usr/share/fonts/truetype/dejavu/*
 chmod 644 /usr/share/fonts/truetype/font-awesome/*
 chmod 644 /usr/share/fonts/truetype/JetBrainsMono/*
-chmod 644 /usr/share/fonts/opentype/ipaexfont-gothic/ *
-chmod 644 /usr/share/fonts/opentype/ipaexfont-mincho/*
-
-
 
 # 1. ダウンロード
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.tar.xz
 # 2. 解凍用のディレクトリ作成（既存の jetbrains-mono と分ける）
-mkdir -p /usr/share/fonts/jetbrains-mono-nerd
+mkdir -p /usr/share/fonts/truetype/jetbrains-mono-nerd
 # 3. 解凍（-C でディレクトリを指定）
-tar xf JetBrainsMono.tar.xz -C /usr/share/fonts/jetbrains-mono-nerd
+tar xf JetBrainsMono.tar.xz -C /usr/share/fonts/truetype/jetbrains-mono-nerd
 # 4. 権限設定とキャッシュ更新
-chmod 644 /usr/share/fonts/jetbrains-mono-nerd/*.ttf
+chmod 644 /usr/share/fonts/truetype/jetbrains-mono-nerd/*.ttf
+
+wget https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf
+mkdir -p /usr/share/fonts/truetype/noto-cjk
+cp NotoSansCJKjp-Regular.otf /usr/share/fonts/truetype/noto-cjk/
+chmod 644 /usr/share/fonts/truetype/noto-cjk/*
 
 sudo fc-cache -fv
 
