@@ -105,7 +105,14 @@ mkdir -p /etc/systemd/network
 cat > /etc/systemd/network/10-ens3.network << "EOF"
 [Match]
 Name=ens3
+[Network]
+DHCP=yes
+DNS=8.8.8.8
+EOF
 
+cat > /etc/systemd/network/10-ens2.network << "EOF"
+[Match]
+Name=ens2
 [Network]
 DHCP=yes
 DNS=8.8.8.8
