@@ -120,6 +120,10 @@ build_meson "wlr-randr" "https://github.com/emersion/wlr-randr.git" ""
 build_meson "wofi" "https://github.com/SimplyCEO/wofi.git" ""
 build_meson "wlogout" "https://github.com/ArtsyMacaw/wlogout.git" ""
 
+# rootユーザーで実行
+chmod 4755 /usr/sbin/shutdown
+chmod 4755 /usr/sbin/reboot
+
 # Ueberzug++ (Yaziの画像プレビュー用)
 build_cmake "ueberzugpp" "https://github.com/jstkdng/ueberzugpp/archive/refs/tags/v2.9.6.tar.gz" \
     "-DENABLE_X11=OFF -DENABLE_WAYLAND=ON -DENABLE_OPENCV=OFF"
