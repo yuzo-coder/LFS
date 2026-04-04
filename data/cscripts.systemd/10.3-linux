@@ -140,8 +140,9 @@ scripts/config --enable CONFIG_AF_UNIX
 scripts/config --enable CONFIG_IPV6
 
 # システムの監査・ログ
-scripts/config --disable CONFIG_AUDIT
-scripts/config --disable CONFIG_AUDITSYSCALL
+# Firefox
+scripts/config --enable CONFIG_AUDIT
+scripts/config --enable CONFIG_AUDITSYSCALL
 
 # 仮想マシンとホスト間での共有ディレクトリ用 (もし将来使うなら)
 scripts/config --enable CONFIG_VIRTIO_9P
