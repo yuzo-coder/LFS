@@ -2,11 +2,11 @@
 
 cd /sources
 
-rm -rfv ncurses-6.5-20250809
+rm -rfv ncurses-6.5
 
-tar -xf ncurses-6.5-20250809.tgz
+tar -xf ncurses-6.5.tar.gz
 
-cd ncurses-6.5-20250809
+cd ncurses-6.5
 
 ./configure --prefix=/usr           \
             --mandir=/usr/share/man \
@@ -36,7 +36,7 @@ ln -sfv libncursesw.so /usr/lib/libcurses.so
 if [[ "$ULFS_DOCS" == "YES" ]]
 then
 
-cp -v -R doc -T /usr/share/doc/ncurses-6.5-20250809
+cp -v -R doc -T /usr/share/doc/ncurses-6.5
 
 fi
 
