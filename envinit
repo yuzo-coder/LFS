@@ -122,6 +122,8 @@ mkdir -p "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
 mkdir -p "$LFS/blfs" "$LFS/tools"
 cp -ar blfs/* "$LFS/blfs/"
 
+mkdir -p "$LFS/BLFS" "$LFS/tools"
+cp -ar BLFS/* "$LFS/BLFS/"
 ########################################
 # 権限
 ########################################
