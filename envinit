@@ -119,10 +119,8 @@ ln -sfn ../src/packages "$BUILD_DIR/src"
 # 必須ディレクトリ
 ########################################
 mkdir -p "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
-mkdir -p "$LFS/blfs" "$LFS/tools"
+mkdir -p "$LFS/blfs" "$LFS/tools" "$LFS/BLFS"
 cp -ar blfs/* "$LFS/blfs/"
-
-mkdir -p "$LFS/BLFS" "$LFS/tools"
 cp -ar BLFS/* "$LFS/BLFS/"
 ########################################
 # 権限
