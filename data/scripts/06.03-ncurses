@@ -1,7 +1,7 @@
 cd $LFS/sources
 tar -xf ncurses-6.5.tar.gz
 
-cd ncurses-6.5.tar.gz
+cd ncurses-6.5
 
 mkdir build
 pushd build
