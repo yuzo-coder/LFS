@@ -12,68 +12,12 @@ mkdir -p "$SRC" "$LOG"
 export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/local/lib/pkgconfig
 export MAKEFLAGS="-j$JOBS"
 
-# --- 2. 共通ユーティリティ関数 ---
-
-download_extract() {
-    local URL=$1
-    local TAR=${URL##*/}
-    echo "Downloading $TAR..." >&2
-    cd "$SRC"
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
-    
-    local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
-    rm -rf "$DIR"
-    tar xf "$TAR"
-    echo "$SRC/$DIR"
-}
-
-build_autotools() {
-    local NAME=$1; local URL=$2; local CONF_OPTS=$3
-    echo "===== Building $NAME (autotools) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    ./configure --prefix="$PREFIX" --libdir=/usr/lib $CONF_OPTS > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
-    make install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
-
-build_meson() {
-    local NAME=$1; local URL_OR_GIT=$2; local EXTRA=$3
-    echo "===== Building $NAME (meson) ====="
-    
-    local DIR=""
-    if [[ "$URL_OR_GIT" == *.git ]]; then
-        cd "$SRC"
-        rm -rf "$NAME"
-        git clone "$URL_OR_GIT" "$NAME"
-        DIR="$SRC/$NAME"
-    else
-        DIR=$(download_extract "$URL_OR_GIT")
-    fi
-
-    cd "$DIR"
-    rm -rf build
-    meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
-    ninja -C build >> "$LOG/$NAME.log" 2>&1
-    ninja -C build install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
-
-build_cmake() {
-    local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (cmake) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    rm -rf build && mkdir build && cd build
-    cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR=lib $EXTRA .. > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
-    make install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
+if [ -f "./common.sh" ]; then
+    source "$(dirname "$0")/common.sh"
+else
+    echo "Error: common.sh not found!"
+    exit 1
+fi
 
 # --- 3. Wayland & Graphics Foundation ---
 build_autotools libxml2 "https://download.gnome.org/sources/libxml2/2.12/libxml2-2.12.7.tar.xz" "--disable-static --without-python"
@@ -83,7 +27,12 @@ build_cmake doxygen "https://doxygen.nl/files/doxygen-1.16.1.src.tar.gz" "-DCMAK
 build_cmake json-c "https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18.tar.gz" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 
 build_meson wayland "https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.23.0/downloads/wayland-1.23.0.tar.xz" "-Ddocumentation=false"
+
 build_meson wayland-protocols "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.36/downloads/wayland-protocols-1.36.tar.xz" ""
+
+# 2. wayland-utils (wayland-info)
+     83 build_meson wayland-utils "https://gitlab.freedesktop.org/wayland/wayland-utils/-/archive/1.2.0/wayland-utils-1.2.0.tar.gz" ""
+
 build_meson libdisplay-info "https://gitlab.freedesktop.org/emersion/libdisplay-info/-/archive/0.2.0/libdisplay-info-0.2.0.tar.gz" ""
 
 build_meson libdrm "https://dri.freedesktop.org/libdrm/libdrm-2.4.120.tar.xz" ""

@@ -23,6 +23,45 @@ else
     exit 1
 fi
 
+# --- 3. PulseAudio 依存関係 & 本体ビルド ---
+
+# 1. libsndfile (音声ファイルの読み書きに必須)
+build_cmake "libsndfile" \
+    "https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz" \
+    "-DBUILD_SHARED_LIBS=ON -DENABLE_EXTERNAL_LIBS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+
+# 2. check (PulseAudioのビルドに推奨されるユニットテストフレームワーク)
+build_cmake "check" \
+    "https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz" \
+    ""
+
+# 3. PulseAudio 本体
+# ALSA (Linux標準の音響層) との連携を有効にし、
+# システム管理用(systemd等)の不要な依存はオフにします。
+build_meson "pulseaudio" \
+    "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-17.0.tar.xz" \
+    "-Ddatabase=gdbm \
+     -Dbluez5=disabled \
+     -Dgtk=disabled \
+     -Dsystemd=disabled \
+     -Dvalgrind=disabled \
+     -Dman=false \
+     -Dtests=false"
+
+# --- 4. 権限と設定の調整 ---
+
+echo "Configuring Audio Groups..."
+# 音声デバイスにアクセスするためのグループ設定
+groupadd -f pulse
+groupadd -f pulse-access
+groupadd -f audio
+usermod -aG audio,pulse,pulse-access $TARGET_USER
+
+# --- Network用 (libnl) ---
+build_autotools "libnl" \
+    "https://github.com/thom311/libnl/releases/download/libnl3_9_0/libnl-3.9.0.tar.gz" \
+    "--sysconfdir=/etc --disable-static"
+
 # --- 3. ALSA Library のビルド ---
 # 全てのオーディオ関連の基礎となるライブラリ
 ALSA_LIB_URL="https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.11.tar.bz2"

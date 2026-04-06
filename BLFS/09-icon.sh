@@ -12,48 +12,12 @@ mkdir -p "$SRC" "$LOG"
 export MAKEFLAGS="-j$JOBS"
 
 # --- 2. 共通ユーティリティ関数 ---
-
-download_extract() {
-    local URL=$1
-    local TAR=${URL##*/}
-    cd "$SRC"
-    echo "Downloading $TAR..." >&2
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
-    
-    # ディレクトリ名を特定
-    local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
-    # 特殊なケース（tarの中身が直下のファイル群の場合）の対策
-    if [ -z "$DIR" ]; then DIR="${TAR%.tar*}"; fi
-    
-    rm -rf "$DIR"
-    tar xf "$TAR"
-    echo "$SRC/$DIR"
-}
-
-build_meson() {
-    local NAME=$1; local URL_OR_GIT=$2; local EXTRA=$3
-    echo "===== Building $NAME (meson) ====="
-    
-    local DIR=""
-    if [[ "$URL_OR_GIT" == *.git ]]; then
-        cd "$SRC"
-        rm -rf "$NAME"
-        git clone --depth 1 "$URL_OR_GIT" "$NAME"
-        DIR="$SRC/$NAME"
-    else
-        DIR=$(download_extract "$URL_OR_GIT")
-    fi
-
-    cd "$DIR"
-    rm -rf build
-    # --libdir=/usr/lib を明示することで 64bit 環境での不整合を防ぐ
-    meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
-    ninja -C build >> "$LOG/$NAME.log" 2>&1
-    ninja -C build install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-}
-
-# --- 3. メインビルドプロセス ---
+if [ -f "./common.sh" ]; then
+    source "$(dirname "$0")/common.sh"
+else
+    echo "Error: common.sh not found!"
+    exit 1
+fi
 
 # 1. すべてのアイコンテーマの基礎 (Meson/Autotoolsではなく単純な構成が多い)
 echo "===== Building hicolor-icon-theme ====="

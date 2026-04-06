@@ -15,53 +15,31 @@ BASE_URL_XCB="https://xcb.freedesktop.org/dist"
 mkdir -p "$SRC" "$LOG"
 export MAKEFLAGS="-j$JOBS"
 
-# --- 2. 共通ユーティリティ関数 ---
-
-download_extract() {
-    local URL=$1
-    local TAR=${URL##*/}
-    echo "Downloading $TAR..." >&2
-    cd "$SRC"
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
-    
-    local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
-    [ -z "$DIR" ] && DIR=$(basename "$TAR" .tar.xz)
-    
-    rm -rf "$DIR"
-    tar xf "$TAR"
-    echo "$SRC/$DIR"
-}
-
-# 汎用ビルド関数 (Autotools)
-build_pkg() {
-    local NAME=$1; local URL=$2; local OPTS=$3
-    echo "===== Building: $NAME ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    ./configure $XORG_CONFIG $OPTS > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
-    make install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
+# --- 2. 共通関数のインクルード ---
+if [ -f "./common.sh" ]; then
+    source "$(dirname "$0")/common.sh"
+else
+    echo "Error: common.sh not found!"
+    exit 1
+fi
 
 # --- 3. 依存関係のビルド (下位レイヤーから順に) ---
 
 # 1. xorgproto (ヘッダファイル)
-build_pkg "xorgproto" "$BASE_URL_PROTO/xorgproto-2024.1.tar.xz" ""
+build_autotools "xorgproto" "$BASE_URL_PROTO/xorgproto-2024.1.tar.xz" ""
 
 # 第2層: libxcb のための必須低層ライブラリ (Xau, Xdmcp)
-build_pkg "libXau"   "$BASE_URL_LIB/libXau-1.0.11.tar.xz" ""
-build_pkg "libXdmcp" "$BASE_URL_LIB/libXdmcp-1.1.5.tar.xz" ""
+build_autotools "libXau"   "$BASE_URL_LIB/libXau-1.0.11.tar.xz" ""
+build_autotools "libXdmcp" "$BASE_URL_LIB/libXdmcp-1.1.5.tar.xz" ""
 
 # 2. xcb-proto (XMLベースのプロトコル定義 - libxcbに必須)
-build_pkg "xcb-proto" "https://xorg.freedesktop.org/archive/individual/proto/xcb-proto-1.17.0.tar.xz" ""
+build_autotools "xcb-proto" "https://xorg.freedesktop.org/archive/individual/proto/xcb-proto-1.17.0.tar.xz" ""
 
 # 3. libpthread-stubs (プラットフォームによっては必須)
-build_pkg "libpthread-stubs" "https://xcb.freedesktop.org/dist/libpthread-stubs-0.4.tar.bz2" ""
+build_autotools "libpthread-stubs" "https://xcb.freedesktop.org/dist/libpthread-stubs-0.4.tar.bz2" ""
 
 # 4. libxcb (これが足りないと怒られていた本体)
-build_pkg "libxcb" "https://xorg.freedesktop.org/archive/individual/lib/libxcb-1.17.0.tar.xz" ""
+build_autotools "libxcb" "https://xorg.freedesktop.org/archive/individual/lib/libxcb-1.17.0.tar.xz" ""
 
 # --- 4. X7 Libraries 実行セクション ---
 

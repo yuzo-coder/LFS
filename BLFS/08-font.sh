@@ -12,53 +12,13 @@ mkdir -p "$SRC" "$LOG"
 export MAKEFLAGS="-j$JOBS"
 
 # --- 2. 共通ユーティリティ関数 ---
+if [ -f "./common.sh" ]; then
+    source "$(dirname "$0")/common.sh"
+else
+    echo "Error: common.sh not found!"
+    exit 1
+fi
 
-download_extract() {
-    local URL=$1
-    local TAR=${URL##*/}
-    echo "Downloading $TAR..." >&2
-    cd "$SRC"
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
-    
-    # 展開ディレクトリ名の取得
-    local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
-    rm -rf "$DIR"
-    tar xf "$TAR"
-    echo "$SRC/$DIR"
-}
-
-build_autotools() {
-    local NAME=$1; local URL=$2; local CONF_OPTS=$3
-    echo "===== Building $NAME (autotools) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    ./configure --prefix="$PREFIX" --libdir=/usr/lib $CONF_OPTS > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
-    make install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
-
-build_meson() {
-    local NAME=$1; local URL_OR_GIT=$2; local EXTRA=$3
-    echo "===== Building $NAME (meson) ====="
-    local DIR=""
-    if [[ "$URL_OR_GIT" == *.git ]]; then
-        cd "$SRC"
-        rm -rf "$NAME"
-        git clone "$URL_OR_GIT" "$NAME"
-        DIR="$SRC/$NAME"
-    else
-        DIR=$(download_extract "$URL_OR_GIT")
-    fi
-    cd "$DIR"
-    rm -rf build
-    meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
-    ninja -C build >> "$LOG/$NAME.log" 2>&1
-    ninja -C build install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
 
 # --- 3. フォントスタックのビルド ---
 # libpng, freetype, harfbuzz, fontconfig の順でビルド

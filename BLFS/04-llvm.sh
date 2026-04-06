@@ -11,6 +11,19 @@ LOG=$ROOT_DIR/logs
 mkdir -p "$SRC" "$LOG"
 export MAKEFLAGS="-j$JOBS"
 
+# --- 2. 共通関数のインクルード ---
+if [ -f "./common.sh" ]; then
+    source "$(dirname "$0")/common.sh"
+else
+    echo "Error: common.sh not found!"
+    exit 1
+fi
+
+# libdrm: MesaがGPUと対話するために必須
+build_meson libdrm "https://dri.freedesktop.org/libdrm/libdrm-2.4.120.tar.xz" \
+    "-Dudev=true -Dvalgrind=disabled"
+
+
 # --- LLVM ビルド設定 ---
 LLVM_VER="18.1.2" # お使いのバージョンに合わせて変更してください
 BASE_URL="https://github.com/llvm/llvm-project/releases/download/llvmorg-$LLVM_VER"
