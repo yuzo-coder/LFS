@@ -99,6 +99,8 @@ echo "===== Configuring Network (systemd-networkd) ====="
 
 # 物理インターフェースの有効化
 # ens3 をアップ状態にします
+ip link set ens1 up || echo "Warning: ens1 not found or already up"
+ip link set ens2 up || echo "Warning: ens2 not found or already up"
 ip link set ens3 up || echo "Warning: ens3 not found or already up"
 
 #  ネットワーク設定ファイルの作成
