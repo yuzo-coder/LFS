@@ -9,6 +9,7 @@ SRC=$ROOT_DIR/sources
 LOG=$ROOT_DIR/logs
 
 mkdir -p "$SRC" "$LOG"
+
 cd "$SRC"
 
 # pkg-config の検索パスを永続化（未設定の場合のみ）
@@ -77,6 +78,7 @@ fi
 # 256color は vi などの色を誘発するので、
 # 色付きプロンプトだけが目的なら標準の xterm でも十分です
 export TERM=xterm-256color
+
 # ディレクトリの色を「太字のシアン」に変更する設定
 export LS_COLORS=$LS_COLORS:'di=01;36:'
 EOF
@@ -101,10 +103,26 @@ ip link set ens3 up || echo "Warning: ens3 not found or already up"
 
 #  ネットワーク設定ファイルの作成
 mkdir -p /etc/systemd/network
+
+cat > /etc/systemd/network/10-ens1.network << "EOF"
+[Match]
+Name=ens1
+[Network]
+DHCP=yes
+DNS=8.8.8.8
+EOF
+
+cat > /etc/systemd/network/10-ens2.network << "EOF"
+[Match]
+Name=ens2
+[Network]
+DHCP=yes
+DNS=8.8.8.8
+EOF
+
 cat > /etc/systemd/network/10-ens3.network << "EOF"
 [Match]
 Name=ens3
-
 [Network]
 DHCP=yes
 DNS=8.8.8.8
