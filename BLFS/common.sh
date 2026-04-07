@@ -81,3 +81,26 @@ build_rust_task() {
     cp "target/release/$BIN_NAME" "$PREFIX/bin/"
     cd "$ROOT_DIR"
 }
+
+build_mm_lib() {
+    local NAME=$1; local URL=$2; local EXTRA=$3
+    echo "===== Building $NAME (MM-Special) ====="
+    local DIR=$(download_extract "$URL")
+    cd "$DIR"
+    
+    # ドキュメント生成エラーを回避するためのダミーパス作成
+    mkdir -p build/subprojects/mm-common
+    touch build/subprojects/mm-common/libstdc++.tag
+    
+    meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release \
+        -Dbuild-documentation=false $EXTRA > "$LOG/$NAME.log" 2>&1
+    
+    # libsigc++関連のパスも保険で作成
+    mkdir -p build/subprojects/libsigcplusplus-2.0/docs/manual/html
+    
+    ninja -C build -j"$JOBS" >> "$LOG/$NAME.log" 2>&1
+    ninja -C build install >> "$LOG/$NAME.log" 2>&1
+    ldconfig
+    cd "$ROOT_DIR"
+}
+

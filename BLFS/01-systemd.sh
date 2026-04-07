@@ -15,74 +15,48 @@ export MAKEFLAGS="-j$JOBS"
 # Python依存の解決
 pip3 install --break-system-packages mako pyserpent 2>/dev/null || true
 
-# --- 2. 共通ユーティリティ関数 ---
+# 共通関数の読み込み
+if [ -f "./common.sh" ]; then
+    source "./common.sh"
+else
+    echo "Error: common.sh not found!"
+    exit 1
+fi
 
-download_extract() {
-    local URL=$1
-    local TAR=${URL##*/}
-    echo "Downloading $TAR..." >&2
-    cd "$SRC"
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
-    
-    local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
-    rm -rf "$DIR"
-    tar xf "$TAR"
-    echo "$SRC/$DIR"
-}
-
-build_autotools() {
-    local NAME=$1; local URL=$2; local CONF_OPTS=$3
-    echo "===== Building $NAME (autotools) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    ./configure --prefix="$PREFIX" --libdir=/usr/lib $CONF_OPTS > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
-    make install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
-
-build_meson() {
-    local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (meson) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    rm -rf build
-    meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
-    ninja -C build >> "$LOG/$NAME.log" 2>&1
-    ninja -C build install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
-
-build_cmake() {
-    local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (cmake) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    rm -rf build && mkdir build && cd build
-    cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR=lib $EXTRA .. > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
-    make install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
 
 # --- 3. 基礎ライブラリ (Base) ---
 build_autotools expat "https://github.com/libexpat/libexpat/releases/download/R_2_6_2/expat-2.6.2.tar.xz" ""
+
 build_autotools libffi "https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz" ""
+
 build_autotools pcre2 "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.43/pcre2-10.43.tar.gz" "--enable-unicode"
+
 build_meson glib2 "https://download.gnome.org/sources/glib/2.80/glib-2.80.4.tar.xz" "-Dtests=false"
+
 build_meson seatd "https://git.sr.ht/~kennylevinsen/seatd/archive/0.8.0.tar.gz" "-Dlibseat-builtin=enabled -Dserver=enabled -Dman-pages=disabled"
 
 # --- 4. ツールチェーン (CMake Bootstrap) ---
 if ! command -v cmake &> /dev/null; then
-    echo "===== Building CMake (Bootstrap) ====="
+    echo "===== Building CMake  ====="
     DIR=$(download_extract "https://cmake.org/files/v4.1/cmake-4.1.0.tar.gz")
     cd "$DIR"
-    ./bootstrap --prefix="$PREFIX" --parallel="$JOBS" --no-system-curl --no-system-libs > "$LOG/cmake-bootstrap.log" 2>&1
-    make >> "$LOG/cmake-bootstrap.log" 2>&1
-    make install >> "$LOG/cmake-bootstrap.log" 2>&1
+
+    # 1. CursesDialog のビルドを「正規の手順」で無効化する
+    # ファイルの中身を「何もしない」という命令に書き換えます
+    echo "return()" > Source/CursesDialog/CMakeLists.txt  
+
+    # 2. Curses を見つけられないようにダミーの値を設定（または空にする）
+    # さらに GCC 15 対策のフラグを export
+    export CXXFLAGS="-O2 -fpermissive -DNCURSES_NOMACROS"
+
+    ./bootstrap \
+        --prefix="$PREFIX" \
+        --parallel="$JOBS" \
+        --no-system-libs \
+        > "$LOG/cmake.log" 2>&1
+        
+    make -j"$JOBS" >> "$LOG/cmake.log" 2>&1
+    make install >> "$LOG/cmake.log" 2>&1
     cd "$ROOT_DIR"
 fi
 

@@ -20,18 +20,6 @@ else
     exit 1
 fi
 
-# --- 3. 追加のビルド補助 ---
-build_rust_task() {
-    local NAME=$1; local GIT_URL=$2; local BIN_NAME=$3
-    echo "===== Building $NAME (Rust) ====="
-    cd "$SRC"
-    rm -rf "$NAME"
-    git clone "$GIT_URL" "$NAME"
-    cd "$NAME"
-    cargo build --release --locked > "$LOG/$NAME.log" 2>&1
-    cp "target/release/$BIN_NAME" "$PREFIX/bin/"
-    cd "$ROOT_DIR"
-}
 
 # --- 4. 基礎ライブラリ・フォント ---
 

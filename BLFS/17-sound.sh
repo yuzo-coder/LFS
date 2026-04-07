@@ -48,6 +48,14 @@ build_meson "pulseaudio" \
      -Dman=false \
      -Dtests=false"
 
+# 2. pavucontrol (PulseAudio Volume Control)
+# ※ C++ のモダンな実装のため、sigc++ や gtkmm などの C++ ラッパーが必要です。
+# BLFS 環境で不足している場合は Meson が自動でチェックします。
+build_meson "pavucontrol" \
+    "https://freedesktop.org/software/pulseaudio/pavucontrol/pavucontrol-6.0.tar.xz" \
+    "-Dlynx=false"
+
+
 # --- 4. 権限と設定の調整 ---
 
 echo "Configuring Audio Groups..."

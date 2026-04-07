@@ -19,39 +19,12 @@ else
     exit 1
 fi
 
-# --- 3. 特殊ビルド関数 (C++ MM-Series用) ---
-
-build_mm_lib() {
-    local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (MM-Special) ====="
-    local DIR=$(download_extract "$URL")
-    cd "$DIR"
-    
-    # ドキュメント生成エラーを回避するためのダミーパス作成
-    mkdir -p build/subprojects/mm-common
-    touch build/subprojects/mm-common/libstdc++.tag
-    
-    meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release \
-        -Dbuild-documentation=false $EXTRA > "$LOG/$NAME.log" 2>&1
-    
-    # libsigc++関連のパスも保険で作成
-    mkdir -p build/subprojects/libsigcplusplus-2.0/docs/manual/html
-    
-    ninja -C build -j"$JOBS" >> "$LOG/$NAME.log" 2>&1
-    ninja -C build install >> "$LOG/$NAME.log" 2>&1
-    ldconfig
-    cd "$ROOT_DIR"
-}
-
-# --- 4. ビルド実行プロセス ---
 
 # 4-1. 基礎ライブラリ
-build_meson libepoxy "https://github.com/anholt/libepoxy/archive/1.5.10.tar.gz" "-Dx11=false -Degl=yes"
-build_meson at-spi2-core "https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-core-2.50.0.tar.xz" ""
+# build_meson libepoxy "https://github.com/anholt/libepoxy/archive/1.5.10.tar.gz" "-Dx11=false -Degl=yes"
 
-build_meson shared-mime-info "https://gitlab.freedesktop.org/xdg/shared-mime-info/-/archive/2.4/shared-mime-info-2.4.tar.gz" ""
-# インストール後、MIMEデータベースを更新します
-update-mime-database /usr/share/mime
+# build_meson at-spi2-core "https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-core-2.50.0.tar.xz" ""
+
 
 # --- 5. 画像処理スタック ---
 
@@ -67,18 +40,22 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. > "$LOG/libjpeg-turbo.log" 2>&1
 make -j"$JOBS" >> "$LOG/libjpeg-turbo.log" 2>&1
 make install >> "$LOG/libjpeg-turbo.log" 2>&1
-ldconfig # [FIX] 追加
+ldconfig
 cd "$ROOT_DIR"
 
 # 5-2. gdk-pixbuf
-# [FIX] build_meson関数を使用し、jpegを明示的に有効化
 build_meson "gdk-pixbuf" "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dglycin=disabled -Dbuiltin_loaders=all -Djpeg=enabled -Dothers=enabled -Dman=false -Dintrospection=disabled -Dtests=false"
+    "-Dglycin=disabled -Dpng=enabled -Djpeg=enabled -Dbuiltin_loaders=none -Dman=false -Dintrospection=disabled -Dtests=false"
 
+gdk-pixbuf-query-loaders --update-cache
+gdk-pixbuf-query-loaders > /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+
+update-mime-database /usr/share/mime
+pkg-config --modversion shared-mime-info
 
 # GTK3 (Waylandのみ、内省/デモ無効)
-build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.xz" \
-    "--wrap-mode=nofallback -Dwayland_backend=true -Dx11_backend=false -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no"
+#build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.xz" \
+#     "--wrap-mode=nofallback -Dwayland_backend=true -Dx11_backend=false -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no"
 
 # 4-2. C++ ユーティリティ
 build_cmake fmt "https://github.com/fmtlib/fmt/archive/11.0.2.tar.gz" "-DBUILD_SHARED_LIBS=ON -DFMT_TEST=OFF"
@@ -88,60 +65,61 @@ build_cmake spdlog "https://github.com/gabime/spdlog/archive/v1.14.1.tar.gz" \
 
 build_meson jsoncpp "https://github.com/open-source-parsers/jsoncpp/archive/1.9.5.tar.gz" "-Dtests=false"
 
-# 4-3. MMシリーズ (C++ Wrappers)
-build_mm_lib libsigc++ "https://download.gnome.org/sources/libsigc++/2.12/libsigc++-2.12.0.tar.xz" ""
-build_mm_lib cairomm "https://www.cairographics.org/releases/cairomm-1.14.5.tar.xz" ""
-build_mm_lib libsigc++3 "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz" ""
-echo "===== Building glibmm (Tutorial script bypass) ====="
-DIR=$(download_extract "https://download.gnome.org/sources/glibmm/2.84/glibmm-2.84.0.tar.xz")
-cd "$DIR"
+#echo "===== Building glibmm (Tutorial script bypass) ====="
+#DIR=$(download_extract "https://download.gnome.org/sources/glibmm/2.84/glibmm-2.84.0.tar.xz")
+#cd "$DIR"
 
-mkdir -p subprojects/libsigcplusplus/tools/
+# mkdir -p subprojects/libsigcplusplus/tools/
 # エラーの原因となっているスクリプトを「何もしない」内容で上書き
-cat > subprojects/libsigcplusplus/tools/tutorial-custom-cmd.py << "EOF"
+# cat > subprojects/libsigcplusplus/tools/tutorial-custom-cmd.py << "EOF"
 #!/usr/bin/env python3
-import sys
+# import sys
 # 何もせずに正常終了(exit 0)を返す
-sys.exit(0)
-EOF
+# sys.exit(0)
+# EOF
 
 # 実行権限を付与
-chmod +x subprojects/libsigcplusplus/tools/tutorial-custom-cmd.py
+# chmod +x subprojects/libsigcplusplus/tools/tutorial-custom-cmd.py
 
 # ビルドの再試行
-rm -rf build
-mkdir build && cd build
+# rm -rf build
+# mkdir build && cd build
 
-meson setup .. \
-    --prefix=/usr \
-    --libdir=/usr/lib \
-    --buildtype=release \
-    -Dbuild-documentation=false \
-    > "$LOG/glibmm.log" 2>&1
+# meson setup .. \
+#     --prefix=/usr \
+#    --libdir=/usr/lib \
+#     --buildtype=release \
+#    -Dbuild-documentation=false \
+#    > "$LOG/glibmm.log" 2>&1
 
-ninja -j"$JOBS" >> "$LOG/glibmm.log" 2>&1
-ninja install >> "$LOG/glibmm.log" 2>&1
-cd "$ROOT_DIR"
+# ninja -j"$JOBS" >> "$LOG/glibmm.log" 2>&1
+# ninja install >> "$LOG/glibmm.log" 2>&1
+# cd "$ROOT_DIR"
 
 # build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.84/glibmm-2.84.0.tar.xz" "-Dbuild-documentation=false"
 
 # build_mm_lib mm-common "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz" ""
-echo "===== Building mm-common ====="
-DIR=$(download_extract "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz")
-cd "$DIR"
 
-rm -rf build && mkdir build && cd build
-meson setup .. --prefix=/usr --buildtype=release > "$LOG/mm-common.log" 2>&1
-ninja install >> "$LOG/mm-common.log" 2>&1
-cd "$ROOT_DIR"
+# echo "===== Building mm-common ====="
+# DIR=$(download_extract "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz")
+# cd "$DIR"
+
+# rm -rf build && mkdir build && cd build
+# meson setup .. --prefix=/usr --buildtype=release > "$LOG/mm-common.log" 2>&1
+# ninja install >> "$LOG/mm-common.log" 2>&1
+# cd "$ROOT_DIR"
 
 # 4-1. libxslt
 echo "===== Building libxslt ====="
-build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz" "--disable-static"
+# build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz" "--disable-static"
 
-build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz" ""
+# build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz" ""
+
 build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" ""
-build_mm_lib gtkmm "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" ""
+
+build_meson "libepoxy" "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" "-Dx11=true -Dglx=yes"
+
+build_mm_lib gtkmm3 "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" "-Dbuild-demos=false -Dbuild-tests=false"
 
 # 4-4. その他依存 (iniparser, date)
 build_cmake iniparser "https://github.com/ndevilla/iniparser/archive/v4.2.4.tar.gz" "-DBUILD_SHARED_LIBS=ON"

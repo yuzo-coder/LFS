@@ -36,16 +36,8 @@ build_autotools "libvorbis" \
 # 1. libcanberra (pavucontrol の音量フィードバック音に必要)
 # ※ GUI アプリの動作を安定させるために推奨されます
 build_autotools "libcanberra" \
-    "https://0pointer.de/lennart/projects/libcanberra/libcanberra-0.30.tar.xz" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/l/libcanberra-0.30.tar.xz" \
     "--disable-oss --disable-lynx --disable-tdb --disable-gtk --disable-gtk3"
-
-# 2. pavucontrol (PulseAudio Volume Control)
-# ※ C++ のモダンな実装のため、sigc++ や gtkmm などの C++ ラッパーが必要です。
-# BLFS 環境で不足している場合は Meson が自動でチェックします。
-build_meson "pavucontrol" \
-    "https://freedesktop.org/software/pulseaudio/pavucontrol/pavucontrol-6.0.tar.xz" \
-    "-Dlynx=false"
-
 
 # iso-codes (国名・言語コードの標準データ)
 # configure 時に --prefix を指定するだけでOKです
@@ -59,6 +51,8 @@ rm -rf /usr/share/xml/iso-codes
 build_autotools "iso-codes" \
     "https://ftp.debian.org/debian/pool/main/i/iso-codes/iso-codes_4.18.0.orig.tar.xz" \
     ""
+
+build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz" "--disable-static"
 
 # mobile-broadband-provider-info (モバイル回線設定データベース)
 build_meson "mobile-broadband-provider-info" \
@@ -164,12 +158,6 @@ build_meson "NetworkManager" \
      -Dmodem_manager=false \
      -Dcrypto=gnutls"
 
-# 3. libnma (nm-connection-editor のコアライブラリ)
-# ネットワーク設定の GUI コンポーネントを提供します。
-build_meson "libnma" \
-    "https://download.gnome.org/sources/libnma/1.10/libnma-1.10.6.tar.xz" \
-    "-Dintrospection=false -Dgtk_doc=false -Dgcr=false -Dvapi=false"
-
 # 1. libgpg-error (libgcrypt の前提ライブラリ)
 DIR=$(download_extract "https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.47.tar.bz2")
 cd "$DIR"
@@ -177,9 +165,9 @@ echo "$DIR"
 # 'nullptr' という変数名を 'my_nullptr' に一括置換する
 sed -i 's/nullptr/my_nullptr/g' tests/t-printf.c
 # 【重要】Makefile を生成するために configure を実行
-./configure --prefix=/usr --disable-static >> /LFSAutoBuilder/blfs/logs/libgpg-error.log 2>&1
-make -j$(nproc) >> /LFSAutoBuilder/blfs/logs/libgpg-error.log 2>&1
-make install >> /LFSAutoBuilder/blfs/logs/libgpg-error.log 2>&1
+./configure --prefix=/usr --disable-static > "$LOG/libgpg-error.log" 2>&1
+make -j$(nproc) >> "$LOG/libgpg-error.log" 2>&1 
+make install >> "$LOG/libgpg-error.log" 2>&1
 ldconfig
 cd "$ROOT_DIR"
 
@@ -222,17 +210,64 @@ else
 fi
 cd "$ROOT_DIR"
 
+echo "===== Building gobject-introspection  ====="
+DIR=$(download_extract "https://download.gnome.org/sources/gobject-introspection/1.80/gobject-introspection-1.80.1.tar.xz") 
+cd "$DIR"
+# MSVCCompiler をダミーのクラスで定義し、NameError を回避する
+sed -i 's/from distutils.msvccompiler import MSVCCompiler/class MSVCCompiler: pass/' giscanner/ccompiler.py
+
+export SETUPTOOLS_USE_DISTUTILS=local
+meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
+    -Dbuild_introspection_data=true \
+    -Dgtk_doc=false \
+    -Ddoctool=disabled \
+    -Dpython=python3 > $LOG/gobject.log 2>&1 
+ninja -C build -j"$JOBS" >> "$LOG/gobject.log" 2>&1
+ninja -C build install >> "$LOG/gobject.log" 2>&1
+cd "$ROOT_DIR"
+
+# GLib 2.80.4 の再ビルド
+# 依存関係: gobject-introspection がインストール済みであること
+build_meson glib2 "https://download.gnome.org/sources/glib/2.80/glib-2.80.4.tar.xz" \
+    "-Dintrospection=enabled -Dtests=false"
+
+build_meson atk "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/atk-2.38.0.tar.xz" \
+    ""
+
+# 2. libepoxy (GPU描画の管理)
+build_meson "libepoxy" \
+    "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" ""
+
+build_meson "at-spi2-core" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/at-spi2-core-2.56.4.tar.xz" ""
+
+build_meson "at-spi2-atk" \
+    "https://download.gnome.org/sources/at-spi2-atk/2.38/at-spi2-atk-2.38.0.tar.xz" ""
+
 # GTK3 (--enable-x11-backend)
-build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.xz" \
-    "-Dwayland_backend=true -Dx11_backend=true -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no"
+build_meson gtk3 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/gtk-3.24.50.tar.xz" \
+    "-Dwayland_backend=true -Dx11_backend=true -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no --wrap-mode=nodownload"
+
+# 3. libnma (nm-connection-editor)
+build_meson "libnma" \
+    "https://download.gnome.org/sources/libnma/1.10/libnma-1.10.6.tar.xz" \
+    "-Dintrospection=false -Dgtk_doc=false -Dgcr=false -Dvapi=false"
 
 # network-manager-applet (GUI設定ツール本体)
 build_meson "network-manager-applet" \
-    "https://download.gnome.org/sources/network-manager-applet/1.34/network-manager-applet-1.34.0.tar.xz" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/n/network-manager-applet-1.34.0.tar.xz" \
      "-Dwwan=false \
      -Dselinux=false \
      -Dappindicator=no \
      -Dteam=false"
+
+build_meson libxkbcommon "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" "-Denable-x11=false"
+
+build_meson xkeyboard-config "https://www.x.org/pub/individual/data/xkeyboard-config/xkeyboard-config-2.45.tar.xz" ""
+
+
+# 1. mesa-demos (eglinfo, es2gears_wayland �~I)~
+build_meson mesa-demos "https://archive.mesa3d.org/demos/mesa-demos-9.0.0.tar.xz" "-Dwayland=enabled -Dx11=disabled -Dgles2=enabled"
 
 echo "=================================================="
 echo "    GUI Management Tools Build Complete!          "

@@ -28,8 +28,8 @@ build_meson "graphene" \
     "-Dintrospection=disabled"
 
 # 2. libepoxy (GPU描画の管理)
-build_meson "libepoxy" \
-    "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" ""
+# build_meson "libepoxy" \
+#    "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" ""
 
 # 3. GTK4 本体
 # ※ビルドに時間がかかりますが、Z840なら数分です。
@@ -43,8 +43,33 @@ build_autotools "fontconfig" \
     "https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.17.1/fontconfig-2.17.1.tar.xz" \
     "--disable-docs --sysconfdir=/etc --localstatedir=/var"
 
+build_mm_lib libsigc++ "https://download.gnome.org/sources/libsigc++/2.12/libsigc++-2.12.0.tar.xz" ""
+
+echo "===== Building mm-common ====="
+DIR=$(download_extract "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz")
+
+cd "$DIR"
+    
+rm -rf build && mkdir build && cd build
+
+meson setup .. --prefix=/usr --buildtype=release > "$LOG/mm-common.log" 2>&1
+
+ninja install >> "$LOG/mm-common.log" 2>&1
+
+cd "$ROOT_DIR"
+# ===== end mm-common ====="
+
+build_mm_lib cairomm "https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz" ""
+
+build_mm_lib libsigc++3 "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz" ""
+
+build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.80/glibmm-2.80.0.tar.xz" \
+    "-Dbuild-documentation=false"
+
+build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz" "-Dbuild-documentation=false"
+
 # 4. gtkmm-4.0 (pavucontrol の直接の依存先)
 build_meson "gtkmm4" \
-    "https://download.gnome.org/sources/gtkmm/4.12/gtkmm-4.12.0.tar.xz" ""
+    "https://download.gnome.org/sources/gtkmm/4.12/gtkmm-4.12.0.tar.xz" "--wrap-mode=nodownload -Dbuild-demos=false -Dbuild-tests=false"
 
 echo "===== 11-GTK4 ALL BUILD & CONFIG COMPLETED ====="

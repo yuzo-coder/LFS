@@ -57,22 +57,6 @@ build_meson "libxkbcommon" \
     "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" \
     "-Denable-x11=true"
 
-echo "===== Building gobject-introspection  ====="
-DIR=$(download_extract "https://download.gnome.org/sources/gobject-introspection/1.80/gobject-introspection-1.80.1.tar.xz") 
-cd "$DIR"
-# MSVCCompiler をダミーのクラスで定義し、NameError を回避する
-sed -i 's/from distutils.msvccompiler import MSVCCompiler/class MSVCCompiler: pass/' giscanner/ccompiler.py
-
-export SETUPTOOLS_USE_DISTUTILS=local
-meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
-    -Dbuild_introspection_data=true \
-    -Dgtk_doc=false \
-    -Ddoctool=disabled \
-    -Dpython=python3 > $LOG/gobject.log 2>&1 
-ninja -C build -j"$JOBS" >> "$LOG/gobject.log" 2>&1
-ninja -C build install >> "$LOG/gobject.log" 2>&1
-cd "$ROOT_DIR"
-
 # glib-2.80.4 の再ビルド
 # 以前のビルドディレクトリがある場合は必ず削除してください (rm -rf build)
 build_meson glib2 "https://download.gnome.org/sources/glib/2.86/glib-2.86.4.tar.xz" \

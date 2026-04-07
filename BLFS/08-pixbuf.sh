@@ -89,10 +89,12 @@ build_cmake "libavif" \
     "https://github.com/AOMediaCodec/libavif/archive/v1.4.1/libavif-1.4.1.tar.gz" \
     "-DAVIF_CODEC_AOM=SYSTEM -DAVIF_LIBYUV=SYSTEM"
 
+build_meson shared-mime-info "https://gitlab.freedesktop.org/xdg/shared-mime-info/-/archive/2.4/shared-mime-info-2.4.tar.gz" ""
+
 # 3. gdk-pixbuf (先にビルドして librsvg のインストール先を確定させる)
 build_meson "gdk-pixbuf" \
     "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dbuiltin_loaders=none -Djpeg=enabled -Dpng=enabled -Dtiff=enabled -Dintrospection=disabled -Dman=false -Dglycin=disabled"
+    "-Dbuiltin_loaders=png,jpeg -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=disabled -Dman=false -Dglycin=disabled"
 
 # cargo-c (Rust ライブラリを C 用にビルドするためのツール)
 # https://github.com/lu-zero/cargo-c/archive/v0.10.15/cargo-c-0.10.15.tar.gz

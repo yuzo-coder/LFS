@@ -57,6 +57,8 @@ build_meson "xdg-desktop-portal" \
     "https://github.com/flatpak/xdg-desktop-portal/releases/download/1.18.4/xdg-desktop-portal-1.18.4.tar.xz" \
     ""
 
+# build_meson wayland-protocols "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.38/downloads/wayland-protocols-1.38.tar.xz" ""
+
 # xdg-desktop-portal の後、xdg-desktop-portal-wlr の前に追加
 build_meson "inih" \
     "https://github.com/benhoyt/inih/archive/refs/tags/r58.tar.gz" \

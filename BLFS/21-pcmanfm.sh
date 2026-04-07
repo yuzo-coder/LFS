@@ -337,11 +337,6 @@ make install >> /LFSAutoBuilder/blfs/logs/pcmanfm_rebuild.log 2>&1
 # 共有ライブラリのキャッシュを更新
 ldconfig
 
-build_meson shared-mime-info "https://gitlab.freedesktop.org/xdg/shared-mime-info/-/archive/2.4/shared-mime-info-2.4.tar.gz" ""
-
-# インストール後、MIMEデータベースを更新します
-update-mime-database /usr/share/mime
-
 # gdk-pixbuf のローダーキャッシュを強制更新
 gdk-pixbuf-query-loaders --update-cache
 
