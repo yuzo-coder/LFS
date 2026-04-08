@@ -1,5 +1,21 @@
 sudo chown -R lfs:lfs log
 sudo chown -R lfs:lfs tmp
-sudo chown -R lfs:lfs `pwd`
+
+# 現在のユーザーのホームディレクトリを取得
+MY_HOME="$HOME"
+# 現在の作業ディレクトリ（LFSディレクトリ）を取得
+CURRENT_LFS_DIR="$(pwd)"
+
+echo "Setting permissions for lfs user access..."
+
+# ホームディレクトリに実行権限(x)を付与
+sudo chmod o+x "$MY_HOME"
+
+# LFSディレクトリ（親）に実行権限(x)を付与
+sudo chmod o+x "$CURRENT_LFS_DIR"
+
+# ビルドディレクトリの所有権をlfsへ
+sudo chown -R lfs:lfs "$CURRENT_LFS_DIR/build"
+
 su - lfs -c "cd `pwd` && time ./runscripts"
 
