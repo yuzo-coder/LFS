@@ -12,6 +12,10 @@ MY_HOME=$(eval echo "~$(id -un 1000)") # UID 1000（通常最初のユーザー�
 echo "Target Build Dir: $SCRIPT_DIR"
 echo "Setting permissions..."
 
+echo "MY_HOME: " "$MY_HOME"
+echo "PARENT_DIR: " "$PARENT_DIR"
+echo "SCRIPT_DIR: " "$SCRIPT_DIR"
+
 # 1. 通り道の全ディレクトリに実行権限を付与
 sudo chmod o+x "$MY_HOME"
 sudo chmod o+x "$PARENT_DIR"
