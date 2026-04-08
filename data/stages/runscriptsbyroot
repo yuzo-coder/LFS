@@ -1,22 +1,26 @@
 sudo chown -R lfs:lfs log
 sudo chown -R lfs:lfs tmp
 
-# 現在のユーザーのホームディレクトリを取得
-MY_HOME="$HOME"
-# 現在の作業ディレクトリ（LFSディレクトリ）を取得
-CURRENT_LFS_DIR="$(pwd)"
+# このスクリプトが存在するディレクトリ（build）の絶対パスを取得
+# これにより、どこから実行しても正しく "/home/user/LFS/build" を指します
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+# その親ディレクトリ（/home/user/LFS）
+PARENT_DIR=$(dirname "$SCRIPT_DIR")
+# ホームディレクトリ（/home/user）
+MY_HOME=$(eval echo "~$(id -un 1000)") # UID 1000（通常最初のユーザー）のホームを取得
 
-echo "Setting permissions for lfs user access..."
+echo "Target Build Dir: $SCRIPT_DIR"
+echo "Setting permissions..."
 
-# ホームディレクトリに実行権限(x)を付与
+# 1. 通り道の全ディレクトリに実行権限を付与
 sudo chmod o+x "$MY_HOME"
+sudo chmod o+x "$PARENT_DIR"
+sudo chmod o+x "$SCRIPT_DIR"
 
-# LFSディレクトリ（親）に実行権限(x)を付与
-sudo chmod o+x "$CURRENT_LFS_DIR"
+# 2. 所有権を lfs に
+sudo chown -R lfs:lfs "$SCRIPT_DIR"
 
-# ビルドディレクトリの所有権をlfsへ
-sudo chown -R lfs:lfs "$CURRENT_LFS_DIR"
-
-echo "LFS DIR:" $CURRENT_LFS_DIR
-su - lfs -c "cd `pwd` && time ./runscripts"
+# 3. lfs ユーザーとして実行
+# cd 先を $SCRIPT_DIR に固定することで、間違いを防ぎます
+su - lfs -c "cd $SCRIPT_DIR && time ./runscripts"
 
