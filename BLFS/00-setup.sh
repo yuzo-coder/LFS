@@ -12,6 +12,14 @@ mkdir -p "$SRC" "$LOG"
 
 cd "$SRC"
 
+# 日本語キーボード
+loadkeys jp106
+
+cat > /etc/vconsole.conf << "EOF"
+KEYMAP=jp106
+FONT=lat0-16
+EOF
+
 # pkg-config の検索パスを永続化（未設定の場合のみ）
 if ! grep -q "PKG_CONFIG_PATH" /etc/profile; then
 cat >> /etc/profile << "EOF"
