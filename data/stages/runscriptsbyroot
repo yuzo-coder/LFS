@@ -17,6 +17,6 @@ sudo chmod o+x "$CURRENT_LFS_DIR"
 # ビルドディレクトリの所有権をlfsへ
 sudo chown -R lfs:lfs "$CURRENT_LFS_DIR"
 
-echo $CURRENT_LFS_DIR
+echo "LFS DIR:" $CURRENT_LFS_DIR
 su - lfs -c "cd `pwd` && time ./runscripts"
 
