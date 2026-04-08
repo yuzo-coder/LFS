@@ -1,4 +1,5 @@
 sudo chown -R lfs:lfs log
 sudo chown -R lfs:lfs tmp
+sudo chown -R lfs:lfs `pwd`
 su - lfs -c "cd `pwd` && time ./runscripts"
 
