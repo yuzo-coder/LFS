@@ -7,3 +7,8 @@ echo ""
 sleep 10
 mkfs.ext4 -F /dev/$PARTITION
 mount /dev/$PARTITION builddir
+
+# マウントした「後」にコピーする
+echo "Copying BLFS files to mounted partition..."
+mkdir -p builddir/BLFS
+cp -ar ../BLFS/* builddir/BLFS/
