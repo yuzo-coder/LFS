@@ -253,6 +253,23 @@ scripts/config --enable CONFIG_SYSVIPC_SYSCTL
 scripts/config --enable CONFIG_POSIX_MQUEUE
 scripts/config --enable CONFIG_CHECKPOINT_RESTORE
 
+# FUSE (Filesystem in Userspace)
+scripts/config --enable CONFIG_FUSE_FS
+scripts/config --enable CONFIG_VIRTIO_MENU
+
+# --- ポータルとファイルマネージャーの連携強化 ---
+scripts/config --enable CONFIG_VIRTIO_FS           # ホスト・ゲスト間の高速ファイル共有（将来用）
+
+# --- systemd-journald の安定性とパフォーマンス ---
+scripts/config --enable CONFIG_CRYPTO_ZSTD         # ログの圧縮に使用
+scripts/config --enable CONFIG_TMPFS_XATTR         # systemd が tmpfs 上で拡張属性を扱うために必要
+
+# --- Firefox の GPU 加速と描画安定化 ---
+scripts/config --enable CONFIG_SYNC_FILE           # 明示的な同期（現代のGPUスタックで重要）
+scripts/config --enable CONFIG_UDMABUF             # VirtIO GPU でのメモリアクセス最適化
+
+# --- ネットワーク (Firefox の名前解決や IPv6 安定化) ---
+scripts/config --enable CONFIG_DNS_RESOLVER
 
 # 依存関係自動解決
 make olddefconfig
