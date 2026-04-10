@@ -183,32 +183,12 @@ build_meson "libsecret" \
 
 # Cairo (X11 を強制的に有効化)
 # 1. Cairo (X11 を強制的に有効化)
-build_meson "cairo" \
-    "https://www.cairographics.org/releases/cairo-1.18.0.tar.xz" \
-    "-Dxlib=enabled \
-     -Dxcb=enabled \
-     -Dtests=disabled \
-     -Dglib=enabled"
-
-# 2. 確実にインストールされた実体ファイルがあるかチェック
-if [ -f "/usr/lib/libcairo.so.2.11800.0" ]; then
-    echo "Confirmed: Cairo 1.18.0 (X11 enabled) installed."
-    
-    # 古いリンクを削除して張り直す
-    rm -f /usr/lib/libcairo.so /usr/lib/libcairo.so.2
-    
-    # 相対パスでリンクを張る（推奨される作法です）
-    cd /usr/lib
-    ln -sf libcairo.so.2.11800.0 libcairo.so
-    ln -sf libcairo.so.2.11800.0 libcairo.so.2
-    cd - > /dev/null
-    
-    ldconfig
-else
-    echo "Error: libcairo.so.2.11800.0 not found. Check build logs."
-    exit 1
-fi
-cd "$ROOT_DIR"
+#build_meson "cairo" \
+#    "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz" \
+#    "-Dxlib=enabled \
+#     -Dxcb=enabled \
+#     -Dtests=disabled \
+#     -Dglib=enabled"
 
 echo "===== Building gobject-introspection  ====="
 DIR=$(download_extract "https://download.gnome.org/sources/gobject-introspection/1.80/gobject-introspection-1.80.1.tar.xz") 
@@ -234,15 +214,19 @@ build_meson glib2 "https://download.gnome.org/sources/glib/2.80/glib-2.80.4.tar.
 build_meson atk "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/atk-2.38.0.tar.xz" \
     ""
 
+build_meson "libepoxy" "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" "-Dx11=true -Dglx=yes"
+
 # 2. libepoxy (GPU描画の管理)
-build_meson "libepoxy" \
-    "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" ""
+# build_meson "libepoxy" \
+#    "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" ""
 
 build_meson "at-spi2-core" \
     "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/at-spi2-core-2.56.4.tar.xz" ""
 
 build_meson "at-spi2-atk" \
     "https://download.gnome.org/sources/at-spi2-atk/2.38/at-spi2-atk-2.38.0.tar.xz" ""
+
+build_meson libxkbcommon "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" "-Denable-x11=false"
 
 # GTK3 (--enable-x11-backend)
 build_meson gtk3 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/gtk-3.24.50.tar.xz" \
@@ -261,13 +245,13 @@ build_meson "network-manager-applet" \
      -Dappindicator=no \
      -Dteam=false"
 
-build_meson libxkbcommon "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" "-Denable-x11=false"
-
 build_meson xkeyboard-config "https://www.x.org/pub/individual/data/xkeyboard-config/xkeyboard-config-2.45.tar.xz" ""
 
 
 # 1. mesa-demos (eglinfo, es2gears_wayland �~I)~
 build_meson mesa-demos "https://archive.mesa3d.org/demos/mesa-demos-9.0.0.tar.xz" "-Dwayland=enabled -Dx11=disabled -Dgles2=enabled"
+
+# build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" "-Dbuild-documentation=false -Dlibsigcplusplus:build-documentation=false -Dlibsigcplusplus-2.0:build-documentation=false"
 
 echo "=================================================="
 echo "    GUI Management Tools Build Complete!          "

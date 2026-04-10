@@ -19,6 +19,8 @@ else
     exit 1
 fi
 
+build_autotools nasm "https://www.nasm.us/pub/nasm/releasebuilds/3.01/nasm-3.01.tar.xz" ""
+
 # x264
 # グラフィックスの安定性を確保する
 build_autotools "x264" \
@@ -34,6 +36,25 @@ build_meson libva "https://github.com/intel/libva/releases/download/2.22.0/libva
 build_autotools "fdk-aac" \
     "https://downloads.sourceforge.net/opencore-amr/fdk-aac-2.0.3.tar.gz" \
     "--disable-static"
+
+# libvpx
+echo "===== Building libvpx ====="
+cd "$SRC"
+wget https://github.com/webmproject/libvpx/archive/v1.16.0/libvpx-1.16.0.tar.gz
+tar -xf libvpx-1.16.0.tar.gz
+cd libvpx-1.16.0
+mkdir -p build && cd build
+../configure --prefix=/usr \
+             --enable-shared \
+             --disable-static \
+             --enable-vp8 \
+             --enable-vp9 \
+             --enable-postproc \
+             --enable-vp9-highbitdepth \
+             --enable-pic > "$LOG/libvpx.log" 2>&1
+make -j$(nproc) >> "$LOG/libvpx.log" 2>&1
+make install >> "$LOG/libvpx.log" 2>&1
+cd "$ROOT_DIR"
 
 # 1. ffmpeg
 echo "===== Building FFMPEG ====="

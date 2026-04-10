@@ -84,10 +84,11 @@ build_rust_task() {
 
 build_mm_lib() {
     local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (MM-Special) ====="
+    echo "===== Building $NAME (meson lib) ====="
     local DIR=$(download_extract "$URL")
     cd "$DIR"
-    
+    rm -rf build
+ 
     # ドキュメント生成エラーを回避するためのダミーパス作成
     mkdir -p build/subprojects/mm-common
     touch build/subprojects/mm-common/libstdc++.tag

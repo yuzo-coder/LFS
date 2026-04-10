@@ -187,8 +187,18 @@ build_meson "libnvme" \
     "https://github.com/linux-nvme/libnvme/archive/v1.15/libnvme-1.15.tar.gz" \
     ""
 
+# libatasmart
+build_autotools "libatasmart" \
+    "http://0pointer.de/public/libatasmart-0.19.tar.xz" \
+    "--prefix=/usr --disable-static"
+
+# libyaml
+build_autotools "libyaml" \
+    "http://pyyaml.org/download/libyaml/yaml-0.1.7.tar.gz" \
+    "--prefix=/usr --disable-static"
+
 echo "===== Building libblockdev  ====="
-DIR=$(download_extract "https://github.com/storaged-project/libblockdev/releases/download/3.1.1/libblockdev-3.1.1.tar.gz")
+DIR=$(download_extract "https://ftp.lfs-matrix.net/pub/blfs/12.4/l/libblockdev-3.3.1.tar.gz")
 cd "$DIR"
 # 1. 問題の nvdimm.c を空のファイルで上書きする
 # これにより、依存関係（.h等）を一切無視して「中身なし」でコンパイルが終わります
@@ -215,11 +225,6 @@ echo "" > src/plugins/nvdimm.h
 make
 make install
 cd "$ROOT_DIR"
-
-# libatasmart
-build_autotools "libatasmart" \
-    "http://0pointer.de/public/libatasmart-0.19.tar.xz" \
-    "--prefix=/usr --disable-static"
 
 echo "===== Building udisks2 (Forcing MDRAID-skip) ====="
 DIR=$(download_extract "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.1/udisks-2.10.1.tar.bz2")
@@ -296,6 +301,14 @@ ln -sf /usr/lib/gvfs/libgvfsdaemon.so /usr/lib/gio/modules/
 # モジュールキャッシュの更新（必須）
 gio-querymodules /usr/lib/gio/modules
 
+# libfm-extra
+build_autotools "libfm-extra" \
+    "https://downloads.sourceforge.net/pcmanfm/libfm-1.3.2.tar.xz" \
+    "--sysconfdir=/etc \
+     --prefix=/usr \
+     --disable-static \
+     --with-extra-only"
+
 # menu-cache
 build_autotools "menu-cache" \
     "https://downloads.sourceforge.net/lxde/menu-cache-1.1.0.tar.xz" \
@@ -329,11 +342,11 @@ echo "===== pcmanfm ====="
 DIR=$(download_extract "https://downloads.sourceforge.net/pcmanfm/pcmanfm-1.3.2.tar.xz")
 cd "$DIR"
 # 5. 再構成（ログをしっかり取る）
-./configure --prefix=/usr --sysconfdir=/etc --with-gtk=3  > /LFSAutoBuilder/blfs/logs/pcmanfm_rebuild.log 2>&1
+./configure --prefix=/usr --sysconfdir=/etc --with-gtk=3  > "$LOG/pcmanfm.log" 2>&1
 # 6. ビルド（Z840の全コア投入）
-make -j$(nproc) >> /LFSAutoBuilder/blfs/logs/pcmanfm_rebuild.log 2>&1
+make -j$(nproc) >> "$LOG/pcmanfm.log" 2>&1
 # 7. インストール
-make install >> /LFSAutoBuilder/blfs/logs/pcmanfm_rebuild.log 2>&1
+make install >> "$LOG/pcmanfm.log" 2>&1
 # 共有ライブラリのキャッシュを更新
 ldconfig
 

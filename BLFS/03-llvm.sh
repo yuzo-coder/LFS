@@ -77,6 +77,7 @@ build_llvm_lfs_style() {
           -D CMAKE_SKIP_INSTALL_RPATH=ON         \
           -D LLVM_ENABLE_FFI=ON                  \
           -D CMAKE_BUILD_TYPE=Release            \
+          -D LLVM_ENABLE_PROJECTS="clang;lld"    \
           -D LLVM_BUILD_LLVM_DYLIB=ON            \
           -D LLVM_LINK_LLVM_DYLIB=ON             \
           -D LLVM_ENABLE_RTTI=ON                 \

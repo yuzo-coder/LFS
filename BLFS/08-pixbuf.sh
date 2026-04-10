@@ -91,34 +91,28 @@ build_cmake "libavif" \
 
 build_meson shared-mime-info "https://gitlab.freedesktop.org/xdg/shared-mime-info/-/archive/2.4/shared-mime-info-2.4.tar.gz" ""
 
-# 3. gdk-pixbuf (先にビルドして librsvg のインストール先を確定させる)
-build_meson "gdk-pixbuf" \
-    "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dbuiltin_loaders=png,jpeg -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=disabled -Dman=false -Dglycin=disabled"
-
-# cargo-c (Rust ライブラリを C 用にビルドするためのツール)
-# https://github.com/lu-zero/cargo-c/archive/v0.10.15/cargo-c-0.10.15.tar.gz
-echo "===== Building cargo-c (Rust/Cargo) ====="
-DIR=$(download_extract "https://github.com/lu-zero/cargo-c/archive/v0.10.15/cargo-c-0.10.15.tar.gz")
+# 5-1. libjpeg-turbo
+echo "===== Building libjpeg-turbo ====="
+DIR=$(download_extract "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz")
 cd "$DIR"
-# --release で最適化、--locked で依存関係を固定
-# 複数のバイナリ (cargo-cbuild, cargo-cinstall 等) が生成されます
-cargo build --release > "$LOG/cargo-c.log" 2>&1
-# 生成されたバイナリを /usr/bin へ配置
-cp target/release/cargo-c* "$PREFIX/bin/"
+rm -rf build && mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=RELEASE \
+      -DENABLE_STATIC=FALSE \
+      -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. > "$LOG/libjpeg-turbo.log" 2>&1
+make -j"$JOBS" >> "$LOG/libjpeg-turbo.log" 2>&1
+make install >> "$LOG/libjpeg-turbo.log" 2>&1
 ldconfig
 cd "$ROOT_DIR"
 
-# 4. librsvg (最重要：SVG アイコンの描画エンジン)
-# gdk-pixbuf の情報を pkg-config で強制的に認識させる
-export PKG_CONFIG_PATH="/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
-build_meson "librsvg" \
-    "https://download.gnome.org/sources/librsvg/2.62/librsvg-2.62.1.tar.xz" \
-    "-Dintrospection=disabled -Ddocs=disabled -Dvala=disabled -Dpixbuf=enabled \
-     -Dpixbuf-loader=enabled"
+# 3. gdk-pixbuf (先にビルドして librsvg のインストール先を確定させる)
+build_meson "gdk-pixbuf" \
+    "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
+    "-Dbuiltin_loaders=none -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=disabled -Dman=false -Dglycin=disabled"
 
-# 5. ローダーキャッシュの更新 (librsvg が入った後に行う)
-echo "Updating gdk-pixbuf loaders cache..."
-/usr/bin/gdk-pixbuf-query-loaders --update-cache
+gdk-pixbuf-query-loaders --update-cache
+
+update-mime-database /usr/share/mime
 
 echo "===== Image Stack Build Completed (Minimal) ====="

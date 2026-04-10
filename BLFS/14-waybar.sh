@@ -25,33 +25,7 @@ fi
 
 # build_meson at-spi2-core "https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-core-2.50.0.tar.xz" ""
 
-
 # --- 5. 画像処理スタック ---
-
-# 5-1. libjpeg-turbo
-echo "===== Building libjpeg-turbo ====="
-DIR=$(download_extract "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz")
-cd "$DIR"
-rm -rf build && mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_BUILD_TYPE=RELEASE \
-      -DENABLE_STATIC=FALSE \
-      -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. > "$LOG/libjpeg-turbo.log" 2>&1
-make -j"$JOBS" >> "$LOG/libjpeg-turbo.log" 2>&1
-make install >> "$LOG/libjpeg-turbo.log" 2>&1
-ldconfig
-cd "$ROOT_DIR"
-
-# 5-2. gdk-pixbuf
-build_meson "gdk-pixbuf" "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dglycin=disabled -Dpng=enabled -Djpeg=enabled -Dbuiltin_loaders=none -Dman=false -Dintrospection=disabled -Dtests=false"
-
-gdk-pixbuf-query-loaders --update-cache
-gdk-pixbuf-query-loaders > /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
-
-update-mime-database /usr/share/mime
-pkg-config --modversion shared-mime-info
 
 # GTK3 (Waylandのみ、内省/デモ無効)
 #build_meson gtk3 "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.41.tar.xz" \
@@ -115,11 +89,11 @@ echo "===== Building libxslt ====="
 
 # build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz" ""
 
-build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" ""
+# build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" ""
 
-build_meson "libepoxy" "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" "-Dx11=true -Dglx=yes"
+# build_meson "libepoxy" "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" "-Dx11=true -Dglx=yes"
 
-build_mm_lib gtkmm3 "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" "-Dbuild-demos=false -Dbuild-tests=false"
+# build_mm_lib gtkmm3 "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" "-Dbuild-demos=false -Dbuild-tests=false"
 
 # 4-4. その他依存 (iniparser, date)
 build_cmake iniparser "https://github.com/ndevilla/iniparser/archive/v4.2.4.tar.gz" "-DBUILD_SHARED_LIBS=ON"
@@ -153,6 +127,7 @@ cd "$WAYBAR_DIR"
 export CXXFLAGS="-std=c++20"
 
 meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
+    -Dlibnl=enabled \
     -Dcpp_std=c++20 \
     -Dtests=disabled \
     -Dman-pages=disabled \

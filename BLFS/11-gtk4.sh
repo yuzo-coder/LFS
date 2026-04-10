@@ -45,6 +45,8 @@ build_autotools "fontconfig" \
 
 build_mm_lib libsigc++ "https://download.gnome.org/sources/libsigc++/2.12/libsigc++-2.12.0.tar.xz" ""
 
+build_mm_lib libsigc++3 "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz" ""
+
 echo "===== Building mm-common ====="
 DIR=$(download_extract "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz")
 
@@ -59,14 +61,16 @@ ninja install >> "$LOG/mm-common.log" 2>&1
 cd "$ROOT_DIR"
 # ===== end mm-common ====="
 
-build_mm_lib cairomm "https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz" ""
+build_mm_lib cairomm "https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz" "--wrap-mode=nofallback"
 
-build_mm_lib libsigc++3 "https://download.gnome.org/sources/libsigc++/3.6/libsigc++-3.6.0.tar.xz" ""
-
-build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.80/glibmm-2.80.0.tar.xz" \
+build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.66/glibmm-2.66.7.tar.xz" \
     "-Dbuild-documentation=false"
 
 build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz" "-Dbuild-documentation=false"
+
+build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" "--wrap-mode=nofallback"
+
+build_meson gtkmm3 "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" "-Dbuild-demos=false -Dbuild-tests=false"
 
 # 4. gtkmm-4.0 (pavucontrol の直接の依存先)
 build_meson "gtkmm4" \

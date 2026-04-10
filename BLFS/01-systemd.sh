@@ -47,7 +47,9 @@ if ! command -v cmake &> /dev/null; then
 
     # 2. Curses を見つけられないようにダミーの値を設定（または空にする）
     # さらに GCC 15 対策のフラグを export
-    export CXXFLAGS="-O2 -fpermissive -DNCURSES_NOMACROS"
+    # -Wno-stack-usage を追加して「greatest stack depth」の報告を抑制します
+    export CFLAGS="-O2 -Wno-stack-usage"
+    export CXXFLAGS="-O2 -fpermissive -DNCURSES_NOMACROS -Wno-stack-usage"
 
     ./bootstrap \
         --prefix="$PREFIX" \

@@ -17,34 +17,30 @@ else
     exit 1
 fi
 
+build_meson "gvfs" \
+     "https://download.gnome.org/sources/gvfs/1.56/gvfs-1.56.1.tar.xz" \
+     "--prefix=/usr \
+     --buildtype=release \
+     -Dsmb=false \
+     -Dgphoto2=false \
+     -Dmtp=false \
+     -Dbluray=false \
+     -Ddnssd=false \
+     -Dgcr=false \
+     -Dkeyring=false \
+     -Dgoa=false \
+     -Dafc=false \
+     -Dfuse=false \
+     -Donedrive=false \
+     -Dnfs=false \
+     -Dgoogle=false \
+     -Dman=false"
 
-echo "===== Building glslang 16.2.0 ====="
+# root権限で実行
+ln -sf /usr/lib/gvfs/libgvfscommon.so /usr/lib/gio/modules/
+ln -sf /usr/lib/gvfs/libgvfsdaemon.so /usr/lib/gio/modules/
 
-cd "$SRC"
-wget https://github.com/KhronosGroup/glslang/archive/16.2.0/glslang-16.2.0.tar.gz
-tar -xf glslang-16.2.0.tar.gz
-cd glslang-16.2.0
+# モジュールキャッシュの更新（必須）
+gio-querymodules /usr/lib/gio/modules
 
-# 2. ビルド用ディレクトリの作成
-mkdir build && cd build
-
-# 3. CMake 実行
-# CXXFLAGS に -fpermissive を入れているのは、GCC 15対策です
-export CXXFLAGS="-O2 -fpermissive"
-
-cmake -D CMAKE_INSTALL_PREFIX=/usr \
-      -D CMAKE_BUILD_TYPE=Release   \
-      -D ENABLE_OPT=OFF            \
-      -G "Unix Makefiles" ..
-
-# 4. コンパイルとインストール
-make -j$(nproc)
-make install
-
-# 5. 後片付け
-ldconfig
-cd "$ROOT_DIR"
-
-# ビルドが終わったら後始末（スクリプトの最後に）
-echo "===== TEST COMPLETED ====="
-
+echo "===== COMPLETE ====="

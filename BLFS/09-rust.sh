@@ -44,13 +44,13 @@ cp target/release/cargo-c* "$PREFIX/bin/"
 ldconfig
 cd "$ROOT_DIR"
 
+build_meson cairo "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz" "-Dfontconfig=enabled -Dfreetype=enabled -Dxcb=enabled -Dxlib=enabled -Dtests=disabled"
+
 # --- 5. Font & Drawing Stack ---
 build_meson pixman "https://www.cairographics.org/releases/pixman-0.43.4.tar.gz" ""
 
 build_meson fribidi "https://github.com/fribidi/fribidi/releases/download/v1.0.15/fribidi-1.0.15.tar.xz" ""
 
-build_meson cairo "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz" \
-    "-Dfontconfig=enabled -Dfreetype=enabled -Dxcb=disabled -Dxlib=disabled -Dtests=disabled"
 
 build_meson pango "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz" "-Dintrospection=disabled"
 

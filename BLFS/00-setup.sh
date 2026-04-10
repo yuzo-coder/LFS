@@ -12,20 +12,13 @@ mkdir -p "$SRC" "$LOG"
 
 cd "$SRC"
 
-# 日本語キーボード
-loadkeys jp106
-
-cat > /etc/vconsole.conf << "EOF"
-KEYMAP=jp106
-FONT=lat0-16
-EOF
-
 # pkg-config の検索パスを永続化（未設定の場合のみ）
 if ! grep -q "PKG_CONFIG_PATH" /etc/profile; then
 cat >> /etc/profile << "EOF"
 # pkg-config の検索パスを追加
 # ${PKG_CONFIG_PATH:-}	変数が空（未定義）なら、右側の値（今回は空）を代入した体で進める。
 PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
+export PATH=$PATH:/usr/local/bin
 export PKG_CONFIG_PATH
 # export LANG=ja_JP.UTF-8
 # export LC_ALL=ja_JP.UTF-8
@@ -106,42 +99,33 @@ echo "===== Bash Color Setup Complete ====="
 echo "===== Configuring Network (systemd-networkd) ====="
 
 # 物理インターフェースの有効化
-# ens3 をアップ状態にします
-ip link set ens1 up || echo "Warning: ens1 not found or already up"
-ip link set ens2 up || echo "Warning: ens2 not found or already up"
-ip link set ens3 up || echo "Warning: ens3 not found or already up"
+# ループバック(lo)以外の、物理または仮想インターフェース名を取得
+INTERFACES=$(ip -o link show | awk -F': ' '{print $2}' | grep -v 'lo')
 
-#  ネットワーク設定ファイルの作成
 mkdir -p /etc/systemd/network
 
-cat > /etc/systemd/network/10-ens1.network << "EOF"
+for IFACE in $INTERFACES; do
+    echo "Found interface: $IFACE. Creating configuration..."
+    
+    cat > "/etc/systemd/network/10-${IFACE}.network" << EOF
 [Match]
-Name=ens1
+Name=${IFACE}
+
 [Network]
 DHCP=yes
 DNS=8.8.8.8
 EOF
 
-cat > /etc/systemd/network/10-ens2.network << "EOF"
-[Match]
-Name=ens2
-[Network]
-DHCP=yes
-DNS=8.8.8.8
-EOF
+    # インターフェースをUPにする
+    ip link set "$IFACE" up
+done
 
-cat > /etc/systemd/network/10-ens3.network << "EOF"
-[Match]
-Name=ens3
-[Network]
-DHCP=yes
-DNS=8.8.8.8
-EOF
+
 
 #  systemd-resolved の設定 (DNS解決に必要)
 # DNS=8.8.8.8 を反映させるため、resolved も有効化し、/etc/resolv.conf をリンクします
 systemctl enable systemd-resolved
-systemctl start systemd-resolved
+systemctl restart systemd-resolved
 ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 #  サービスの有効化と開始

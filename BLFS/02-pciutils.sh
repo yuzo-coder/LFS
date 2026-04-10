@@ -17,6 +17,20 @@ else
     exit 1
 fi
 
+echo "===== Building unzip ====="
+cd "$SRC"
+wget https://downloads.sourceforge.net/infozip/unzip60.tar.gz
+tar -xf unzip60.tar.gz
+cd unzip60
+# 2. 前回の gmtime エラーの修正だけを適用（これだけで十分です）
+sed -i 's/struct tm \*gmtime(), \*localtime();/\/* struct tm *gmtime(), *localtime(); *\//' unix/unxcfg.h
+gcc -c -I. -Ibzip2 -DUNIX -O3 -DLARGE_FILE_SUPPORT -DUNICODE_SUPPORT -DHAVE_DIRENT_H -DHAVE_TERMIOS_H *.c unix/unix.c
+# 1. unzip本体に関係ない、別の「main」を持つファイルを削除
+rm -f funzip.o gbloffs.o unzipstb.o unzipsfx.o
+gcc -o unzip *.o -lbz2
+cp -v unzip /usr/bin/
+cd "$ROOT_DIR"
+
 # 1. pciutils
 echo "===== Building PCIUTILS ====="
 cd "$SRC"
