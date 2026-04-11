@@ -31,7 +31,7 @@ build_autotools libffi "https://github.com/libffi/libffi/releases/download/v3.4.
 
 build_autotools pcre2 "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.43/pcre2-10.43.tar.gz" "--enable-unicode"
 
-build_meson glib2 "https://download.gnome.org/sources/glib/2.80/glib-2.80.4.tar.xz" "-Dtests=false"
+build_meson glib2 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/glib-2.84.4.tar.xz" "-Dtests=false"
 
 build_meson seatd "https://git.sr.ht/~kennylevinsen/seatd/archive/0.8.0.tar.gz" "-Dlibseat-builtin=enabled -Dserver=enabled -Dman-pages=disabled"
 

@@ -208,7 +208,7 @@ cd "$ROOT_DIR"
 
 # GLib 2.80.4 の再ビルド
 # 依存関係: gobject-introspection がインストール済みであること
-build_meson glib2 "https://download.gnome.org/sources/glib/2.80/glib-2.80.4.tar.xz" \
+build_meson glib2 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/glib-2.84.4.tar.xz" \
     "-Dintrospection=enabled -Dtests=false"
 
 build_meson atk "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/atk-2.38.0.tar.xz" \

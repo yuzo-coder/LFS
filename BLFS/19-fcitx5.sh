@@ -59,7 +59,7 @@ build_meson "libxkbcommon" \
 
 # glib-2.80.4 の再ビルド
 # 以前のビルドディレクトリがある場合は必ず削除してください (rm -rf build)
-build_meson glib2 "https://download.gnome.org/sources/glib/2.86/glib-2.86.4.tar.xz" \
+build_meson glib2 "https://download.gnome.org/sources/glib/2.86/glib-2.80.4.tar.xz" \
     "-Dtests=false" \
     "-Dintrospection=enabled"
 

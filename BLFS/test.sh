@@ -17,30 +17,11 @@ else
     exit 1
 fi
 
-build_meson "gvfs" \
-     "https://download.gnome.org/sources/gvfs/1.56/gvfs-1.56.1.tar.xz" \
-     "--prefix=/usr \
-     --buildtype=release \
-     -Dsmb=false \
-     -Dgphoto2=false \
-     -Dmtp=false \
-     -Dbluray=false \
-     -Ddnssd=false \
-     -Dgcr=false \
-     -Dkeyring=false \
-     -Dgoa=false \
-     -Dafc=false \
-     -Dfuse=false \
-     -Donedrive=false \
-     -Dnfs=false \
-     -Dgoogle=false \
-     -Dman=false"
 
-# root権限で実行
-ln -sf /usr/lib/gvfs/libgvfscommon.so /usr/lib/gio/modules/
-ln -sf /usr/lib/gvfs/libgvfsdaemon.so /usr/lib/gio/modules/
-
-# モジュールキャッシュの更新（必須）
-gio-querymodules /usr/lib/gio/modules
+# 2. libunwind 
+# グラフィックスの安定性を確保する
+build_autotools "libunwind" \
+    "https://download.savannah.nongnu.org/releases/libunwind/libunwind-1.6.2.tar.gz" \
+    "--disable-static --enable-coredump --host=x86_64-linux"
 
 echo "===== COMPLETE ====="

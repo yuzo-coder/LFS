@@ -100,7 +100,7 @@ echo "===== Configuring Network (systemd-networkd) ====="
 
 # 物理インターフェースの有効化
 # ループバック(lo)以外の、物理または仮想インターフェース名を取得
-INTERFACES=$(ip -o link show | awk -F': ' '{print $2}' | grep -v 'lo')
+INTERFACES=$(ip -o link show | awk -F': ' '{print $2}' | grep -E '^e(n|t)' | head -n 1)
 
 mkdir -p /etc/systemd/network
 

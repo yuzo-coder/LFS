@@ -27,7 +27,7 @@ fi
 
 # 1. libsndfile (音声ファイルの読み書きに必須)
 build_cmake "libsndfile" \
-    "https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/l/libsndfile-1.2.2.tar.xz" \
     "-DBUILD_SHARED_LIBS=ON -DENABLE_EXTERNAL_LIBS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 
 # 2. check (PulseAudioのビルドに推奨されるユニットテストフレームワーク)
