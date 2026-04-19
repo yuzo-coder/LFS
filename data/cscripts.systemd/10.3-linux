@@ -34,6 +34,7 @@ scripts/config --enable CONFIG_MAGIC_SYSRQ
 scripts/config --enable CONFIG_DEBUG_PREEMPT
 scripts/config --enable CONFIG_SCHED_DEBUG
 scripts/config --enable CONFIG_PRINTK
+scripts/config --disable CONFIG_DEBUG_STACK_USAGE
 
 # QEMU / virtio
 scripts/config --enable CONFIG_PCI
