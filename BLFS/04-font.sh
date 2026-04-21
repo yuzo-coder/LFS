@@ -23,17 +23,45 @@ fi
 # --- 3. フォントスタックのビルド ---
 # libpng, freetype, harfbuzz, fontconfig の順でビルド
 
-build_autotools libpng "https://downloads.sourceforge.net/libpng/libpng-1.6.43.tar.xz" ""
+#  libpng
+echo "===== Building libpng ====="
+
+cd "$SRC"
+
+wget https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz
+
+tar -xf libpng-1.6.45.tar.xz
+
+cd libpng-1.6.45
+
+# APNGパッチのダウンロード（バージョンが近いものを使用）
+wget https://downloads.sourceforge.net/project/libpng-apng/libpng16/1.6.45/libpng-1.6.45-apng.patch.gz
+
+# パッチの解凍と適用
+gunzip libpng-1.6.45-apng.patch.gz
+
+patch -p1 < libpng-1.6.45-apng.patch
+
+./configure --prefix=/usr --disable-static
+
+make
+
+make install
+
+ldconfig
+
+cd "$ROOT_DIR"
 
 # --- 2. FreeType (1回目: HarfBuzzなしでビルド) ---
 # --without-harfbuzz を明示的に指定して、中途半端なリンクを防ぎます
 build_autotools freetype "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz" \
     "--disable-static --without-harfbuzz"
 
+
 # --- 3. HarfBuzz (文字配置エンジン) ---
 # 先に入れた Freetype を使って HarfBuzz をビルドします
 build_meson harfbuzz "https://github.com/harfbuzz/harfbuzz/releases/download/8.3.1/harfbuzz-8.3.1.tar.xz" \
-    "-Dbenchmark=disabled"
+    "-Dbenchmark=disabled -Dintrospection=enabled"
 
 # --- 4. FreeType (2回目: HarfBuzzを有効にして再ビルド) ---
 # 今度は HarfBuzz がシステムにあるので、自動的に認識して高品質な描画が可能になります

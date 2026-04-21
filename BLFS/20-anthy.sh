@@ -54,24 +54,18 @@ make install >> "$LOG/fcitx5-anthy_build.log" 2>&1
 ldconfig
 
 # 設定ディレクトリの作成
-mkdir -p /home/user/.config/fcitx5
+mkdir -p /etc/xdg/fcitx5
 
-# プロファイル設定の書き込み
-cat << 'EOF' > /home/user/.config/fcitx5/profile
-[Groups/0]
-# グループ名
+# profile などの設定ファイルを配置
+cat << 'EOF' > /etc/xdg/fcitx5/profile
+[GroupOrder]
+0=Default
+
+[Group/0]
 Name=Default
-# デフォルトの入力方法
-Default Layout=jp
+DefaultLayout=jp
 DefaultIM=anthy
-[Groups/0/Items/0]
-Name=keyboard-jp
-Layout=
-[Groups/0/Items/1]
-Name=anthy
-Layout=
 EOF
-
 
 # プロファイル設定の書き込み
 cat << 'EOF' > /home/user/.bash_profile

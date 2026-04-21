@@ -57,11 +57,11 @@ build_meson "libxkbcommon" \
     "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" \
     "-Denable-x11=true"
 
-# glib-2.80.4 の再ビルド
+# glib-2.84.4 の再ビルド
 # 以前のビルドディレクトリがある場合は必ず削除してください (rm -rf build)
-build_meson glib2 "https://download.gnome.org/sources/glib/2.86/glib-2.80.4.tar.xz" \
-    "-Dtests=false" \
-    "-Dintrospection=enabled"
+#build_meson glib2 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/glib-2.84.4.tar.xz" \
+#    "-Dtests=false" \
+#    "-Dintrospection=enabled"
 
 # 3. fcitx5 本体
 # 依存関係として libevent, libuuid が必要です
@@ -73,24 +73,6 @@ build_cmake "fcitx5" \
 build_cmake "fcitx5-gtk" \
     "https://github.com/fcitx/fcitx5-gtk/archive/refs/tags/5.1.4.tar.gz" \
     "-DENABLE_GTK2_IM_MODULE=OFF -DENABLE_GTK3_IM_MODULE=ON -DENABLE_GTK4_IM_MODULE=OFF"
-
-# 5. fcitx5-mozc (日本語入力エンジン)
-echo "===== Building fcitx5-mozc ====="
-# タグを指定して再帰的にクローン（サブモジュールも含む）
-git clone --recursive https://github.com/fcitx/mozc.git fcitx5-mozc-src
-cd fcitx5-mozc-src/src
-
-# Fcitx5-Mozc は src ディレクトリ内に CMakeLists.txt があります
-mkdir -p build && cd build
-cmake -DCMAKE_INSTALL_PREFIX="/usr" \
-      -DENABLE_QT=OFF \
-      -DCMAKE_BUILD_TYPE=Release \
-      .. > "$LOG/fcitx5-mozc.log" 2>&1
-
-make -j$(nproc) >> "$LOG/fcitx5-mozc.log" 2>&1
-make install >> "$LOG/fcitx5-mozc.log" 2>&1
-ldconfig
-cd "$ROOT_DIR"
 
 echo "===== 15 FCITX Build Completed  ====="
 

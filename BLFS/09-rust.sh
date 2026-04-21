@@ -52,7 +52,8 @@ build_meson pixman "https://www.cairographics.org/releases/pixman-0.43.4.tar.gz"
 build_meson fribidi "https://github.com/fribidi/fribidi/releases/download/v1.0.15/fribidi-1.0.15.tar.xz" ""
 
 
-build_meson pango "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz" "-Dintrospection=disabled"
+build_meson pango "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz" "-Dintrospection=eabled"
+
 
 # 4. librsvg (最重要：SVG アイコンの描画エンジン)
 # gdk-pixbuf の情報を pkg-config で強制的に認識させる

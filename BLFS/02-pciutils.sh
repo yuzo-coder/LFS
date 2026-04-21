@@ -17,6 +17,19 @@ else
     exit 1
 fi
 
+echo "===== Building lsof ====="
+cd "$SRC"
+wget https://github.com/lsof-org/lsof/releases/download/4.99.6/lsof-4.99.6.tar.gz
+tar -xf lsof-4.99.6.tar.gz
+cd lsof-4.99.6
+./configure
+make
+
+install -v -m0755 -s lsof /usr/bin
+install -v -m0644 Lsof.8 /usr/share/man/man8
+
+cd "$ROOT_DIR"
+
 echo "===== Building unzip ====="
 cd "$SRC"
 wget https://downloads.sourceforge.net/infozip/unzip60.tar.gz
@@ -29,6 +42,23 @@ gcc -c -I. -Ibzip2 -DUNIX -O3 -DLARGE_FILE_SUPPORT -DUNICODE_SUPPORT -DHAVE_DIRE
 rm -f funzip.o gbloffs.o unzipstb.o unzipsfx.o
 gcc -o unzip *.o -lbz2
 cp -v unzip /usr/bin/
+cd "$ROOT_DIR"
+
+echo "===== Building pgrep ====="
+
+cd "$SRC"
+wget https://downloads.sourceforge.net/project/procps-ng/Production/procps-ng-4.0.5.tar.xz
+tar -xf procps-ng-4.0.5.tar.xz
+cd procps-ng-4.0.5
+
+sed -i '62i #include <stdbool.h>' src/watch.c
+
+./configure
+
+make
+
+make install
+
 cd "$ROOT_DIR"
 
 # 1. pciutils
@@ -63,5 +93,31 @@ ldconfig
 # 5. PCI ID データベースの更新（ネットワークが必要）
 # これにより最新のGPU名などが正しく表示されます
 update-pciids
+
+
+echo "===== gdb ====="
+cd "$SRC"
+
+wget https://ftp.gnu.org/gnu/gdb/gdb-16.3.tar.xz
+
+rm -rf gdb-16.3
+
+tar -xf gdb-16.3.tar.xz
+
+cd gdb-16.3
+
+export CXXFLAGS="${CXXFLAGS:-} -fpermissive -D_GLIBCXX_HAVE_STDBOOL_H -DNCURSES_BOOL=bool"
+export CPPFLAGS="${CPPFLAGS:-} -DNCURSES_NOMACROS"
+
+./configure --prefix=/usr \
+            --with-system-readline \
+            --with-python=/usr/bin/python3 \
+            --disable-source-highlight
+
+# --disable-tui
+
+make
+
+make install
 
 echo "===== PCIUTILS installation completed! ====="

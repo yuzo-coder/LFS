@@ -7,6 +7,7 @@ PREFIX=/usr
 ROOT_DIR=$(pwd)
 SRC=$ROOT_DIR/sources
 LOG=$ROOT_DIR/logs
+export MAKEFLAGS="-j$(nproc)"
 
 mkdir -p "$SRC" "$LOG"
 
@@ -15,11 +16,13 @@ cd "$SRC"
 # pkg-config の検索パスを永続化（未設定の場合のみ）
 if ! grep -q "PKG_CONFIG_PATH" /etc/profile; then
 cat >> /etc/profile << "EOF"
+loadkeys jp106
 # pkg-config の検索パスを追加
 # ${PKG_CONFIG_PATH:-}	変数が空（未定義）なら、右側の値（今回は空）を代入した体で進める。
 PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
 export PATH=$PATH:/usr/local/bin
 export PKG_CONFIG_PATH
+export MAKEFLAGS="-j$(nproc)"
 # export LANG=ja_JP.UTF-8
 # export LC_ALL=ja_JP.UTF-8
 EOF
@@ -46,6 +49,8 @@ if [ -d /etc/profile.d ]; then
   done
   unset i
 fi
+
+loadkeys jp106
 EOF
 fi
 

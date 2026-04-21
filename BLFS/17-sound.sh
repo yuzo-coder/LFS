@@ -82,6 +82,9 @@ ALSA_UTILS_URL="https://www.alsa-project.org/files/pub/utils/alsa-utils-1.2.11.t
 ALSA_UTILS_OPTS="--disable-alsaconf --disable-bat --disable-xmlto --with-curses=ncursesw"
 build_autotools "alsa-utils" "$ALSA_UTILS_URL" "$ALSA_UTILS_OPTS"
 
+# /var/lib/alsa/asound.state作成
+alsactl store
+
 # 再ビルドの実行
 build_meson "pipewire" \
     "https://github.com/PipeWire/pipewire/archive/refs/tags/1.0.7.tar.gz" \
@@ -124,6 +127,11 @@ WIREPLUMBER_URL="https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0
 # ドキュメント作成(Pandoc/Doxygen)を無効にし、システムLuaを使用するように設定
 WIREPLUMBER_OPTS="-Ddoc=disabled -Dsystem-lua=true -Dintrospection=disabled"
 build_meson "wireplumber" "$WIREPLUMBER_URL" "$WIREPLUMBER_OPTS"
+
+# apulse
+build_cmake "apulse" \
+    "https://github.com/i-rinat/apulse/archive/refs/tags/v0.1.14.tar.gz" \
+    ""
 
 echo "===== ALSA & WirePlumber installation completed! ====="
 echo "Next steps:"

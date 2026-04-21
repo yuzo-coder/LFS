@@ -1,6 +1,51 @@
 #!/bin/bash
 set -euo pipefail
 
+echo "===== /usr/bin/start-sway ====="
+
+cat << 'EOF' > /usr/bin/start-sway
+#!/bin/bash
+# 1. ユーザー環境変数のクリーンアップと設定
+# Wayland関連の環境変数を定義
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=sway
+export MOZ_ENABLE_WAYLAND=1
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# 日本語入力 (Fcitx5) 関連の設定
+export XMODIFIERS="@im=fcitx"
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+
+# 2. XDG_RUNTIME_DIR の確認（LFSでは重要）
+# これがないとWaybarやFcitx5がソケットを作れずエラーになります
+if [ -z "$XDG_RUNTIME_DIR" ]; then
+    export XDG_RUNTIME_DIR=/run/user/$(id -u)
+    if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+        mkdir -p "$XDG_RUNTIME_DIR"
+        chmod 700 "$XDG_RUNTIME_DIR"
+        chown $(id -u):$(id -g) "$XDG_RUNTIME_DIR"
+    fi
+fi
+
+# 3. GLibスキーマのキャッシュ更新（念のための自動化）
+# 起動時の「スキーマがありません」エラーを未然に防ぎます
+if [ -d /usr/share/glib-2.0/schemas ]; then
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+fi
+
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# tty1でsway実行
+export XDG_vt=1
+
+# 4. SwayをD-Busセッション経由で起動
+# これにより Waybar, Fcitx5, Portal が互いに通信可能になります
+exec dbus-run-session sway > /home/user/sway.log 2>&1
+EOF
+
+echo "===== /etc/sway/config ====="
+
 # 既存のファイルを削除
 rm -f /etc/sway/config
 
@@ -18,7 +63,7 @@ set $menu dmenu_path | wmenu | xargs swaymsg exec --
 
 ### Output configuration
 output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-output * resolution 1024x768
+output * resolution 1920x1080
 
 ### Key bindings
     bindsym $mod+Return exec $term > /tmp/foot.log 2>&1
@@ -117,10 +162,18 @@ exec_always {
     gsettings set org.gnome.desktop.interface cursor-size 24
 }
 
-exec fcitx5 -d
+exec_always fcitx5 -d --replace
+
+exec pipewire
+exec wireplumber
+
+exec dbus-update-activation-environment --all
 
 include /etc/sway/config.d/*
+
 EOF
+
+echo "===== /etc/xdg/waybar/config ====="
 
 # 既存のディレクトリ・ファイルを整理
 mkdir -p /etc/xdg/waybar
@@ -138,6 +191,7 @@ cat << 'EOF' > /etc/xdg/waybar/config
         "sway/workspaces",
         "custom/foot",
         "custom/pcmanfm",
+        "custom/firefox",
         "sway/mode",
         "sway/scratchpad"
     ],
@@ -178,6 +232,11 @@ cat << 'EOF' > /etc/xdg/waybar/config
         "on-click": "pcmanfm",
         "tooltip": true,
         "tooltip-format": "File Manager"
+    },
+    "custom/firefox": {
+        "format": "", // Font Awesomeなどのアイコンフォントが必要
+        "on-click": "/usr/bin/start-firefox.sh",
+        "tooltip": false
     },
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
@@ -239,7 +298,11 @@ cat << 'EOF' > /etc/xdg/waybar/config
         "on-click": "wlogout"
     }
 }
+
 EOF
+
+
+echo "===== /etc/xdg/waybar/style.css ====="
 
 # 既存のファイルを削除
 rm -f /etc/xdg/waybar/style.css
@@ -390,6 +453,21 @@ button:hover {
 #custom-pcmanfm:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #fce94f; /* ホバー時に明るくする */
+}
+
+#custom-firefox {
+    color: #ff9500; /* Firefoxブランドのオレンジ色 */
+    background-color: transparent;
+    padding: 0 10px;
+    margin: 0 4px;
+    font-size: 18px; /* アイコンの大きさ */
+    transition: all 0.3s ease; /* ホバー時のアニメーション */
+}
+
+#custom-firefox:hover {
+    color: #ffb347; /* ホバー時に少し明るく */
+    background-color: rgba(255, 255, 255, 0.1); /* ほんのり背景を明るく */
+    border-radius: 4px;
 }
 
 #clock {
@@ -610,6 +688,7 @@ label:focus {
 #privacy-item.audio-out {
     background-color: #0069d4;
 }
+
 EOF
 
 # 既存のディレクトリ作成とファイル削除
@@ -991,6 +1070,49 @@ sort_sensitive = false
 sort_reverse 	 = false
 sort_translit  = false
 EOF
+
+echo "===== /usr/bin/start-firefox ====="
+cat << 'EOF' > /usr/bin/start-firefox
+
+#!/bin/bash
+
+# pgrepでチェック（/usr/local/bin にあるのでフルパスかパスを確認）
+if ! pgrep -x "fcitx5" > /dev/null; then
+    /usr/bin/fcitx5 -d
+    sleep 0.5
+fi
+
+# --- Wayland / Fcitx5 連携のコア設定 ---
+export MOZ_ENABLE_WAYLAND=1
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+
+# ALSAを直接使う指定
+export MOZ_ALSA_DEVICE=default
+# 念のため、サウンドバックエンドを強制
+export MOZ_PULSE_DISABLE=1
+
+# --- サンドボックスとGPU偽装（既存） ---
+# export MOZ_SANDBOX_ALLOW_SHM=1
+# export MOZ_SANDBOX_ALLOW_SYSV_SHM=1
+#export MOZ_GECKO_SANDBOX_ALLOW_PATH="/dev/dri/:/dev/shm/"
+# export MOZ_GFX_SPOOF_GL_VENDOR="NVIDIA Corporation"
+# export MOZ_GFX_SPOOF_GL_RENDERER="NVIDIA GeForce RTX 2070/PCIe/SSE2"
+
+# 環境変数でサンドボックスを無効化して起動
+export MOZ_DISABLE_CONTENT_SANDBOX=1
+export MOZ_DISABLE_RDD_SANDBOX=1
+export LD_LIBRARY_PATH=/usr/lib
+export MOZ_WEBRENDER=0
+export MOZ_ACCEL_HWA=0
+
+# Firefox 起動
+firefox > /home/user/firefox.log 2>&1 &
+# firefox --safe-mode
+EOF
+
+chmod +x /usr/bin/start-firefox
 
 echo "===== SWAY CONFIG COMPLETE ====="
 

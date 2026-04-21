@@ -294,10 +294,6 @@ build_meson "gvfs" \
      -Dgoogle=false \
      -Dman=false"
 
-# root権限で実行
-ln -sf /usr/lib/gvfs/libgvfscommon.so /usr/lib/gio/modules/
-ln -sf /usr/lib/gvfs/libgvfsdaemon.so /usr/lib/gio/modules/
-
 # モジュールキャッシュの更新（必須）
 gio-querymodules /usr/lib/gio/modules
 

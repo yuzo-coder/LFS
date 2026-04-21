@@ -71,6 +71,16 @@ make -f Makefile.sharedlibrary
 make -f Makefile.sharedlibrary install INSTALL_PREFIX=/usr
 cd ..
 
+
+# 1. まずグループとユーザーを作る
+groupadd -g 27 polkitd &&
+useradd -c "PolicyKit Daemon User" -d /var/lib/polkit -u 27 -g polkitd -s /bin/false polkitd
+
+# 2. 次にディレクトリを作って所有権を変える
+mkdir -p /var/lib/polkit
+chown -v polkitd:polkitd /var/lib/polkit
+chmod -v 750 /var/lib/polkit
+
 # Polkit (権限管理フレームワーク)
 # 依存関係を最小限にしてビルドを通します
 build_meson "polkit" \
@@ -191,8 +201,17 @@ build_meson "libsecret" \
 #     -Dglib=enabled"
 
 echo "===== Building gobject-introspection  ====="
-DIR=$(download_extract "https://download.gnome.org/sources/gobject-introspection/1.80/gobject-introspection-1.80.1.tar.xz") 
-cd "$DIR"
+
+cd "$SRC"
+
+rm -rf gobject-introspection-1.80.1
+
+wget https://download.gnome.org/sources/gobject-introspection/1.80/gobject-introspection-1.80.1.tar.xz 
+
+tar -xf gobject-introspection-1.80.1.tar.xz
+
+cd gobject-introspection-1.80.1
+
 # MSVCCompiler をダミーのクラスで定義し、NameError を回避する
 sed -i 's/from distutils.msvccompiler import MSVCCompiler/class MSVCCompiler: pass/' giscanner/ccompiler.py
 
@@ -202,9 +221,13 @@ meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
     -Dgtk_doc=false \
     -Ddoctool=disabled \
     -Dpython=python3 > $LOG/gobject.log 2>&1 
+
 ninja -C build -j"$JOBS" >> "$LOG/gobject.log" 2>&1
+
 ninja -C build install >> "$LOG/gobject.log" 2>&1
+
 cd "$ROOT_DIR"
+
 
 # GLib 2.80.4 の再ビルド
 # 依存関係: gobject-introspection がインストール済みであること

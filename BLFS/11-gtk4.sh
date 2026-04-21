@@ -22,10 +22,11 @@ fi
 
 # --- GTK4 Stack Dependencies ---
 
+
 # 1. graphene (GTK4に必須の数学ライブラリ)
 build_meson "graphene" \
     "https://github.com/ebassi/graphene/archive/refs/tags/1.10.8.tar.gz" \
-    "-Dintrospection=disabled"
+    "-Dintrospection=enabled"
 
 # 2. libepoxy (GPU描画の管理)
 # build_meson "libepoxy" \
@@ -35,7 +36,8 @@ build_meson "graphene" \
 # ※ビルドに時間がかかりますが、Z840なら数分です。
 build_meson "gtk4" \
     "https://download.gnome.org/sources/gtk/4.12/gtk-4.12.5.tar.xz" \
-    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=disabled -Dvulkan=disabled -Dx11-backend=false -Dmedia-gstreamer=disabled"
+    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=disabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=disabled"
+
 
 # Fontconfig 2.17.1 (最新安定版)
 # ※ これが Pango の要求を満たします
@@ -69,6 +71,16 @@ build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.66/glibmm-2.66.
 build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz" "-Dbuild-documentation=false"
 
 build_mm_lib atkmm "https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.4.tar.xz" "--wrap-mode=nofallback"
+
+
+groupadd -g 133 rtkit &&
+useradd -c "RealtimeKit Daemon User" -d /var/lib/rtkit -u 133 -g rtkit -s /bin/false rtkit
+
+mkdir -p /var/lib/rtkit
+chown rtkit:rtkit /var/lib/rtkit
+chmod 750 /var/lib/rtkit 
+    
+build_meson rtkit "https://github.com/heftig/rtkit/releases/download/v0.13/rtkit-0.13.tar.xz" "-Dlibsystemd=disabled"
 
 build_meson gtkmm3 "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" "-Dbuild-demos=false -Dbuild-tests=false"
 

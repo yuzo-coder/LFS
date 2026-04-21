@@ -28,6 +28,9 @@ su - user -c "rustup default stable"
 # user に切り替えてインストール
 su - user -c "cargo install cbindgen"
 
+build_autotools libevent "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz" ""
+
+
 # --- 2. Firefox 専用ビルド処理 ---
 FIREFOX_URL="https://archive.mozilla.org/pub/firefox/releases/140.9.0esr/source/firefox-140.9.0esr.source.tar.xz"
 TAR_NAME="firefox-140.9.0esr.source.tar.xz"
@@ -35,13 +38,14 @@ NAME="firefox-140.9.0" # 解凍後のディレクトリ名に合わせる
 
 echo "===== Building $NAME ====="
 cd "$SRC"
+rm -rf firefox-140.9.0
 [ -f "$TAR_NAME" ] || wget "$FIREFOX_URL"
 tar xf "$TAR_NAME"
 cd "$NAME"
 
 # 念のため .mozconfig にフルパスを教える
-echo "ac_add_options --with-rustc=/usr/bin/rustc" >> /LFSAutoBuilder/blfs/sources/firefox-140.9.0/.mozconfig
-echo "ac_add_options --with-cargo=/usr/bin/cargo" >> /LFSAutoBuilder/blfs/sources/firefox-140.9.0/.mozconfig
+echo "ac_add_options --with-rustc=/usr/bin/rustc" >> "$SRC/firefox-140.9.0/.mozconfig"
+echo "ac_add_options --with-cargo=/usr/bin/cargo" >> "$SRC/firefox-140.9.0/.mozconfig"
 
 # 重要：一般ユーザーがビルドできるように所有権を変更
 chown -R user:user .
@@ -51,36 +55,42 @@ chown -R user:user .
 cat << EOF > .mozconfig
 ac_add_options --prefix=/usr
 ac_add_options --enable-application=browser
-ac_add_options --enable-optimize
+ac_add_options --enable-optimize="-O2 -march=native"
 ac_add_options --enable-release
-# ★重要：MOZ_OBJDIR を独立させ、メモリ(tmpfs)を指定
+
+# ビルドディレクトリ
 mk_add_options MOZ_OBJDIR=/tmp/firefox-build
-mk_add_options MOZ_MAKE_FLAGS="-j$(nproc)"
-# 全コアではなく、メモリ 8GB なら 2〜4 程度に抑えるのが安全です
+# Z840ならメモリに余裕があるはずですが、リンク時のメモリ消費が激しいので -j4 程度は賢明です
 mk_add_options MOZ_MAKE_FLAGS="-j4"
 
-# システムライブラリの利用
-# ac_add_options --with-system-icu
-ac_add_options --with-system-zlib
-ac_add_options --with-system-webp
-# ac_add_options --with-system-png
-ac_add_options --with-system-jpeg
+# --- マルチメディア関連 (ここが重要) ---
+# システムの ffmpeg を使うことを明示 (AAC/MP4再生に必須)
 ac_add_options --with-system-libvpx
 ac_add_options --with-system-ffi
-ac_add_options --enable-alsa
-ac_add_options --enable-pulseaudio
+
+# --- グラフィックス関連 ---
+# Wayland サポートを確実に有効化
+ac_add_options --enable-default-toolkit=cairo-gtk3-wayland
+
+
+
+# バックエンドをALSAだけに固定することで、自動推論による衝突を防ぐ
+ac_add_options --enable-audio-backends=alsa
+
+# --- 不要な機能の無効化 (ビルド時間短縮) ---
 ac_add_options --disable-tests
 ac_add_options --disable-debug
 ac_add_options --disable-crashreporter
 ac_add_options --disable-updater
-ac_add_options --without-wasm-sandboxed-libraries
+ac_add_options --disable-accessibility
 ac_add_options --disable-gecko-profiler
-ac_add_options --target=x86_64-pc-linux-gnu
-ac_add_options --host=x86_64-pc-linux-gnu
-ac_add_options --with-toolchain-prefix=x86_64-pc-linux-gnu-
-# Rustの最適化レベルを上げる
+ac_add_options --without-wasm-sandboxed-libraries
+
+# Rust最適化
+ac_add_options --enable-rust-simd
 mk_add_options MOZ_RUST_DEFAULT_FLAGS="-C target-cpu=native"
 EOF
+
 
 # 所有権を再度確認（.mozconfig を root が作った場合に備えて）
 chown user:user .mozconfig
@@ -113,21 +123,34 @@ export BINDGEN_EXTRA_CLANG_ARGS="-march=native"
 # もしLFS環境でターゲットトリプルに厳格なら、以下も併用
 export BINDGEN_EXTRA_CLANG_ARGS="$BINDGEN_EXTRA_CLANG_ARGS -target x86_64-unknown-linux-gnu"
 
-# 4. ビルド実行
-# HOME を指定することで /root/.mozbuild へのアクセスを回避します
-echo "Cleaning up..."
-su -m user -c "HOME=/home/user ./mach clobber" > "$LOG/firefox.log" 2>&1
+# 1. 物理ディスク上のビルドディレクトリを準備
+# (メモリ溢れを防ぐため、ソースツリー内に置くのがLFSでは安全です)
+OBJDIR="$SRC/firefox-140.9.0/obj-firefox"
+mkdir -p "$OBJDIR"
+chown -R user:user "$OBJDIR"
+chown -R user:user "$SRC/firefox-140.9.0"
+
+# 2. .mozconfig の OBJDIR を物理ディスクに書き換え
+# (もし /tmp/firefox-build になっていたら、ここを物理パスに！)
+sed -i "s|mk_add_options MOZ_OBJDIR=.*|mk_add_options MOZ_OBJDIR=$OBJDIR|" .mozconfig
+
+echo "Cleaning up permissions..."
+rm -rf /tmp/firefox-build  # 念のため古い残骸を消去
 
 echo "Building... (Log: tail -f $LOG/firefox.log)"
-# RUSTUP_TOOLCHAIN=stable を加えることで、rustup 経由のチェックを強制通過させます
-# su コマンドの中で直接環境変数をセットして実行
-su -m user -c "HOME=/home/user \
-    PATH=\$PATH:/home/user/.cargo/bin \
-    CFLAGS='-march=native -DSYS_SECCOMP=317' \
-    CXXFLAGS='-march=native -DSYS_SECCOMP=317' \
-    BINDGEN_EXTRA_CLANG_ARGS='-march=native -target x86_64-unknown-linux-gnu' \
-    RUSTC=/usr/bin/rustc \
-    CARGO=/usr/bin/cargo \
+
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/local/lib/pkgconfig
+
+# su - user -c '...' を使う
+# -m (preserve environment) は使わず、ログインシェルで実行するのが一番安定します
+su - user -c "
+    cd $SRC/firefox-140.9.0 && \
+    export PATH=\$PATH:/home/user/.cargo/bin && \
+    export CFLAGS='-march=native -DSYS_SECCOMP=317' && \
+    export CXXFLAGS='-march=native -DSYS_SECCOMP=317' && \
+    export BINDGEN_EXTRA_CLANG_ARGS='-march=native -target x86_64-unknown-linux-gnu' && \
+    export RUSTC=/usr/bin/rustc && \
+    export CARGO=/usr/bin/cargo && \
     ./mach build" >> "$LOG/firefox.log" 2>&1
 
 # 5. インストール（root権限）
@@ -137,7 +160,5 @@ echo "Installing Firefox..."
 ldconfig
 cd "$ROOT_DIR"
 
-# ビルドが終わったら後始末（スクリプトの最後に）
-umount /usr/lib/clang/18/include/mmintrin.h
 echo "===== FIREFOX COMPLETED ====="
 

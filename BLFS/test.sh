@@ -17,11 +17,7 @@ else
     exit 1
 fi
 
+build_autotools libpng "https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz" ""
 
-# 2. libunwind 
-# グラフィックスの安定性を確保する
-build_autotools "libunwind" \
-    "https://download.savannah.nongnu.org/releases/libunwind/libunwind-1.6.2.tar.gz" \
-    "--disable-static --enable-coredump --host=x86_64-linux"
 
 echo "===== COMPLETE ====="

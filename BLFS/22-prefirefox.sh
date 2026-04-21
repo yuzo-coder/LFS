@@ -67,4 +67,8 @@ make -j$(nproc) >> "$LOG/libwebp.log" 2>&1
 make install >> "$LOG/libwebp.log" 2>&1
 cd "$ROOT_DIR"
 
+build_autotools libevent "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz" ""
+
+
+
 echo "===== Pre-Firefox installation completed! ====="

@@ -39,11 +39,19 @@ build_autotools "fdk-aac" \
 
 # libvpx
 echo "===== Building libvpx ====="
+
 cd "$SRC"
+
+rm -rf libvpx-1.16.0
+
 wget https://github.com/webmproject/libvpx/archive/v1.16.0/libvpx-1.16.0.tar.gz
+
 tar -xf libvpx-1.16.0.tar.gz
+
 cd libvpx-1.16.0
+
 mkdir -p build && cd build
+
 ../configure --prefix=/usr \
              --enable-shared \
              --disable-static \
@@ -52,15 +60,24 @@ mkdir -p build && cd build
              --enable-postproc \
              --enable-vp9-highbitdepth \
              --enable-pic > "$LOG/libvpx.log" 2>&1
+
 make -j$(nproc) >> "$LOG/libvpx.log" 2>&1
+
 make install >> "$LOG/libvpx.log" 2>&1
+
 cd "$ROOT_DIR"
 
 # 1. ffmpeg
 echo "===== Building FFMPEG ====="
+
 cd "$SRC"
+
+rm -rf ffmpeg-7.1
+
 wget https://ftp.lfs-matrix.net/pub/blfs/12.3/f/ffmpeg-7.1.tar.xz
+
 tar xf ffmpeg-7.1.tar.xz
+
 cd ffmpeg-7.1
 
 # 1. configure を手動で実行（設定を生成する）
@@ -78,9 +95,7 @@ cd ffmpeg-7.1
             --enable-runtime-cpudetect  \
             --enable-libfdk-aac         \
             --disable-debug             \
-            --disable-doc               \
-            --extra-cflags="-march=native -O2" \
-            --extra-cxxflags="-march=native -O2"
+            --disable-doc
 
 # 2. 上記が成功したら make を実行
 # (config.mak が作成されているので、今度はエラーになりません)
@@ -88,6 +103,7 @@ make -j$(nproc)
 
 # 3. インストール
 make install
+
 ldconfig
 
 echo "=================================================="

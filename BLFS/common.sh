@@ -1,6 +1,8 @@
 #!/bin/bash
 # common.sh
 
+export MAKEFLAGS="-j$(nproc)"
+
 download_extract() {
     local URL=$1
     local TAR=${URL##*/}
@@ -18,6 +20,7 @@ build_autotools() {
     local NAME=$1; local URL=$2; local CONF_OPTS=$3
     echo "===== Building $NAME (autotools) ====="
     local DIR=$(download_extract "$URL")
+    echo "$DIR"
     cd "$DIR"
 
     # 以前のビルド残骸を掃除
@@ -48,6 +51,7 @@ build_meson() {
         DIR=$(download_extract "$URL_OR_GIT")
     fi
 
+    echo "$DIR"
     cd "$DIR"
     rm -rf build
     meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
@@ -88,14 +92,13 @@ build_mm_lib() {
     local DIR=$(download_extract "$URL")
     cd "$DIR"
     rm -rf build
- 
+
     # ドキュメント生成エラーを回避するためのダミーパス作成
     mkdir -p build/subprojects/mm-common
     touch build/subprojects/mm-common/libstdc++.tag
-    
     meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release \
         -Dbuild-documentation=false $EXTRA > "$LOG/$NAME.log" 2>&1
-    
+
     # libsigc++関連のパスも保険で作成
     mkdir -p build/subprojects/libsigcplusplus-2.0/docs/manual/html
     

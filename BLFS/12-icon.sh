@@ -36,6 +36,8 @@ build_meson "fuse3" \
 
 [ -e /dev/fuse ] || mknod /dev/fuse c 10 229
 
+chmod 4755 /usr/bin/fusermount3
+
 # fuse3 の後、xdg-desktop-portal の前に追加
 build_meson "pipewire" \
     "https://github.com/PipeWire/pipewire/archive/refs/tags/1.0.7.tar.gz" \
