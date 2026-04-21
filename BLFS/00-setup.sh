@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- 1. 環境設定 ---
+# Preferences
 JOBS=$(nproc)
 PREFIX=/usr
 ROOT_DIR=$(pwd)
@@ -16,34 +16,20 @@ cd "$SRC"
 # Japansene Keyboard Keymap
 localectl set-keymap jp106
 
-# pkg-config の検索パスを永続化（未設定の場合のみ）
-if ! grep -q "PKG_CONFIG_PATH" /etc/profile; then
+# /etc/profile
 cat >> /etc/profile << "EOF"
 loadkeys jp106
-# pkg-config の検索パスを追加
-# ${PKG_CONFIG_PATH:-}	変数が空（未定義）なら、右側の値（今回は空）を代入した体で進める。
+
+# PKG_CONFIG_PATH
+# ${PKG_CONFIG_PATH:-}	
 PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
 export PATH=$PATH:/usr/local/bin
 export PKG_CONFIG_PATH
 export MAKEFLAGS="-j$(nproc)"
 # export LANG=ja_JP.UTF-8
 # export LC_ALL=ja_JP.UTF-8
-EOF
-fi
 
-# タイムゾーンを「日本」に設定する
-ln -sfv /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
-
-# UDEV非表示 "info" に変更すると表示されます
-cat >> /etc/udev/udev.conf << 'EOF'
-udev_log="err"
-EOF
-
-# 1. /etc/profile の基盤設定 (profile.d を読み込む仕組みを強制的に追加)
-if ! grep -q "profile.d" /etc/profile; then
-cat >> /etc/profile << 'EOF'
-
-# /etc/profile.d/ 内の全 .sh ファイルを読み込む設定
+# /etc/profile.d/*.sh ファイルを読み込む設定
 if [ -d /etc/profile.d ]; then
   for i in /etc/profile.d/*.sh; do
     if [ -r "$i" ]; then
@@ -52,10 +38,15 @@ if [ -d /etc/profile.d ]; then
   done
   unset i
 fi
-
-loadkeys jp106
 EOF
-fi
+
+# Timezone Tokyo
+ln -sfv /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+# UDEV Not Show
+cat >> /etc/udev/udev.conf << 'EOF'
+udev_log="err"
+EOF
 
 cat > /etc/profile.d/bash_colors.sh << "EOF"
 # --- 1. dircolors の設定 (lsの色) ---
