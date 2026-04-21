@@ -49,15 +49,13 @@ udev_log="err"
 EOF
 
 cat > /etc/profile.d/bash_colors.sh << "EOF"
-# --- 1. dircolors の設定 (lsの色) ---
+# --- 1. dircolors Setting (LS COLOR) ---
 if [ -x /usr/bin/dircolors ]; then
     eval "$(dircolors -b)"
     alias ls='ls --color=auto'
     alias grep='grep --color=auto'
 fi
 
-# --- 2. vi の色を無効化する ---
-# 設定ファイルを読み込まず、プレーンな状態で起動
 alias vi='vi -u NONE'
 alias vim='vim -u NONE'
 
