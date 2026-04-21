@@ -15,6 +15,10 @@ insmod ext2
 set root=(hd0,1)
 
 menuentry "GNU/Linux, Linux 6.16.1-lfs-12.4-systemd" {
-        linux   /boot/vmlinuz-6.16.1-lfs-12.4-systemd root=/dev/vda1 ro video=1024x768 rd.udev.log_priority=3 audit=0
+        linux   /boot/vmlinuz-6.16.1-lfs-12.4-systemd root=/dev/vda1 ro \
+                rd.udev.log_priority=3 \
+                audit=0 \
+                rw
 }
+
 EOF
