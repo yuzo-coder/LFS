@@ -13,6 +13,9 @@ mkdir -p "$SRC" "$LOG"
 
 cd "$SRC"
 
+# Japansene Keyboard Keymap
+localectl set-keymap jp106
+
 # pkg-config の検索パスを永続化（未設定の場合のみ）
 if ! grep -q "PKG_CONFIG_PATH" /etc/profile; then
 cat >> /etc/profile << "EOF"
