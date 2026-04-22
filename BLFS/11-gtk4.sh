@@ -23,6 +23,22 @@ fi
 # --- GTK4 Stack Dependencies ---
 
 
+build_meson "gstreamer" \
+    "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.26.5.tar.xz" \
+    ""
+
+build_meson "gst-plugins-base" \
+    "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.26.5.tar.xz" \
+    "-Dplayback=enabled"
+
+build_meson "gst-plugins-good" \
+    "https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.26.5.tar.xz" \
+    ""
+
+build_meson "gst-plugins-bad" \
+    "https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.26.5.tar.xz" \
+    ""
+
 # 1. graphene (GTK4に必須の数学ライブラリ)
 build_meson "graphene" \
     "https://github.com/ebassi/graphene/archive/refs/tags/1.10.8.tar.gz" \
@@ -34,16 +50,20 @@ build_meson "graphene" \
 
 # 3. GTK4 本体
 # ※ビルドに時間がかかりますが、Z840なら数分です。
-build_meson "gtk4" \
-    "https://download.gnome.org/sources/gtk/4.12/gtk-4.12.5.tar.xz" \
-    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=disabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=disabled"
+# build_meson "gtk4" \
+#    "https://download.gnome.org/sources/gtk/4.12/gtk-4.12.5.tar.xz" \
+#    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=disabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=disabled"
 
+
+build_meson "gtk4" \
+    "https://download.gnome.org/sources/gtk/4.18/gtk-4.18.6.tar.xz" \
+    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=enabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=enabled"
 
 # Fontconfig 2.17.1 (最新安定版)
 # ※ これが Pango の要求を満たします
-build_autotools "fontconfig" \
-    "https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.17.1/fontconfig-2.17.1.tar.xz" \
-    "--disable-docs --sysconfdir=/etc --localstatedir=/var"
+# build_autotools "fontconfig" \
+#    "https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.17.1/fontconfig-2.17.1.tar.xz" \
+#    "--disable-docs --sysconfdir=/etc --localstatedir=/var"
 
 build_mm_lib libsigc++ "https://download.gnome.org/sources/libsigc++/2.12/libsigc++-2.12.0.tar.xz" ""
 

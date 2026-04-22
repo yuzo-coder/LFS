@@ -200,33 +200,6 @@ build_meson "libsecret" \
 #     -Dtests=disabled \
 #     -Dglib=enabled"
 
-echo "===== Building gobject-introspection  ====="
-
-cd "$SRC"
-
-rm -rf gobject-introspection-1.80.1
-
-wget https://download.gnome.org/sources/gobject-introspection/1.80/gobject-introspection-1.80.1.tar.xz 
-
-tar -xf gobject-introspection-1.80.1.tar.xz
-
-cd gobject-introspection-1.80.1
-
-# MSVCCompiler をダミーのクラスで定義し、NameError を回避する
-sed -i 's/from distutils.msvccompiler import MSVCCompiler/class MSVCCompiler: pass/' giscanner/ccompiler.py
-
-export SETUPTOOLS_USE_DISTUTILS=local
-meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
-    -Dbuild_introspection_data=true \
-    -Dgtk_doc=false \
-    -Ddoctool=disabled \
-    -Dpython=python3 > $LOG/gobject.log 2>&1 
-
-ninja -C build -j"$JOBS" >> "$LOG/gobject.log" 2>&1
-
-ninja -C build install >> "$LOG/gobject.log" 2>&1
-
-cd "$ROOT_DIR"
 
 
 # GLib 2.80.4 の再ビルド

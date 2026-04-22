@@ -19,6 +19,7 @@ localectl set-keymap jp106
 # /etc/profile
 cat >> /etc/profile << "EOF"
 loadkeys jp106
+ulimit -n 65536
 
 # PKG_CONFIG_PATH
 # ${PKG_CONFIG_PATH:-}	

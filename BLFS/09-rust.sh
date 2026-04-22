@@ -52,7 +52,11 @@ build_meson pixman "https://www.cairographics.org/releases/pixman-0.43.4.tar.gz"
 build_meson fribidi "https://github.com/fribidi/fribidi/releases/download/v1.0.15/fribidi-1.0.15.tar.xz" ""
 
 
-build_meson pango "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz" "-Dintrospection=eabled"
+# build_meson pango "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz" "-Dintrospection=enabled"
+
+# 環境変数 CXXFLAGS に C++17 をセットして構成
+export CXXFLAGS="-O3 -std=c++17"
+build_meson pango "https://download.gnome.org/sources/pango/1.56/pango-1.56.4.tar.xz" "-Dintrospection=enabled"
 
 
 # 4. librsvg (最重要：SVG アイコンの描画エンジン)
@@ -60,7 +64,7 @@ build_meson pango "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.ta
 export PKG_CONFIG_PATH="/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 build_meson "librsvg" \
     "https://download.gnome.org/sources/librsvg/2.62/librsvg-2.62.1.tar.xz" \
-    "-Dintrospection=disabled -Ddocs=disabled -Dvala=disabled -Dpixbuf=enabled \
+    "-Dintrospection=enabled -Ddocs=disabled -Dvala=disabled -Dpixbuf=enabled \
      -Dpixbuf-loader=enabled"
 
 # 5. ローダーキャッシュの更新 (librsvg が入った後に行う)

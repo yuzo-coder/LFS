@@ -42,7 +42,7 @@ meson setup .. \
     --prefix=/usr \
     --buildtype=release \
     -Dshaderc=disabled \
-    -Dvulkan=disabled \
+    -Dvulkan=enabled \
     -Dlcms=enabled \
     -Dopengl=enabled > "$LOG/libplacebo.log" 2>&1
 
@@ -96,5 +96,6 @@ build_meson "mpv" \
     -Dlibmpv=true \
     -Djavascript=disabled"
 
+echo "mpv --vo=gpu /pathtovideo "
 
 echo "===== COMPLETE ====="

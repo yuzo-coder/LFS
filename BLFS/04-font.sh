@@ -21,12 +21,13 @@ fi
 
 
 # --- 3. フォントスタックのビルド ---
-# libpng, freetype, harfbuzz, fontconfig の順でビルド
 
 #  libpng
 echo "===== Building libpng ====="
 
 cd "$SRC"
+
+rm -rf libpng-1.6.45
 
 wget https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz
 
@@ -53,9 +54,49 @@ ldconfig
 cd "$ROOT_DIR"
 
 # --- 2. FreeType (1回目: HarfBuzzなしでビルド) ---
-# --without-harfbuzz を明示的に指定して、中途半端なリンクを防ぎます
-build_autotools freetype "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz" \
+build_autotools freetype "https://downloads.sourceforge.net/freetype/freetype-2.13.2.tar.xz" \
     "--disable-static --without-harfbuzz"
+
+echo "===== Building gobject-introspection  ====="
+
+cd "$SRC"
+    
+rm -rf gobject-introspection-1.84.0
+
+wget https://download.gnome.org/sources/gobject-introspection/1.84/gobject-introspection-1.84.0.tar.xz
+
+tar -xf gobject-introspection-1.84.0.tar.xz
+    
+cd gobject-introspection-1.84.0
+
+# MSVCCompiler �~B~R�~C~@�~C~_�~C��~A��~B��~C��~B��~A��~Z義�~A~W�~@~ANameError �~B~R�~[~^�~A��~A~Y�~B~K
+sed -i 's/from distutils.msvccompiler import MSVCCompiler/class MSVCCompiler: pass/' giscanner/ccompiler.py
+    
+export SETUPTOOLS_USE_DISTUTILS=local
+meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
+    -Dbuild_introspection_data=true \
+    -Dgtk_doc=false \
+    -Ddoctool=disabled \
+    -Dbuild_introspection_data=true \
+    -Dpython=python3 > $LOG/gobject.log 2>&1
+
+ninja -C build -j"$JOBS" >> "$LOG/gobject.log" 2>&1
+
+ninja -C build install >> "$LOG/gobject.log" 2>&1
+
+mkdir -pv /usr/share/gir-1.0
+
+mkdir -pv /usr/lib/girepository-1.0
+
+cd build
+
+cp -v gir/*.gir /usr/share/gir-1.0/
+
+cp -v gir/*.typelib /usr/lib/girepository-1.0/
+ldconfig 
+
+cd "$ROOT_DIR"
+
 
 
 # --- 3. HarfBuzz (文字配置エンジン) ---

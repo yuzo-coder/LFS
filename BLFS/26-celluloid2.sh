@@ -10,38 +10,50 @@ SRC=$ROOT_DIR/sources
 LOG=$ROOT_DIR/logs
 mkdir -p "$SRC" "$LOG"
 
-export CXXFLAGS="-O3 -std=c++17"
 
+build_meson "libxmlb" \
+    "https://github.com/hughsie/libxmlb/releases/download/0.3.23/libxmlb-0.3.23.tar.xz" \
+    "-Dgtkdoc=false"
 
-
-
-pip3 install https://github.com/djc/rnc2rng/archive/refs/tags/2.7.0.tar.gz
-
-
-echo "===== sassc ====="
+echo "===== Building libadwaita ====="
 cd "$SRC"
 
-wget https://github.com/sass/sassc/archive/3.6.2/sassc-3.6.2.tar.gz
+wget https://download.gnome.org/sources/libadwaita/1.7/libadwaita-1.7.6.tar.xz
 
-rm -rf sassc-3.6.2
+rm -rf libadwaita-1.7.6
 
-tar -xf sassc-3.6.2.tar.gz
+tar -xf libadwaita-1.7.6.tar.xz
 
-cd sassc-3.6.2
+cd libadwaita-1.7.6
 
-wget https://github.com/sass/libsass/archive/3.6.4/libsass-3.6.4.tar.gz
+meson subprojects download
+sed -i "s|subdir('docs/')|# subdir('docs/')|" subprojects/appstream/meson.build
+sed -i "s|subdir('docs')|# subdir('docs')|" subprojects/appstream/meson.build
+# --- 2. ビルド設定 (CMake) ---
+mkdir -p build && cd build
 
-tar -xzvf libsass-3.6.4.tar.gz
+meson setup .. \
+    --prefix=/usr \
+    --buildtype=release \
+    -Dtests=false \
+    -Dintrospection=enabled \
+    --wrap-mode=nodownload \
+    -Dvapi=true
 
-mv libsass-3.6.4 libsass
-
-export SASS_LIBSASS_PATH=$(pwd)/libsass
-
-make
-
-install -v -m755 bin/sassc /usr/bin/sassc
-
+ninja > "$LOG/libadwaita.log" 2>&1
+ninja install >> "$LOG/libadwaita.log" 2>&1
+ldconfig
 cd "$ROOT_DIR"
+
+echo "libadwaita Installation Complete!"
+
+build_meson "desktop-file-utils" \
+    "https://www.freedesktop.org/software/desktop-file-utils/releases/desktop-file-utils-0.28.tar.xz" \
+    ""
+
+build_meson "celluloid" \
+    "https://github.com/celluloid-player/celluloid/archive/refs/tags/v0.28.tar.gz" \
+    ""
 
 
 echo "===== COMPLETE ====="

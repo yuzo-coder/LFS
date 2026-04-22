@@ -40,8 +40,8 @@ chmod 4755 /usr/bin/fusermount3
 
 # fuse3 の後、xdg-desktop-portal の前に追加
 build_meson "pipewire" \
-    "https://github.com/PipeWire/pipewire/archive/refs/tags/1.0.7.tar.gz" \
-    "-Dsession-managers=[] -Draop=disabled -Dbluez5=disabled -Dgstreamer=disabled -Dsystemd=disabled"
+    "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.4.7/pipewire-1.4.7.tar.bz2" \
+    "-Dsession-managers=[] -Draop=disabled -Dbluez5=disabled -Dgstreamer=enabled -Dsystemd=disabled"
 
 # pipewire の後、xdg-desktop-portal の前に追加
 build_meson "bubblewrap" \

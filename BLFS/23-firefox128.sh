@@ -38,6 +38,10 @@ make
 
 make install
 
+export LD_LIBRARY_PATH=/opt/python311/lib:${LD_LIBRARY_PATH:-}
+
+ldconfig
+
 cd $ROOT_DIR
 
 

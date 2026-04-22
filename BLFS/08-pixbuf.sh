@@ -109,7 +109,7 @@ cd "$ROOT_DIR"
 # 3. gdk-pixbuf (先にビルドして librsvg のインストール先を確定させる)
 build_meson "gdk-pixbuf" \
     "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dbuiltin_loaders=none -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=disabled -Dman=false -Dglycin=disabled"
+    "-Dbuiltin_loaders=none -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=enabled -Dman=false -Dglycin=disabled"
 
 gdk-pixbuf-query-loaders --update-cache
 

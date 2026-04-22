@@ -17,7 +17,9 @@ else
     exit 1
 fi
 
-build_autotools libpng "https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz" ""
+build_meson "celluloid" \
+    "https://github.com/celluloid-player/celluloid/archive/refs/tags/v0.28.tar.gz" \
+    ""
 
 
 echo "===== COMPLETE ====="

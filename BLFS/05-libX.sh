@@ -128,4 +128,44 @@ while read -r TARBALL; do
     echo "Successfully installed $NAME"
 done < lib-7.list
 
+build_autotools "xdg-user-dirs" "https://user-dirs.freedesktop.org/releases/xdg-user-dirs-0.18.tar.gz" ""
+
+build_autotools "xdg-dbus-proxy" "https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz" ""
+
+build_cmake "Vulkan-Headers" \
+    "https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.321/Vulkan-Headers-1.4.321.tar.gz" \
+    ""
+
+
+echo "===== Building Vulkan ====="
+cd "$SRC"
+
+wget https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.4.321/Vulkan-Loader-1.4.321.tar.gz
+
+rm -rf Vulkan-Loader-1.4.321
+
+tar -xf Vulkan-Loader-1.4.321.tar.gz
+
+cd Vulkan-Loader-1.4.321 
+
+# --- 2. ビルド設定 (CMake) ---
+# Vulkan-LoaderはCMakeを使用します
+mkdir -p build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DVULKAN_HEADERS_INSTALL_DIR=/usr \
+      -DBUILD_WSI_XCB_SUPPORT=ON \
+      -DBUILD_WSI_XLIB_SUPPORT=ON \
+      -DBUILD_WSI_WAYLAND_SUPPORT=ON \
+      -GNinja .. > "$LOG/vulkan_loader.log" 2>&1
+
+# --- 3. コンパイルとインストール ---
+echo "Starting Vulkan-Loader build with 36 cores..."
+ninja  >> "$LOG/vulkan_loader.log" 2>&1
+ninja install >> "$LOG/vulkan_loader.log" 2>&1
+
+echo "Vulkan-Loader Installation Complete!"
+
+echo "===== 05 COMPLETE ====="
 echo "Done! Verify with: ls /usr/share/X11/locale/ja_JP.UTF-8/"

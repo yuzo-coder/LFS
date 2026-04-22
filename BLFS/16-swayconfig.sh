@@ -44,6 +44,8 @@ export XDG_vt=1
 exec dbus-run-session sway > /home/user/sway.log 2>&1
 EOF
 
+chmod +x /usr/bin/start-sway
+
 echo "===== /etc/sway/config ====="
 
 # 既存のファイルを削除
@@ -235,14 +237,14 @@ cat << 'EOF' > /etc/xdg/waybar/config
     },
     "custom/firefox": {
         "format": "", // Font Awesomeなどのアイコンフォントが必要
-        "on-click": "/usr/bin/start-firefox.sh",
+        "on-click": "/usr/bin/start-firefox",
         "tooltip": false
     },
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
     "custom/fcitx5": {
-        "exec": "fcitx5-remote -n | sed -e 's/anthy/ あ/' -e 's/keyboard-jp/ A/'", 
+        "exec": "fcitx5-remote -n | sed -e 's/anthy/ あ/' -e 's/keyboard-us/ A/'", 
         "interval": 1,
         "format": "{}",
     }, 
@@ -1113,6 +1115,27 @@ firefox > /home/user/firefox.log 2>&1 &
 EOF
 
 chmod +x /usr/bin/start-firefox
+
+echo "===== /etc/xdg/fcitx5/profile ====="
+cat << 'EOF' > /etc/xdg/fcitx5
+
+[Groups/0]
+Name=Default
+Default Layout=jp
+# keyboard-jp を先頭（または anthy の前）に置く
+DefaultIMList=keyboard-jp,anthy
+
+[Groups/0/Items/0]
+Name=keyboard-jp
+Layout=
+
+[Groups/0/Items/1]
+Name=anthy
+Layout=
+
+[GroupOrder]
+0=Default
+EOF
 
 echo "===== SWAY CONFIG COMPLETE ====="
 

@@ -18,44 +18,6 @@ else
 fi
 
 
-
-build_cmake "Vulkan-Headers" \
-    "https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.321/Vulkan-Headers-1.4.321.tar.gz" \
-    ""
-
-
-echo "===== Building Vulkan ====="
-cd "$SRC"
-
-wget https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.4.321/Vulkan-Loader-1.4.321.tar.gz
-
-rm -rf Vulkan-Loader-1.4.321
-
-tar -xf Vulkan-Loader-1.4.321.tar.gz
-
-cd Vulkan-Loader-1.4.321 
-
-# --- 2. ビルド設定 (CMake) ---
-# Vulkan-LoaderはCMakeを使用します
-mkdir -p build && cd build
-
-cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DVULKAN_HEADERS_INSTALL_DIR=/usr \
-      -DBUILD_WSI_XCB_SUPPORT=ON \
-      -DBUILD_WSI_XLIB_SUPPORT=ON \
-      -DBUILD_WSI_WAYLAND_SUPPORT=ON \
-      -GNinja .. > "$LOG/vulkan_loader.log" 2>&1
-
-# --- 3. コンパイルとインストール ---
-echo "Starting Vulkan-Loader build with 36 cores..."
-ninja  >> "$LOG/vulkan_loader.log" 2>&1
-ninja install >> "$LOG/vulkan_loader.log" 2>&1
-
-echo "Vulkan-Loader Installation Complete!"
-
-
-
 build_autotools "libfyaml" \
     "https://github.com/pantoniou/libfyaml/releases/download/v0.9/libfyaml-0.9.tar.gz" \
     "--disable-static"
@@ -79,9 +41,139 @@ build_autotools "vapigen" \
     "--disable-valadoc"
 
 
-build_meson "gdk-pixbuf" \
-    "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
-    "-Dbuiltin_loaders=none -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=enabled -Dman=false -Dglycin=disabled"
+# build_meson "gdk-pixbuf" \
+#    "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git" \
+#    "-Dbuiltin_loaders=none -Djpeg=enabled -Dtests=false -Dpng=enabled -Dtiff=enabled -Dintrospection=enabled -Dman=false -Dglycin=disabled"
 
+pip3 install https://github.com/djc/rnc2rng/archive/refs/tags/2.7.0.tar.gz
+
+
+echo "===== sassc ====="
+cd "$SRC"
+
+wget https://github.com/sass/sassc/archive/3.6.2/sassc-3.6.2.tar.gz
+
+rm -rf sassc-3.6.2
+
+tar -xf sassc-3.6.2.tar.gz
+
+cd sassc-3.6.2
+
+wget https://github.com/sass/libsass/archive/3.6.4/libsass-3.6.4.tar.gz
+
+tar -xzvf libsass-3.6.4.tar.gz
+
+mv libsass-3.6.4 libsass
+
+export SASS_LIBSASS_PATH=$(pwd)/libsass
+
+make
+
+install -v -m755 bin/sassc /usr/bin/sassc
+
+cd "$ROOT_DIR"
+
+
+echo "===== shaderc ====="
+cd "$SRC"
+
+wget https://github.com/google/shaderc/archive/v2026.1/shaderc-2026.1.tar.gz
+
+rm -rf shaderc-2026.1
+
+tar -xf shaderc-2026.1.tar.gz
+
+cd shaderc-2026.1
+
+# 2. 外部依存リポジトリ（glslang, SPIRV-Tools等）の取得
+# これを忘れるとビルド時に「ファイルがない」と怒られます
+./utils/git-sync-deps
+
+# 3. ビルドディレクトリの作成
+mkdir build && cd build
+
+# 4. CMake の実行
+# -DSHADERC_SKIP_TESTS=ON でテストをスキップして時間を短縮します
+cmake .. \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DSHADERC_SKIP_TESTS=ON \
+    -DSHADERC_SKIP_EXAMPLES=ON
+
+make 
+
+make install
+
+cd "$ROOT_DIR"
+
+
+echo "===== Building gobject-introspection  ====="
+
+cd "$SRC"
+    
+rm -rf gobject-introspection-1.80.1
+
+wget https://download.gnome.org/sources/gobject-introspection/1.84/gobject-introspection-1.84.0.tar.xz
+
+tar -xf gobject-introspection-1.84.0.tar.xz
+    
+cd gobject-introspection-1.84.0
+
+# MSVCCompiler �~B~R�~C~@�~C~_�~C��~A��~B��~C��~B��~A��~Z義�~A~W�~@~ANameError �~B~R�~[~^�~A��~A~Y�~B~K
+sed -i 's/from distutils.msvccompiler import MSVCCompiler/class MSVCCompiler: pass/' giscanner/ccompiler.py
+    
+export SETUPTOOLS_USE_DISTUTILS=local
+meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
+    -Dbuild_introspection_data=true \
+    -Dgtk_doc=false \
+    -Ddoctool=disabled \
+    -Dbuild_introspection_data=true \
+    -Dpython=python3 > $LOG/gobject.log 2>&1
+
+ninja -C build -j"$JOBS" >> "$LOG/gobject.log" 2>&1
+
+ninja -C build install >> "$LOG/gobject.log" 2>&1
+
+mkdir -pv /usr/share/gir-1.0
+
+mkdir -pv /usr/lib/girepository-1.0
+
+cd build
+
+cp -v gir/*.gir /usr/share/gir-1.0/
+
+cp -v gir/*.typelib /usr/lib/girepository-1.0/
+ldconfig 
+
+cd "$ROOT_DIR"
+
+# 環境変数 CXXFLAGS に C++17 をセットして構成
+#export CXXFLAGS="-O3 -std=c++17"
+# build_meson pango "https://download.gnome.org/sources/pango/1.56/pango-1.56.0.tar.xz" "-Dintrospection=enabled -Dcpp_std=c++17"
+
+
+
+# build_meson "gtk4" \
+#     "https://download.gnome.org/sources/gtk/4.18/gtk-4.18.6.tar.xz" \
+#    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=disabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=disabled"
+
+
+echo "===== pygments ====="
+cd "$SRC"
+
+rm -rf pygments-2.20.0
+
+wget -O pygments.tar.gz https://github.com/pygments/pygments/archive/refs/tags/2.20.0.tar.gz
+
+tar -xf pygments.tar.gz
+
+cd pygments-2.20.0
+
+python3 -m pip install --break-system-packages .
+
+cd "$ROOT_DIR"
+build_meson "gtk-doc" \
+    "https://download.gnome.org/sources/gtk-doc/1.34/gtk-doc-1.34.0.tar.xz" \
+    ""
 
 echo "===== COMPLETE ====="
