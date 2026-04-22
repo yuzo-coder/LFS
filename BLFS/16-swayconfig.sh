@@ -1117,7 +1117,7 @@ EOF
 chmod +x /usr/bin/start-firefox
 
 echo "===== /etc/xdg/fcitx5/profile ====="
-cat << 'EOF' > /etc/xdg/fcitx5
+cat << 'EOF' > /etc/xdg/fcitx5/profile
 
 [Groups/0]
 Name=Default
