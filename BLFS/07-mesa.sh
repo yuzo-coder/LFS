@@ -36,8 +36,13 @@ build_meson libdrm "https://dri.freedesktop.org/libdrm/libdrm-2.4.120.tar.xz" ""
 
 echo "===== Building glslang 16.2.0 ====="
 cd "$SRC"
+
+rm -rf glslang-16.2.0
+
 wget https://github.com/KhronosGroup/glslang/archive/16.2.0/glslang-16.2.0.tar.gz
+
 tar -xf glslang-16.2.0.tar.gz
+
 cd glslang-16.2.0
 
 # 2. ビルド用ディレクトリの作成
@@ -55,6 +60,68 @@ make install
 ldconfig
 cd "$ROOT_DIR"
 
+cargo install bindgen-cli
+
+
+echo "===== libclc ====="
+
+cd "$SRC"
+
+rm -rf libclc-20.1.8.src
+
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.8/libclc-20.1.8.src.tar.xz
+
+tar -xf libclc-20.1.8.src.tar.xz
+
+cd libclc-20.1.8.src
+
+mkdir -pv build
+
+cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr               \
+      -DCMAKE_BUILD_TYPE=Release                \
+      -DLLVM_ENABLE_PROJECTS="clang;lld;compiler-rt" \
+      -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
+      -DLLVM_TARGETS_TO_BUILD="X86"             \
+      -DLLVM_LINK_LLVM_DYLIB=ON                 \
+      -DLLVM_ENABLE_RTTI=ON                     \
+      -DLLVM_INCLUDE_BENCHMARKS=OFF             \
+      -DCLANG_DEFAULT_RTLIB=compiler-rt         \
+      -DCLANG_DEFAULT_UNWINDLIB=libunwind       \
+      -Wno-dev -G Ninja ..
+
+ninja
+
+ninja install 
+
+ldconfig
+
+cd "$ROOT_DIR"
+
+python3 -m pip install pyyaml
+
+echo "===== SPIRV-LLVM-Translator ====="
+
+cd "$SRC"
+
+rm -rf SPIRV-LLVM-Translator-20.1.5
+
+wget https://github.com/KhronosGroup/SPIRV-LLVM-Translator/archive/v20.1.5/SPIRV-LLVM-Translator-20.1.5.tar.gz
+
+tar -xf SPIRV-LLVM-Translator-20.1.5.tar.gz
+
+cd SPIRV-LLVM-Translator-20.1.5
+
+mkdir build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+
+make
+
+make install
+
+cd "$ROOT_DIR"
 build_meson mesa "https://mesa.freedesktop.org/archive/mesa-25.1.8.tar.xz" \
     "-Dplatforms=wayland \
      -Dglx=disabled \
@@ -62,11 +129,10 @@ build_meson mesa "https://mesa.freedesktop.org/archive/mesa-25.1.8.tar.xz" \
      -Dgles2=enabled \
      -Degl=enabled \
      -Dgbm=enabled \
-     -Dgallium-drivers=nouveau,virgl,swrast,zink \
+     -Dgallium-drivers=nouveau,virgl,zink \
      -Dvulkan-drivers=nouveau,swrast \
      -Dllvm=enabled \
-     -Dshared-llvm=enabled \
-     -Dbuildtests=false"
+     -Dshared-llvm=enabled"
 
 
 ln -sv /usr/lib/pkgconfig/gl.pc /usr/lib/pkgconfig/opengl.pc || true
