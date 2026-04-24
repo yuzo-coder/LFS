@@ -122,24 +122,81 @@ make
 make install
 
 cd "$ROOT_DIR"
+
+export PATH=/root/.cargo/bin:$PATH:/usr/local/bin
+
+cd "$SRC"
+
+rm -rf SPIRV-Headers-vulkan-sdk-1.4.321.0
+
+wget https://github.com/KhronosGroup/SPIRV-Headers/archive/vulkan-sdk-1.4.321.0/SPIRV-Headers-vulkan-sdk-1.4.321.0.tar.gz -O SPIRV-Headers.tar.gz
+
+tar -xf SPIRV-Headers.tar.gz
+
+rm -rf SPIRV-Tools-vulkan-sdk-1.4.321.0
+
+wget https://github.com/KhronosGroup/SPIRV-Tools/archive/vulkan-sdk-1.4.321.0/SPIRV-Tools-vulkan-sdk-1.4.321.0.tar.gz -O SPIRV-Tools.tar.gz
+
+tar -xf SPIRV-Tools.tar.gz
+
+cd SPIRV-Tools-vulkan-sdk-1.4.321.0
+
+mkdir -pv external/spirv-headers
+
+cp -rv ../SPIRV-Headers-vulkan-sdk-1.4.321.0/* external/spirv-headers/
+
+mkdir build && cd build
+
+cmake -D CMAKE_INSTALL_PREFIX=/usr     \
+      -D CMAKE_BUILD_TYPE=Release      \
+      -D SPIRV_WERROR=OFF              \
+      -D SPIRV_SKIP_TESTS=ON           \
+      -D SPIRV_TOOLS_BUILD_STATIC=OFF  \
+      -G Ninja ..
+
+ninja
+
+ninja install
+
+ldconfig
+
+
+echo "===== cbindgen ====="
+
+cd "$SRC"
+
+rm -rf cbindgen-0.29.0
+
+wget https://github.com/mozilla/cbindgen/archive/v0.29.0/cbindgen-0.29.0.tar.gz
+
+tar -xf cbindgen-0.29.0.tar.gz
+
+cd cbindgen-0.29.0
+
+cargo build --release
+
+cp -v target/release/cbindgen /usr/bin/
+
+cd "$ROOT_DIR"
+
 build_meson mesa "https://mesa.freedesktop.org/archive/mesa-25.1.8.tar.xz" \
-    "-Dplatforms=wayland \
+    "-Dplatforms=x11,wayland \
      -Dglx=disabled \
      -Dgles1=disabled \
      -Dgles2=enabled \
      -Degl=enabled \
      -Dgbm=enabled \
-     -Dgallium-drivers=nouveau,virgl,zink \
+     -Dgallium-drivers=nouveau,virgl,zink,llvmpipe \
      -Dvulkan-drivers=nouveau,swrast \
      -Dllvm=enabled \
-     -Dshared-llvm=enabled"
+     -Dshared-llvm=enabled \
+     -Dvideo-codecs=all"
 
+
+build_meson "libglvnd" "https://gitlab.freedesktop.org/glvnd/libglvnd/-/archive/v1.7.0/libglvnd-v1.7.0.tar.gz" ""
 
 ln -sv /usr/lib/pkgconfig/gl.pc /usr/lib/pkgconfig/opengl.pc || true
-# opengl.pc を gl.pc として参照できるようにリンクを貼る
-# ln -s /usr/lib/pkgconfig/opengl.pc /usr/lib/pkgconfig/gl.pc
 
-# --- 5. ユーティリティツールのビルド ---
 
 build_meson glu "https://archive.mesa3d.org/glu/glu-9.0.3.tar.xz" ""
 

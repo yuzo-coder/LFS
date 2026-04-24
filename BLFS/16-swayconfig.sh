@@ -1116,6 +1116,7 @@ EOF
 
 chmod +x /usr/bin/start-firefox
 
+mkdir -p /etc/xdg/fcitx5
 echo "===== /etc/xdg/fcitx5/profile ====="
 cat << 'EOF' > /etc/xdg/fcitx5/profile
 

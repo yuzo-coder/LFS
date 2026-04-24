@@ -26,9 +26,9 @@ build_autotools hwdata "https://github.com/vcrhonek/hwdata/archive/v0.404/hwdata
 build_cmake doxygen "https://doxygen.nl/files/doxygen-1.16.1.src.tar.gz" "-DCMAKE_BUILD_TYPE=Release"
 build_cmake json-c "https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18.tar.gz" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 
-build_meson wayland "https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.25.0/downloads/wayland-1.25.0.tar.xz" "-Ddocumentation=false"
+build_meson wayland "https://ftp2.osuosl.org/pub/blfs/12.4/w/wayland-1.24.0.tar.xz" "-Ddocumentation=false"
 
-build_meson wayland-protocols "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.38/downloads/wayland-protocols-1.38.tar.xz" ""
+build_meson wayland-protocols "https://ftp2.osuosl.org/pub/blfs/12.4/w/wayland-protocols-1.45.tar.xz" ""
 
 # 2. wayland-utils (wayland-info)
 build_meson wayland-utils "https://gitlab.freedesktop.org/wayland/wayland-utils/-/archive/1.2.0/wayland-utils-1.2.0.tar.gz" ""

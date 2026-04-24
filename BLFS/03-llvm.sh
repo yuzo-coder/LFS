@@ -24,6 +24,7 @@ build_meson libdrm "https://dri.freedesktop.org/libdrm/libdrm-2.4.120.tar.xz" \
     "-Dudev=true -Dvalgrind=disabled"
 
 
+cd "$SRC"
 
 # --- LLVM ビルド設定 ---
 LLVM_VER="20.1.8"

@@ -41,7 +41,7 @@ cd build
 meson setup .. \
     --prefix=/usr \
     --buildtype=release \
-    -Dshaderc=disabled \
+    -Dshaderc=enabled \
     -Dvulkan=enabled \
     -Dlcms=enabled \
     -Dopengl=enabled > "$LOG/libplacebo.log" 2>&1

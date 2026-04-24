@@ -74,38 +74,6 @@ install -v -m755 bin/sassc /usr/bin/sassc
 cd "$ROOT_DIR"
 
 
-echo "===== shaderc ====="
-cd "$SRC"
-
-wget https://github.com/google/shaderc/archive/v2026.1/shaderc-2026.1.tar.gz
-
-rm -rf shaderc-2026.1
-
-tar -xf shaderc-2026.1.tar.gz
-
-cd shaderc-2026.1
-
-# 2. 外部依存リポジトリ（glslang, SPIRV-Tools等）の取得
-# これを忘れるとビルド時に「ファイルがない」と怒られます
-./utils/git-sync-deps
-
-# 3. ビルドディレクトリの作成
-mkdir build && cd build
-
-# 4. CMake の実行
-# -DSHADERC_SKIP_TESTS=ON でテストをスキップして時間を短縮します
-cmake .. \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DSHADERC_SKIP_TESTS=ON \
-    -DSHADERC_SKIP_EXAMPLES=ON
-
-make 
-
-make install
-
-cd "$ROOT_DIR"
-
 
 echo "===== Building gobject-introspection  ====="
 

@@ -41,7 +41,11 @@ cd "$DIR"
 cargo build --release > "$LOG/cargo-c.log" 2>&1
 # 生成されたバイナリを /usr/bin へ配置
 cp target/release/cargo-c* "$PREFIX/bin/"
+
+export PATH=/root/.cargo/bin:$PATH:/usr/local/bin
+
 ldconfig
+
 cd "$ROOT_DIR"
 
 build_meson cairo "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz" "-Dfontconfig=enabled -Dfreetype=enabled -Dxcb=enabled -Dxlib=enabled -Dtests=disabled"

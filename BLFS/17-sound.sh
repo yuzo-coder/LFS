@@ -87,7 +87,7 @@ alsactl store
 
 # 再ビルドの実行
 build_meson "pipewire" \
-    "https://github.com/PipeWire/pipewire/archive/refs/tags/1.0.7.tar.gz" \
+    "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.4.7/pipewire-1.4.7.tar.bz2" \
     "-Dsession-managers=[] -Dalsa=enabled -Draop=disabled -Dbluez5=disabled -Dgstreamer=disabled -Dsystemd=disabled"
 
 # --- 3. Lua 5.4.8 のビルド ---
@@ -120,13 +120,6 @@ EOF
 ldconfig
 cd "$ROOT_DIR"
 
-# --- 5. WirePlumber のビルド ---
-# PipeWire のセッションマネージャー
-# Meson を使用してビルドします
-WIREPLUMBER_URL="https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.4.17/wireplumber-0.4.17.tar.gz"
-# ドキュメント作成(Pandoc/Doxygen)を無効にし、システムLuaを使用するように設定
-WIREPLUMBER_OPTS="-Ddoc=disabled -Dsystem-lua=true -Dintrospection=disabled"
-build_meson "wireplumber" "$WIREPLUMBER_URL" "$WIREPLUMBER_OPTS"
 
 # apulse
 build_cmake "apulse" \

@@ -52,7 +52,7 @@ build_autotools "iso-codes" \
     "https://ftp.debian.org/debian/pool/main/i/iso-codes/iso-codes_4.18.0.orig.tar.xz" \
     ""
 
-build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz" "--disable-static"
+build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.43.tar.xz" "--disable-static"
 
 # mobile-broadband-provider-info (モバイル回線設定データベース)
 build_meson "mobile-broadband-provider-info" \
@@ -84,8 +84,8 @@ chmod -v 750 /var/lib/polkit
 # Polkit (権限管理フレームワーク)
 # 依存関係を最小限にしてビルドを通します
 build_meson "polkit" \
-    "https://github.com/polkit-org/polkit/archive/refs/tags/124.tar.gz" \
-    "-Dintrospection=false -Dman=false -Dexamples=false -Dgtk_doc=false -Dtests=false"
+    "https://ftp2.osuosl.org/pub/blfs/12.4/p/polkit-126.tar.gz" \
+    "-Dintrospection=false -Dman=false -Dexamples=false -Dgtk_doc=false -Dtests=false -Dsystemdsystemunitdir=/usr/lib/systemd/system"
 
 # 1. libndp (隣接デバイス発見プロトコル - NMに必須)
 build_autotools "libndp" \

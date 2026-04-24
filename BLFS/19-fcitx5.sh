@@ -57,17 +57,10 @@ build_meson "libxkbcommon" \
     "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" \
     "-Denable-x11=true"
 
-# glib-2.84.4 の再ビルド
-# 以前のビルドディレクトリがある場合は必ず削除してください (rm -rf build)
-#build_meson glib2 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/glib-2.84.4.tar.xz" \
-#    "-Dtests=false" \
-#    "-Dintrospection=enabled"
 
-# 3. fcitx5 本体
-# 依存関係として libevent, libuuid が必要です
 build_cmake "fcitx5" \
     "https://github.com/fcitx/fcitx5/archive/refs/tags/5.1.14.tar.gz" \
-    "-DENABLE_ENCHANT=OFF"
+    "-DENABLE_ENCHANT=OFF -DENABLE_WAYLAND=ON -DENABLE_X11=ON"
 
 # 4. fcitx5-gtk (GTKアプリでの入力用)
 build_cmake "fcitx5-gtk" \

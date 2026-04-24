@@ -53,11 +53,51 @@ build_meson "json-glib" \
     "https://download.gnome.org/sources/json-glib/1.6/json-glib-1.6.6.tar.xz" \
     "-Dintrospection=disabled -Dgtk_doc=disabled -Dtests=false"
 
-# 3. xdg-desktop-portal (ポータル本体)
-# Sway用ポータルの前に、これがないと pkg-config でエラーになります。
-build_meson "xdg-desktop-portal" \
-    "https://github.com/flatpak/xdg-desktop-portal/releases/download/1.18.4/xdg-desktop-portal-1.18.4.tar.xz" \
+
+
+build_cmake "graphviz" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/g/graphviz-13.1.2.tar.bz2" \
+    "-D ENABLE_QT=OFF             \
+      -D ENABLE_VISIO=OFF          \
+      -D ENABLE_PHP=OFF            \
+      -D ENABLE_PYTHON=OFF         \
+      -D ENABLE_PERL=OFF           \
+      -D ENABLE_LUA=OFF            \
+       .."
+
+build_autotools "vala" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/v/vala-0.56.18.tar.xz" \
     ""
+
+build_autotools "libpcap" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/l/libpcap-1.10.5.tar.gz" \
+    ""
+
+build_meson "umockdev" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/u/umockdev-0.19.3.tar.xz" \
+    "-Dgtk_doc=false"
+
+
+build_meson "libgudev" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/l/libgudev-238.tar.xz" \
+    "-Dtests=disabled -Dintrospection=enabled"
+
+python3 -m pip install pytest
+
+
+build_meson "pygobject" \
+    "https://download.gnome.org/sources/pygobject/3.52/pygobject-3.52.3.tar.gz" \
+    "-Dtests=false"
+
+build_meson "dbus-python" \
+    "https://dbus.freedesktop.org/releases/dbus-python/dbus-python-1.4.0.tar.xz" ""
+
+python3 -m pip install python-dbusmock
+
+build_meson "xdg-desktop-portal" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/x/xdg-desktop-portal-1.20.3.tar.xz" \
+    ""
+
 
 # build_meson wayland-protocols "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.38/downloads/wayland-protocols-1.38.tar.xz" ""
 
@@ -69,7 +109,7 @@ build_meson "inih" \
 # 4. xdg-desktop-portal-wlr (Sway専用実装)
 build_meson "xdg-desktop-portal-wlr" \
     "https://github.com/emersion/xdg-desktop-portal-wlr.git" \
-    "-Dsd-bus-provider=libsystemd -Dc_args=-Wno-error=implicit-function-declaration" # systemd環境でない場合は自動検知に任せる
+    "-Dsd-bus-provider=libsystemd -Dc_args=-Wno-error=implicit-function-declaration"
 
 
 echo "=================================================="

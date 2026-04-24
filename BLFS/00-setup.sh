@@ -16,6 +16,9 @@ cd "$SRC"
 # Japansene Keyboard Keymap
 localectl set-keymap jp106
 
+chown -v root:root /usr/sbin/shutdown /usr/sbin/reboot
+chmod -v 4755 /usr/sbin/shutdown /usr/sbin/reboot
+
 # /etc/profile
 cat >> /etc/profile << "EOF"
 loadkeys jp106

@@ -26,32 +26,18 @@ DIR=$(download_extract "https://ftp.jaist.ac.jp/pub/osdn.net/anthy/37536/anthy-9
 # 展開ディレクトリ名は anthy-9100h
 cd "$SRC/anthy-9100h"
 echo "Configuring Anthy..."
-./configure --prefix=$PREFIX > "$LOG/anthy_config.log" 2>&1
+./configure --prefix=$PREFIX > "$LOG/anthy.log" 2>&1
 echo "Compiling and Installing Anthy..."
-make >> "$LOG/anthy_build.log" 2>&1
-make install >> "$LOG/anthy_build.log" 2>&1
+make >> "$LOG/anthy.log" 2>&1
+make install >> "$LOG/anthy.log" 2>&1
 
 # 共有ライブラリのキャッシュ更新
 ldconfig
 
-# --- 4. fcitx5-anthy (Plugin) のビルド ---
-echo "===== Building fcitx5-anthy (Plugin) ====="
-DIR=$(download_extract "https://github.com/fcitx/fcitx5-anthy/archive/refs/tags/5.1.0.tar.gz")
-# 展開ディレクトリ名は fcitx5-anthy-5.1.0
-cd "$SRC/fcitx5-anthy-5.1.0"
-echo "Configuring fcitx5-anthy with CMake..."
-mkdir -p build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_INSTALL_LIBDIR=/usr/lib \
-      -DCMAKE_BUILD_TYPE=Release \
-      .. > "$LOG/fcitx5-anthy_config.log" 2>&1
+build_cmake "fcitx5-anthy" \
+    "https://github.com/fcitx/fcitx5-anthy/archive/5.1.7/fcitx5-anthy-5.1.7.tar.gz" \
+    ""
 
-echo "Compiling and Installing fcitx5-anthy..."
-make >> "$LOG/fcitx5-anthy_build.log" 2>&1
-make install >> "$LOG/fcitx5-anthy_build.log" 2>&1
-
-# 最終的なライブラリ認識
-ldconfig
 
 # 設定ディレクトリの作成
 mkdir -p /etc/xdg/fcitx5

@@ -17,9 +17,12 @@ else
     exit 1
 fi
 
-build_meson "celluloid" \
-    "https://github.com/celluloid-player/celluloid/archive/refs/tags/v0.28.tar.gz" \
+
+
+build_autotools "strace" \
+    "https://github.com/strace/strace/releases/download/v6.14/strace-6.14.tar.xz" \
     ""
+
 
 
 echo "===== COMPLETE ====="

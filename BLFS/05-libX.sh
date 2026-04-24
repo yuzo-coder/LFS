@@ -128,9 +128,33 @@ while read -r TARBALL; do
     echo "Successfully installed $NAME"
 done < lib-7.list
 
-build_autotools "xdg-user-dirs" "https://user-dirs.freedesktop.org/releases/xdg-user-dirs-0.18.tar.gz" ""
+build_autotools "xdg-user-dirs" "https://user-dirs.freedesktop.org/releases/xdg-user-dirs-0.18.tar.gz" "--disable-documentation"
 
 build_autotools "xdg-dbus-proxy" "https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz" ""
+
+echo "===== xdg-dbus-proxy ====="
+cd "$SRC"
+
+rm -rf xdg-dbus-proxy-0.1.6
+
+wget https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz
+
+tar -xf xdg-dbus-proxy-0.1.6.tar.xz
+
+cd xdg-dbus-proxy-0.1.6
+
+mkdir -v build && cd build
+
+meson setup ..            \
+      --prefix=/usr       \
+      --buildtype=release \
+      -Dman=disabled
+
+ninja
+
+ninja install
+
+cd "$ROOT_DIR"
 
 build_cmake "Vulkan-Headers" \
     "https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.321/Vulkan-Headers-1.4.321.tar.gz" \

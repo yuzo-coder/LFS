@@ -54,6 +54,35 @@ build_meson "graphene" \
 #    "https://download.gnome.org/sources/gtk/4.12/gtk-4.12.5.tar.xz" \
 #    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=disabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=disabled"
 
+echo "===== glslc ====="
+cd "$SRC"
+
+wget https://github.com/google/shaderc/archive/v2026.1/shaderc-2026.1.tar.gz
+
+rm -rf shaderc-2026.1
+
+tar -xf shaderc-2026.1.tar.gz
+
+cd shaderc-2026.1
+
+./utils/git-sync-deps
+
+mkdir build && cd build
+
+# 4. CMake の実行
+# -DSHADERC_SKIP_TESTS=ON でテストをスキップして時間を短縮します
+cmake .. \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DSHADERC_SKIP_TESTS=ON \
+    -DSHADERC_SKIP_EXAMPLES=ON
+
+make 
+
+make install
+
+cd "$ROOT_DIR"
+
 
 build_meson "gtk4" \
     "https://download.gnome.org/sources/gtk/4.18/gtk-4.18.6.tar.xz" \
