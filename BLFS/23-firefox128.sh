@@ -1,23 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- 1. 環境設定 ---
-JOBS=$(nproc)
-ROOT_DIR=$(pwd)
-SRC=$ROOT_DIR/sources
-LOG=$ROOT_DIR/logs
-mkdir -p "$SRC" "$LOG"
+source ./functions.sh
 
-# 共通関数の読み込み
-if [ -f "./common.sh" ]; then
-    source "./common.sh"
-else
-    echo "Error: common.sh not found!"
-    exit 1
-fi
+scripts=(
+    "libdrm"
+    "llvm"
+)
 
-
-echo "===== Python-3.11.0 ====="
+for pkg in "${scripts[@]}"; do
+    echo "========= Building $pkg =========="
+    cd "$ROOT_DIR"
+    source "./scripts/$pkg"
+done
 
 cd $SRC
 

@@ -1,28 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- 1. 環境設定 ---
-JOBS=$(nproc)
-PREFIX=/usr
-ROOT_DIR=$(pwd)
-SRC=$ROOT_DIR/sources
-LOG=$ROOT_DIR/logs
-mkdir -p "$SRC" "$LOG"
-
-# 共通関数の読み込み
-if [ -f "./common.sh" ]; then
-    source "./common.sh"
-else
-    echo "Error: common.sh not found!"
-    exit 1
-fi
+source ./functions.sh
 
 
 
-build_autotools "strace" \
-    "https://github.com/strace/strace/releases/download/v6.14/strace-6.14.tar.xz" \
-    ""
+DIR=$(download_extract "https://downloads.sourceforge.net/pcmanfm/pcmanfm-1.3.2.tar.xz")
 
+cd "$DIR"
+
+CFLAGS="-Wno-error=incompatible-pointer-types" ./configure --prefix=/usr --sysconfdir=/etc --with-gtk=3  > "$LOG/pcmanfm.log" 2>&1
+
+make >> "$LOG/pcmanfm.log" 2>&1
+
+make install >> "$LOG/pcmanfm.log" 2>&1
+
+ldconfig
 
 
 echo "===== COMPLETE ====="

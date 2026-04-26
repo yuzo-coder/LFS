@@ -1,7 +1,19 @@
 #!/bin/bash
-# common.sh
+
+# --- 1. 環境設定 ---
+TARGET_USER=user
+
+JOBS=$(nproc)
+PREFIX=/usr
+ROOT_DIR=$(pwd)
+SRC=$ROOT_DIR/sources
+LOG=$ROOT_DIR/logs
+
+mkdir -p "$SRC" "$LOG"
 
 export MAKEFLAGS="-j$(nproc)"
+
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/local/lib/pkgconfig
 
 download_extract() {
     local URL=$1
@@ -18,15 +30,13 @@ download_extract() {
 
 build_autotools() {
     local NAME=$1; local URL=$2; local CONF_OPTS=$3
-    echo "===== Building $NAME (autotools) ====="
     local DIR=$(download_extract "$URL")
-    echo "$DIR"
     cd "$DIR"
 
     # 以前のビルド残骸を掃除
     [ -f Makefile ] && make distclean || true
 
-    ./configure --prefix="$PREFIX" --libdir=/usr/lib $CONF_OPTS > "$LOG/$NAME.log" 2>&1
+    ./configure --prefix="$PREFIX" --libdir=/usr/lib --sysconfdir=/etc --disable-static > "$LOG/$NAME.log" 2>&1
     make -j$(nproc) >> "$LOG/$NAME.log" 2>&1
     
     # インストール。既存ファイルがあっても強制(force)するように、
@@ -39,7 +49,6 @@ build_autotools() {
 
 build_meson() {
     local NAME=$1; local URL_OR_GIT=$2; local EXTRA=$3
-    echo "===== Building $NAME (meson) ====="
     
     local DIR=""
     if [[ "$URL_OR_GIT" == *.git ]]; then
@@ -51,7 +60,6 @@ build_meson() {
         DIR=$(download_extract "$URL_OR_GIT")
     fi
 
-    echo "$DIR"
     cd "$DIR"
     rm -rf build
     meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
@@ -63,7 +71,6 @@ build_meson() {
 
 build_cmake() {
     local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (cmake) ====="
     local DIR=$(download_extract "$URL")
     cd "$DIR"
     rm -rf build && mkdir build && cd build
@@ -76,7 +83,6 @@ build_cmake() {
 
 build_rust_task() {
     local NAME=$1; local GIT_URL=$2; local BIN_NAME=$3
-    echo "===== Building $NAME (Rust) ====="
     cd "$SRC"
     rm -rf "$NAME"
     git clone "$GIT_URL" "$NAME"
@@ -88,7 +94,6 @@ build_rust_task() {
 
 build_mm_lib() {
     local NAME=$1; local URL=$2; local EXTRA=$3
-    echo "===== Building $NAME (meson lib) ====="
     local DIR=$(download_extract "$URL")
     cd "$DIR"
     rm -rf build
