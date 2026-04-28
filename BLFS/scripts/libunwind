@@ -1,0 +1,6 @@
+
+# グラフィックスの安定性を確保する
+build_autotools "libunwind" \
+    "https://download.savannah.nongnu.org/releases/libunwind/libunwind-1.6.2.tar.gz" \
+    "--disable-static --enable-coredump --host=x86_64-linux"
+

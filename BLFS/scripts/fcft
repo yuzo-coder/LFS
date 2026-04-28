@@ -1,0 +1,2 @@
+
+build_meson fcft "https://codeberg.org/dnkl/fcft/releases/download/3.3.2/fcft-3.3.2.tar.gz" "-Ddocs=disabled"

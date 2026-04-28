@@ -1,0 +1,5 @@
+
+build_meson "gtkgreet" "https://github.com/kennylevinsen/gtkgreet.git" ""
+
+cp "$SRC/greetd/greetd.service" /etc/systemd/system/
+

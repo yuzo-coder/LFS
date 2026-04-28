@@ -1,0 +1,5 @@
+
+build_autotools "xcb-util" \
+    "https://xcb.freedesktop.org/dist/xcb-util-0.4.1.tar.xz" \
+    ""
+

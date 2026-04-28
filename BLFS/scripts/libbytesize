@@ -1,0 +1,5 @@
+
+build_autotools "libbytesize" \
+    "https://github.com/storaged-project/libbytesize/releases/download/2.10/libbytesize-2.10.tar.gz" \
+    "--prefix=/usr --disable-static"
+

@@ -1,0 +1,27 @@
+
+cd "$SRC"
+
+rm -rf libyuv
+
+git clone https://chromium.googlesource.com/libyuv/libyuv
+
+cd libyuv
+
+rm -rf build && mkdir build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON .. > "$LOG/libyuv.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/libyuv.log" 2>&1
+
+cp libyuv.so* /usr/lib/
+
+mkdir -p /usr/include/libyuv
+
+cp -r ../include/* /usr/include/
+
+cp ../include/libyuv.h /usr/include/
+
+ldconfig
+

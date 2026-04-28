@@ -1,0 +1,24 @@
+
+cd "$SRC"
+
+wget https://ftp.gnu.org/gnu/gdb/gdb-16.3.tar.xz
+
+rm -rf gdb-16.3
+
+tar -xf gdb-16.3.tar.xz
+
+cd gdb-16.3
+
+export CXXFLAGS="${CXXFLAGS:-} -fpermissive -D_GLIBCXX_HAVE_STDBOOL_H -DNCURSES_BOOL=bool"
+
+export CPPFLAGS="${CPPFLAGS:-} -DNCURSES_NOMACROS"
+
+./configure --prefix=/usr \
+            --with-system-readline \
+            --with-python=/usr/bin/python3 \
+            --disable-source-highlight
+
+make
+
+make install
+

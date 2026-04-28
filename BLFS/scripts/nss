@@ -1,0 +1,38 @@
+
+DIR=$(download_extract "https://archive.mozilla.org/pub/security/nss/releases/NSS_3_121_RTM/src/nss-3.121.tar.gz")
+
+cd "$DIR/nss"
+
+make -j$(nproc) BUILD_OPT=1 \
+    NSPR_INCLUDE_DIR=/usr/include/nspr \
+    USE_64=1 \
+    $( [ -f /usr/include/sqlite3.h ] && echo NSS_USE_SYSTEM_SQLITE=1 )
+
+
+install -v -m755 -d /usr/include/nss
+
+cd ../dist
+
+install -v -m644 public/nss/*.h /usr/include/nss/
+
+cd Linux6.16_x86_64_cc_glibc_PTH_64_OPT.OBJ
+
+install -v -m755 lib/*.so /usr/lib/
+install -v -m644 lib/*.chk /usr/lib/
+install -v -m644 lib/*.a /usr/lib/
+install -v -m755 bin/* /usr/bin/
+
+cat > /usr/lib/pkgconfig/nss.pc << "EOF"
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/nss
+Name: NSS
+Description: Network Security Services
+Version: 3.121
+Requires: nspr >= 4.35
+Libs: -L${libdir} -lnss3 -lnssutil3 -lsmime3 -lssl3
+Cflags: -I${includedir}
+EOF
+ldconfig
+

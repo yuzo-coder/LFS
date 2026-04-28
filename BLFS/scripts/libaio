@@ -1,0 +1,13 @@
+
+DIR=$(download_extract "https://pagure.io/libaio/archive/libaio-0.3.113/libaio-0.3.113.tar.gz")
+
+cd "$DIR"
+
+sed -i '/install.*libdir/s@/lib@/lib64@g' src/Makefile || true
+
+make prefix=/usr
+
+make prefix=/usr install
+
+ldconfig
+

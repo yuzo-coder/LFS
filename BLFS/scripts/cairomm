@@ -1,0 +1,3 @@
+
+build_mm_lib cairomm "https://www.cairographics.org/releases/cairomm-1.18.0.tar.xz" "--wrap-mode=nofallback"
+

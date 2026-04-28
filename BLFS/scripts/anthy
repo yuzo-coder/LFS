@@ -1,0 +1,13 @@
+
+DIR=$(download_extract "https://ftp.jaist.ac.jp/pub/osdn.net/anthy/37536/anthy-9100h.tar.gz")
+
+cd "$SRC/anthy-9100h"
+
+./configure --prefix=$PREFIX > "$LOG/anthy_config.log" 2>&1
+
+make >> "$LOG/anthy_build.log" 2>&1
+
+make install >> "$LOG/anthy_build.log" 2>&1
+
+ldconfig
+

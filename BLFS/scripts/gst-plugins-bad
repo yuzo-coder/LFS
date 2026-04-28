@@ -1,0 +1,5 @@
+
+build_meson "gst-plugins-bad" \
+    "https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.26.5.tar.xz" \
+    ""
+

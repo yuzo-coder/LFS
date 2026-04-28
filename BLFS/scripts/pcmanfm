@@ -1,0 +1,17 @@
+
+DIR=$(download_extract "https://downloads.sourceforge.net/pcmanfm/pcmanfm-1.3.2.tar.xz")
+
+cd "$DIR"
+
+./configure --prefix=/usr --sysconfdir=/etc --with-gtk=3  > "$LOG/pcmanfm.log" 2>&1
+
+make -j$(nproc) >> "$LOG/pcmanfm.log" 2>&1
+
+make install >> "$LOG/pcmanfm.log" 2>&1
+
+ldconfig
+
+gdk-pixbuf-query-loaders --update-cache
+
+update-mime-database /usr/share/mime
+

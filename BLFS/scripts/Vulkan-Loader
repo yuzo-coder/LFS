@@ -1,0 +1,27 @@
+
+cd "$SRC"
+
+wget https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.4.321/Vulkan-Loader-1.4.321.tar.gz
+
+rm -rf Vulkan-Loader-1.4.321
+
+tar -xf Vulkan-Loader-1.4.321.tar.gz
+
+cd Vulkan-Loader-1.4.321 
+
+mkdir -p build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_INSTALL_LIBDIR=lib \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DVULKAN_HEADERS_INSTALL_DIR=/usr \
+      -DBUILD_WSI_XCB_SUPPORT=ON \
+      -DBUILD_WSI_XLIB_SUPPORT=ON \
+      -DBUILD_WSI_WAYLAND_SUPPORT=ON \
+      -GNinja .. > "$LOG/vulkan_loader.log" 2>&1
+
+
+ninja  >> "$LOG/vulkan_loader.log" 2>&1
+
+ninja install >> "$LOG/vulkan_loader.log" 2>&1
+

@@ -1,0 +1,6 @@
+
+# 高品質なAAC再生
+build_autotools "fdk-aac" \
+    "https://downloads.sourceforge.net/opencore-amr/fdk-aac-2.0.3.tar.gz" \
+    "--disable-static"
+

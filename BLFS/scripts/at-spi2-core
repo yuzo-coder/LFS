@@ -1,0 +1,3 @@
+
+build_meson "at-spi2-core" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/at-spi2-core-2.56.4.tar.xz" ""

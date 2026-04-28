@@ -1,0 +1,5 @@
+
+build_autotools "python" \
+    "https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tar.xz" \
+    "--enable-shared --with-system-expat --with-system-ffi --enable-optimizations"
+

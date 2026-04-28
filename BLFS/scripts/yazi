@@ -1,0 +1,5 @@
+
+build_rust_task "yazi" "https://github.com/sxyazi/yazi.git" "yazi"
+
+cp "$SRC/yazi/target/release/ya" "$PREFIX/bin/"
+

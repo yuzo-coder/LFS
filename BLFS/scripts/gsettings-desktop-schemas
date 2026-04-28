@@ -1,0 +1,7 @@
+
+build_meson "gsettings-desktop-schemas" \
+     "https://download.gnome.org/sources/gsettings-desktop-schemas/49/gsettings-desktop-schemas-49.1.tar.xz" \
+     "-Dintrospection=true"
+
+glib-compile-schemas /usr/share/glib-2.0/schemas
+

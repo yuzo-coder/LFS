@@ -1,0 +1,20 @@
+
+DIR=$(download_extract "https://cmake.org/files/v4.1/cmake-4.1.0.tar.gz")
+
+cd "$DIR"
+
+echo "return()" > Source/CursesDialog/CMakeLists.txt  
+
+export CFLAGS="-O2 -Wno-stack-usage"
+export CXXFLAGS="-O2 -fpermissive -DNCURSES_NOMACROS -Wno-stack-usage"
+
+./bootstrap \
+    --prefix="$PREFIX" \
+    --parallel="$JOBS" \
+    --no-system-libs \
+    > "$LOG/cmake.log" 2>&1
+        
+make -j"$JOBS" >> "$LOG/cmake.log" 2>&1
+
+make install >> "$LOG/cmake.log" 2>&1
+

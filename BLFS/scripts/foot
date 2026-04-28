@@ -1,0 +1,3 @@
+
+build_meson foot "https://codeberg.org/dnkl/foot/releases/download/1.24.0/foot-1.24.0.tar.gz" "-Dterminfo=enabled -Ddocs=disabled -Dtests=false"
+

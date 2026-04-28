@@ -1,0 +1,6 @@
+
+# --- 3. HarfBuzz (文字配置エンジン) ---
+# 先に入れた Freetype を使って HarfBuzz をビルドします
+build_meson harfbuzz "https://github.com/harfbuzz/harfbuzz/releases/download/8.3.1/harfbuzz-8.3.1.tar.xz" \
+    "-Dbenchmark=disabled -Dintrospection=enabled"
+

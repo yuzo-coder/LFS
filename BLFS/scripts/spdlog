@@ -1,0 +1,4 @@
+
+build_cmake spdlog "https://github.com/gabime/spdlog/archive/v1.14.1.tar.gz" \
+    "-DSPDLOG_FMT_EXTERNAL=ON -DBUILD_SHARED_LIBS=ON -DSPDLOG_BUILD_EXAMPLE=OFF"
+

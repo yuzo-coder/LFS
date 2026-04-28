@@ -1,0 +1,3 @@
+
+build_meson gtkmm3 "https://download.gnome.org/sources/gtkmm/3.24/gtkmm-3.24.9.tar.xz" "-Dbuild-demos=false -Dbuild-tests=false"
+

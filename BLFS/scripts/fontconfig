@@ -1,0 +1,5 @@
+
+# Fontconfig (fc-cache コマンドを含む)
+build_autotools fontconfig "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.15.0.tar.xz" \
+    "--sysconfdir=/etc --localstatedir=/var --disable-docs"
+

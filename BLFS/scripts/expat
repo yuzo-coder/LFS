@@ -1,0 +1,4 @@
+
+# --- 3. �~_��~N�~C��~B��~C~V�~C��~C� (Base) ---
+build_autotools expat "https://github.com/libexpat/libexpat/releases/download/R_2_6_2/expat-2.6.2.tar.xz" ""
+

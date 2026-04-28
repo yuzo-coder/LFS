@@ -1,0 +1,3 @@
+
+build_meson "wireplumber" "https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.4.17/wireplumber-0.4.17.tar.gz" "-Ddoc=disabled -Dsystem-lua=true -Dintrospection=disabled"
+

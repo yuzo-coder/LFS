@@ -1,0 +1,5 @@
+
+build_cmake "libsndfile" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/l/libsndfile-1.2.2.tar.xz" \
+    "-DBUILD_SHARED_LIBS=ON -DENABLE_EXTERNAL_LIBS=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+

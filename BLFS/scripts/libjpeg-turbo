@@ -1,0 +1,18 @@
+
+DIR=$(download_extract "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz")
+
+cd "$DIR"
+
+rm -rf build && mkdir build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=RELEASE \
+      -DENABLE_STATIC=FALSE \
+      -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. > "$LOG/libjpeg-turbo.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/libjpeg-turbo.log" 2>&1
+
+make install >> "$LOG/libjpeg-turbo.log" 2>&1
+
+ldconfig

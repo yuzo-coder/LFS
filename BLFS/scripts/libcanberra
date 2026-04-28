@@ -1,0 +1,7 @@
+
+# 1. libcanberra (pavucontrol の音量フィードバック音に必要)
+# ※ GUI アプリの動作を安定させるために推奨されます
+build_autotools "libcanberra" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/l/libcanberra-0.30.tar.xz" \
+    "--disable-oss --disable-lynx --disable-tdb --disable-gtk --disable-gtk3"
+

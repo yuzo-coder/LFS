@@ -1,0 +1,31 @@
+
+cd "$SRC"
+
+rm -rf pciutils-3.14.0
+
+wget https://mj.ucw.cz/download/linux/pci/pciutils-3.14.0.tar.gz
+
+tar xf pciutils-3.14.0.tar.gz
+
+cd pciutils-3.14.0
+
+# PREFIX=/usr: 標準のシステムパスにインストール
+# SHARED=yes: Firefoxが必要とする共有ライブラリ（libpci.so）を生成
+# LIBDIR=/usr/lib: 64bit環境のライブラリパスを指定
+# make PREFIX=/usr                \
+     SHAREDIR=/usr/share/hwdata \
+     SHARED=yes                 \
+     LIBDIR=/usr/lib            \
+     HOST=x86_64-linux          \
+     OPT="-march=native -O2"
+
+make PREFIX=/usr                \
+     SHAREDIR=/usr/share/hwdata \
+     SHARED=yes                 \
+     LIBDIR=/usr/lib            \
+     install install-lib
+
+ldconfig
+
+update-pciids
+

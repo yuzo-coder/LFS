@@ -1,0 +1,15 @@
+
+build_meson "mpv" \
+    "https://github.com/mpv-player/mpv/archive/refs/tags/v0.41.0.tar.gz" \
+    "-Dalsa=enabled \
+    -Dpulse=enabled \
+    -Dpipewire=enabled \
+    -Dwayland=enabled \
+    -Dx11=enabled \
+    -Dlua=enabled \
+    --libdir=/usr/lib \
+    -Dlibmpv=true \
+    -Djavascript=disabled"
+
+echo "mpv --vo=gpu /pathtovideo "
+

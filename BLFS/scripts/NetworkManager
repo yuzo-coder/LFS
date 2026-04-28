@@ -1,0 +1,16 @@
+
+build_meson "NetworkManager" \
+    "https://download.gnome.org/sources/NetworkManager/1.44/NetworkManager-1.44.2.tar.xz" \
+    "-Dintrospection=false \
+     -Dqt=false \
+     -Dlibaudit=no \
+     -Dtests=no \
+     -Dnmtui=false \
+     -Dselinux=false \
+     -Dsession_tracking=no \
+     -Dsystemd_journal=false \
+     -Dppp=false \
+     -Dovs=false \
+     -Dmodem_manager=false \
+     -Dcrypto=gnutls"
+

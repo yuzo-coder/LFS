@@ -1,0 +1,4 @@
+
+build_autotools "chafa" "https://github.com/hpjansson/chafa/releases/download/1.18.0/chafa-1.18.0.tar.xz" ""
+
+

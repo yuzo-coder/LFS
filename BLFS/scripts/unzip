@@ -1,0 +1,25 @@
+
+cd "$SRC"
+
+rm -rf unzip60
+
+wget https://downloads.sourceforge.net/infozip/unzip60.tar.gz
+
+tar -xf unzip60.tar.gz
+
+cd unzip60
+
+# 2. �~I~M�~[~^�~A� gmtime �~B��~C��~C��~A�修正�~A| �~A~Q�~B~R�~A��~T��~H�~A~~  
+S�~B~L�~A| �~A~Q�~A��~M~A�~H~F�~A��~A~Y�~I
+sed -i 's/struct tm \*gmtime(), \*localtime();/\/* struct tm *gmtime(), *localtime(); *\//' unix/unxcfg.h
+
+gcc -c -I. -Ibzip2 -DUNIX -O3 -DLARGE_FILE_SUPPORT -DUNICODE_SUPPORT -DHAVE_DIRENT_H -DHAVE_TERMIOS_H *.c unix/unix.c
+
+# 1. unzip�~\��~S�~A��~V��~B�~A��~A~D�~@~A�~H��~A��~@~Lmain�~@~M�~B~R�~L~A�~A�� 
+�~C~U�~B��~B��~C��~B~R�~I~J�~Y�
+rm -f funzip.o gbloffs.o unzipstb.o unzipsfx.o
+
+gcc -o unzip *.o -lbz2
+
+cp -v unzip /usr/bin/
+

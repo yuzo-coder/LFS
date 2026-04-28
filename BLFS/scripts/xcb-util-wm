@@ -1,0 +1,5 @@
+
+build_autotools "xcb-util-wm" \
+    "https://xcb.freedesktop.org/dist/xcb-util-wm-0.4.2.tar.xz" \
+    ""
+

@@ -1,0 +1,25 @@
+
+cd "$SRC"
+
+rm -rf libplacebo-7.360.0
+
+wget https://github.com/haasn/libplacebo/archive/refs/tags/v7.360.0.tar.gz
+
+tar -xf v7.360.0.tar.gz
+
+cd libplacebo-7.360.0
+
+mkdir -v build
+
+meson setup .. \
+    --prefix=/usr \
+    --buildtype=release \
+    -Dshaderc=disabled \
+    -Dvulkan=enabled \
+    -Dlcms=enabled \
+    -Dopengl=enabled > "$LOG/libplacebo.log" 2>&1
+
+ninja  >> "$LOG/libplacebo.log" 2>&1
+
+ninja install >> "$LOG/libplacebo.log" 2>&1
+

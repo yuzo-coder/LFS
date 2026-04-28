@@ -1,0 +1,11 @@
+
+build_meson "pulseaudio" \
+    "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-17.0.tar.xz" \
+    "-Ddatabase=gdbm \
+     -Dbluez5=disabled \
+     -Dgtk=enabled \
+     -Dsystemd=disabled \
+     -Dvalgrind=disabled \
+     -Dman=false \
+     -Dtests=false"
+

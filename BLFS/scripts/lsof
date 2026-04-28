@@ -1,0 +1,19 @@
+
+cd "$SRC"
+
+rm -rf lsof-4.99.6
+
+wget https://github.com/lsof-org/lsof/releases/download/4.99.6/lsof-4.99.6.tar.gz
+
+tar -xf lsof-4.99.6.tar.gz
+
+cd lsof-4.99.6
+
+./configure
+
+make
+
+install -v -m0755 -s lsof /usr/bin
+
+install -v -m0644 Lsof.8 /usr/share/man/man8
+

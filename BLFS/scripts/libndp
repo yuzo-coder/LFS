@@ -1,0 +1,5 @@
+
+# 1. libndp (隣接デバイス発見プロトコル - NMに必須)
+build_autotools "libndp" \
+    "https://libndp.org/files/libndp-1.9.tar.gz" ""
+

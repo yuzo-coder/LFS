@@ -1,0 +1,3 @@
+
+build_meson "libepoxy" "https://github.com/anholt/libepoxy/archive/refs/tags/1.5.10.tar.gz" "-Dx11=true -Dglx=yes"
+

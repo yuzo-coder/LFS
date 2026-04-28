@@ -1,0 +1,5 @@
+
+build_autotools "vapigen" \
+    "https://download.gnome.org/sources/vala/0.56/vala-0.56.18.tar.xz" \
+    "--disable-valadoc"
+

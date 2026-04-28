@@ -1,0 +1,5 @@
+
+build_meson "json-glib" \
+    "https://download.gnome.org/sources/json-glib/1.6/json-glib-1.6.6.tar.xz" \
+    "-Dintrospection=disabled -Dgtk_doc=disabled -Dtests=false"
+

@@ -1,0 +1,5 @@
+
+build_meson "gstreamer" \
+    "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.26.5.tar.xz" \
+    ""
+

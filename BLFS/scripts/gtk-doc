@@ -1,0 +1,6 @@
+
+cd "$ROOT_DIR"
+build_meson "gtk-doc" \
+    "https://download.gnome.org/sources/gtk-doc/1.34/gtk-doc-1.34.0.tar.xz" \
+    ""
+

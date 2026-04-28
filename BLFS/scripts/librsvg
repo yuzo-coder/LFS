@@ -1,0 +1,12 @@
+
+export PKG_CONFIG_PATH="/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+build_meson "librsvg" \
+    "https://download.gnome.org/sources/librsvg/2.62/librsvg-2.62.1.tar.xz" \
+    "-Dintrospection=enabled -Ddocs=disabled -Dvala=disabled -Dpixbuf=enabled \
+     -Dpixbuf-loader=enabled"
+
+unset PKG_CONFIG_PATH
+
+/usr/bin/gdk-pixbuf-query-loaders --update-cache
+

@@ -1,0 +1,5 @@
+
+build_cmake "fcitx5" \
+    "https://github.com/fcitx/fcitx5/archive/refs/tags/5.1.14.tar.gz" \
+    "-DENABLE_ENCHANT=OFF"
+

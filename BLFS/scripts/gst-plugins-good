@@ -1,0 +1,5 @@
+
+build_meson "gst-plugins-good" \
+    "https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.26.5.tar.xz" \
+    ""
+

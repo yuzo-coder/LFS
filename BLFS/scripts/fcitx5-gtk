@@ -1,0 +1,5 @@
+
+build_cmake "fcitx5-gtk" \
+    "https://github.com/fcitx/fcitx5-gtk/archive/refs/tags/5.1.4.tar.gz" \
+    "-DENABLE_GTK2_IM_MODULE=OFF -DENABLE_GTK3_IM_MODULE=ON -DENABLE_GTK4_IM_MODULE=OFF"
+

@@ -1,0 +1,3 @@
+
+build_autotools mtdev "https://bitmath.org/code/mtdev/mtdev-1.1.6.tar.gz" "--disable-static"
+

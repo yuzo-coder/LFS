@@ -1,0 +1,5 @@
+
+# --- 2. FreeType (1�~[~^�~[�: HarfBuzz�~A��~A~W�~A��~C~S�~C��~C~I) ---
+build_autotools freetype "https://downloads.sourceforge.net/freetype/freetype-2.13.2.tar.xz" \
+    "--disable-static --without-harfbuzz"
+

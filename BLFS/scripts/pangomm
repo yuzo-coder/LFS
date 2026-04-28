@@ -1,0 +1,3 @@
+
+build_mm_lib pangomm "https://download.gnome.org/sources/pangomm/2.54/pangomm-2.54.0.tar.xz" "-Dbuild-documentation=false"
+

@@ -1,0 +1,5 @@
+
+build_autotools "bash-completion" \
+    "https://github.com/scop/bash-completion/releases/download/2.16.0/bash-completion-2.16.0.tar.xz" \
+    "--disable-static"
+

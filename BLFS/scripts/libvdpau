@@ -1,0 +1,4 @@
+
+# 動画支援の窓口を作る
+build_meson libvdpau ""https://gitlab.freedesktop.org/vdpau/libvdpau/-/archive/1.5/libvdpau-1.5.tar.bz2 "-Ddri2=true -Ddocumentation=false"
+

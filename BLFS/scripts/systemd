@@ -1,0 +1,3 @@
+# Systemd (PAM�~\~I�~J��~L~V)
+build_meson systemd "https://github.com/systemd/systemd/archive/v257.8/systemd-257.8.tar.gz" "-Dpam=enabled -Dmode=release"
+

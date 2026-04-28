@@ -1,0 +1,11 @@
+
+build_meson "libsoup" \
+    "https://download.gnome.org/sources/libsoup/3.6/libsoup-3.6.1.tar.xz" \
+    "--prefix=/usr \
+     --buildtype=release \
+     -Dintrospection=disabled \
+     -Dvapi=disabled \
+     -Ddocs=disabled \
+     -Dtests=false \
+     -Dtls_check=false"
+

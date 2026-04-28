@@ -1,0 +1,13 @@
+
+cd "$SRC"
+
+rm -rf pygments-2.20.0
+
+wget -O pygments.tar.gz https://github.com/pygments/pygments/archive/refs/tags/2.20.0.tar.gz
+
+tar -xf pygments.tar.gz
+
+cd pygments-2.20.0
+
+python3 -m pip install --break-system-packages .
+

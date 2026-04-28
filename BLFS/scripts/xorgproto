@@ -1,0 +1,4 @@
+
+# 1. xorgproto (�~C~X�~C~C�~C~@�~C~U�~B��~B��~C�)
+build_autotools "xorgproto" "$BASE_URL_PROTO/xorgproto-2024.1.tar.xz" ""
+

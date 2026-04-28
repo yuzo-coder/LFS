@@ -1,0 +1,5 @@
+
+build_meson "libxmlb" \
+    "https://github.com/hughsie/libxmlb/releases/download/0.3.23/libxmlb-0.3.23.tar.xz" \
+    "-Dgtkdoc=false"
+

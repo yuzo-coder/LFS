@@ -1,0 +1,5 @@
+
+build_autotools "x264" \
+    "https://code.videolan.org/videolan/x264/-/archive/master/x264-master.tar.bz2" \
+    "--enable-shared --enable-pic --disable-cli --host=x86_64-linux"
+

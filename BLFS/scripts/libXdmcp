@@ -1,0 +1,3 @@
+
+build_autotools "libXdmcp" "$BASE_URL_LIB/libXdmcp-1.1.5.tar.xz" ""
+

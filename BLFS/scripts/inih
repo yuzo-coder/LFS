@@ -1,0 +1,6 @@
+
+build_meson "inih" \
+    "https://github.com/benhoyt/inih/archive/refs/tags/r58.tar.gz" \
+    "-Ddistro_install=true -Dwith_INIReader=true"
+
+

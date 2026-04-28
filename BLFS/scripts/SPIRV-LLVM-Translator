@@ -1,0 +1,19 @@
+
+cd "$SRC"
+
+rm -rf SPIRV-LLVM-Translator-20.1.5
+
+wget https://github.com/KhronosGroup/SPIRV-LLVM-Translator/archive/v20.1.5/SPIRV-LLVM-Translator-20.1.5.tar.gz
+
+tar -xf SPIRV-LLVM-Translator-20.1.5.tar.gz
+
+cd SPIRV-LLVM-Translator-20.1.5
+
+mkdir build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release ..
+
+make
+
+make install
+

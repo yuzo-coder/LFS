@@ -1,0 +1,22 @@
+
+DATE_DIR=$(download_extract "https://github.com/HowardHinnant/date/archive/v3.0.1.tar.gz")
+
+cd "$DATE_DIR"
+
+rm -rf build && mkdir build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS=ON -DBUILD_TZ_LIB=ON -DUSE_SYSTEM_TZ_DB=ON ..
+
+make -j"$JOBS" && make install
+
+cat > /usr/lib/pkgconfig/date.pc << "EOF"
+prefix=/usr
+libdir=${prefix}/lib
+includedir=${prefix}/include
+Name: date
+Description: date and time library
+Version: 3.0.1
+Libs: -L${libdir} -ldate-tz
+Cflags: -I${includedir}
+EOF
+

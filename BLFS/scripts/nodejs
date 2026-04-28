@@ -1,0 +1,18 @@
+
+cd "$SRC"
+
+wget https://nodejs.org/dist/v24.14.1/node-v24.14.1.tar.xz
+
+tar -xf node-v24.14.1.tar.xz
+
+cd node-v24.14.1
+
+./configure --prefix=/usr \
+            --shared-zlib \
+            --shared-openssl \
+            --with-intl=system-icu
+
+make
+
+make install
+

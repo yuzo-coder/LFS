@@ -1,0 +1,4 @@
+
+# 動画支援の窓口を作る
+build_meson libva "https://github.com/intel/libva/releases/download/2.22.0/libva-2.22.0.tar.bz2" ""
+

@@ -1,0 +1,9 @@
+
+build_meson "fuse3" \
+    "https://github.com/libfuse/libfuse/releases/download/fuse-3.16.2/fuse-3.16.2.tar.gz" \
+    "-Dexamples=false -Duseroot=false -Dtests=false"
+
+[ -e /dev/fuse ] || mknod /dev/fuse c 10 229
+
+chmod 4755 /usr/bin/fusermount3
+

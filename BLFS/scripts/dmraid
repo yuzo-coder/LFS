@@ -1,0 +1,37 @@
+
+cat <<EOF > /usr/lib/pkgconfig/libndctl.pc
+Name: libndctl
+Description: Dummy libndctl for libblockdev build
+Version: 999.999
+Libs:
+Cflags:
+EOF
+
+DIR=$(download_extract "https://people.redhat.com/~heinzm/sw/dmraid/src/dmraid-current.tar.bz2")
+
+cd "$DIR/1.0.0.rc16-3/dmraid"
+
+echo "$DIR/1.0.0.rc16-3/dmraid"
+
+# 1. ソースコードの物理修正（再確認）
+sed -i 's/ssize_t(\*func) (.*);/ssize_t(*func) (int, void *, size_t);/g' lib/misc/file.c
+
+sed -i '864c\do_device(struct lib_context *lc, struct raid_set *rs, int (*f) (char *, char *))' lib/activate/activate.c
+
+sed -i 's/SUBDIRS = .*/SUBDIRS = ./' lib/Makefile.in
+
+sed -i 's/TARGETS += .*/TARGETS = libdmraid.a libdmraid.so/' lib/Makefile.in
+
+# export CFLAGS="-O2 -fpermissive -Wno-error=all ${CFLAGS:-}"
+
+CFLAGS="-O2 -fpermissive -Wno-error=all" ./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --enable-libselinux=no \
+            --enable-libsepol=no \
+            --disable-events
+make
+
+make install
+
+ldconfig
+

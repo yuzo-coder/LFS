@@ -1,0 +1,3 @@
+
+build_meson gtk3 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/gtk-3.24.50.tar.xz" \
+    "-Dwayland_backend=true -Dx11_backend=true -Dintrospection=false -Ddemos=false -Dtests=false -Dexamples=false -Dcolord=no --wrap-mode=nodownload"

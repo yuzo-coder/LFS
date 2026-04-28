@@ -1,0 +1,5 @@
+
+build_autotools "iso-codes" \
+    "https://ftp.debian.org/debian/pool/main/i/iso-codes/iso-codes_4.18.0.orig.tar.xz" \
+    ""
+

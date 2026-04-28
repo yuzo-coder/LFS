@@ -1,0 +1,4 @@
+
+build_meson "gtkmm4" \
+    "https://download.gnome.org/sources/gtkmm/4.12/gtkmm-4.12.0.tar.xz" "--wrap-mode=nodownload -Dbuild-demos=false -Dbuild-tests=false"
+

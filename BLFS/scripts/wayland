@@ -1,0 +1,3 @@
+
+build_meson wayland "https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.25.0/downloads/wayland-1.25.0.tar.xz" "-Ddocumentation=false"
+

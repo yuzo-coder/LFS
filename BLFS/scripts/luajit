@@ -1,0 +1,19 @@
+
+cd "$SRC"
+
+wget https://anduin.linuxfromscratch.org/BLFS/luajit/luajit-20250212.tar.xz
+
+rm -rf luajit-20250212
+
+tar -xf luajit-20250212.tar.xz
+
+cd luajit-20250212
+
+make PREFIX=/usr
+
+make install PREFIX=/usr
+
+ln -sfv /usr/lib/pkgconfig/luajit.pc /usr/lib/pkgconfig/lua-5.1.pc
+
+ldconfig
+

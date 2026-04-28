@@ -1,0 +1,7 @@
+
+build_autotools "menu-cache" \
+    "https://downloads.sourceforge.net/lxde/menu-cache-1.1.0.tar.xz" \
+    "CFLAGS=-fcommon \
+     --prefix=/usr \
+     --disable-static"
+

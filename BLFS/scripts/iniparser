@@ -1,0 +1,2 @@
+
+build_cmake iniparser "https://github.com/ndevilla/iniparser/archive/v4.2.4.tar.gz" "-DBUILD_SHARED_LIBS=ON"

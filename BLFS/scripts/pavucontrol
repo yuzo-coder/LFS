@@ -1,0 +1,5 @@
+
+build_meson "pavucontrol" \
+    "https://freedesktop.org/software/pulseaudio/pavucontrol/pavucontrol-6.0.tar.xz" \
+    "-Dlynx=false"
+

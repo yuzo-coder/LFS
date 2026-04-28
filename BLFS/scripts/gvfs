@@ -1,0 +1,22 @@
+
+build_meson "gvfs" \
+     "https://download.gnome.org/sources/gvfs/1.56/gvfs-1.56.1.tar.xz" \
+     "--prefix=/usr \
+     --buildtype=release \
+     -Dsmb=false \
+     -Dgphoto2=false \
+     -Dmtp=false \
+     -Dbluray=false \
+     -Ddnssd=false \
+     -Dgcr=false \
+     -Dkeyring=false \
+     -Dgoa=false \
+     -Dafc=false \
+     -Dfuse=false \
+     -Donedrive=false \
+     -Dnfs=false \
+     -Dgoogle=false \
+     -Dman=false"
+
+gio-querymodules /usr/lib/gio/modules
+

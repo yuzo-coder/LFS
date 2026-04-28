@@ -1,0 +1,6 @@
+
+# 1. graphene (GTK4に必須の数学ライブラリ)
+build_meson "graphene" \
+    "https://github.com/ebassi/graphene/archive/refs/tags/1.10.8.tar.gz" \
+    "-Dintrospection=enabled"
+

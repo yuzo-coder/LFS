@@ -1,0 +1,3 @@
+
+build_autotools "xdg-user-dirs" "https://user-dirs.freedesktop.org/releases/xdg-user-dirs-0.18.tar.gz" ""
+

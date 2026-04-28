@@ -1,0 +1,13 @@
+
+DIR=$(download_extract "https://archive.mozilla.org/pub/nspr/releases/v4.35/src/nspr-4.35.tar.gz")
+
+cd "$DIR/nspr"
+
+./configure --prefix=/usr \
+            --with-mozilla \
+            --with-pthreads \
+            $([ $(uname -m) = x86_64 ] && echo --enable-64bit)
+make
+
+make install
+

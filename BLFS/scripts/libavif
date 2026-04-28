@@ -1,0 +1,5 @@
+
+build_cmake "libavif" \
+    "https://github.com/AOMediaCodec/libavif/archive/v1.4.1/libavif-1.4.1.tar.gz" \
+    "-DAVIF_CODEC_AOM=SYSTEM -DAVIF_LIBYUV=SYSTEM"
+

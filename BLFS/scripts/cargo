@@ -1,0 +1,10 @@
+
+if ! command -v cargo &> /dev/null; then
+    echo "===== Installing Rust Toolchain ====="
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    source $HOME/.cargo/env
+
+    # ln -sf $HOME/.cargo/bin/cargo /usr/local/bin/cargo
+    # ln -sf $HOME/.cargo/bin/rustc /usr/local/bin/rustc
+fi
+

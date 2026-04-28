@@ -1,0 +1,3 @@
+
+build_cmake doxygen "https://doxygen.nl/files/doxygen-1.16.1.src.tar.gz" "-DCMAKE_BUILD_TYPE=Release"
+

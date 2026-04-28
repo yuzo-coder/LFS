@@ -1,0 +1,6 @@
+
+export CXXFLAGS="-O3 -std=c++17"
+
+build_meson pango "https://download.gnome.org/sources/pango/1.56/pango-1.56.4.tar.xz" "-Dintrospection=enabled"
+
+unset CXXFLAGS

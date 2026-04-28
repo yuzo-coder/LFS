@@ -1,0 +1,9 @@
+
+build_autotools "nghttp2" \
+    "https://github.com/nghttp2/nghttp2/releases/download/v1.61.0/nghttp2-1.61.0.tar.xz" \
+    "--prefix=/usr \
+     --disable-static \
+     --enable-lib-only \
+     --without-systemd \
+     --without-libxml2"
+

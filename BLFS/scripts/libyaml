@@ -1,0 +1,5 @@
+
+build_autotools "libyaml" \
+    "http://pyyaml.org/download/libyaml/yaml-0.1.7.tar.gz" \
+    "--prefix=/usr --disable-static"
+

@@ -1,0 +1,15 @@
+
+cd "$SRC"
+
+wget https://github.com/unicode-org/icu/releases/download/release-78.3/icu4c-78.3-sources.tgz
+
+tar -xf icu4c-78.3-sources.tgz
+
+cd icu/source
+
+./configure --prefix=/usr
+
+make -j$(nproc)
+
+make install
+

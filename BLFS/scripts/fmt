@@ -1,0 +1,3 @@
+
+build_cmake fmt "https://github.com/fmtlib/fmt/archive/11.0.2.tar.gz" "-DBUILD_SHARED_LIBS=ON -DFMT_TEST=OFF"
+

@@ -1,0 +1,2 @@
+
+build_meson "libvips" "https://github.com/libvips/libvips/releases/download/v8.18.0/vips-8.18.0.tar.xz" ""

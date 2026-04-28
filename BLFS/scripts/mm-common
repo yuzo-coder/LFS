@@ -1,0 +1,11 @@
+
+DIR=$(download_extract "https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.6.tar.xz")
+
+cd "$DIR"
+    
+rm -rf build && mkdir build && cd build
+
+meson setup .. --prefix=/usr --buildtype=release > "$LOG/mm-common.log" 2>&1
+
+ninja install >> "$LOG/mm-common.log" 2>&1
+

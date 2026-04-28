@@ -1,0 +1,6 @@
+
+# mobile-broadband-provider-info (モバイル回線設定データベース)
+build_meson "mobile-broadband-provider-info" \
+    "https://download.gnome.org/sources/mobile-broadband-provider-info/20240407/mobile-broadband-provider-info-20240407.tar.xz" \
+    ""
+

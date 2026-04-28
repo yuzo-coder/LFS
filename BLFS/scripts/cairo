@@ -1,0 +1,3 @@
+
+build_meson cairo "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz" "-Dfontconfig=enabled -Dfreetype=enabled -Dxcb=enabled -Dxlib=enabled -Dtests=disabled"
+

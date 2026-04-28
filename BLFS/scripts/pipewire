@@ -1,0 +1,5 @@
+
+build_meson "pipewire" \
+    "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.4.7/pipewire-1.4.7.tar.bz2" \
+    "-Dsession-managers=[] -Draop=disabled -Dbluez5=disabled -Dgstreamer=enabled -Dsystemd=disabled"
+

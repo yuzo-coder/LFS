@@ -1,0 +1,7 @@
+
+build_meson glib2 "https://ftp.lfs-matrix.net/pub/blfs/12.4/g/glib-2.84.4.tar.xz" \
+    "-Dintrospection=enabled -Dtests=false"
+
+build_meson atk "https://ftp.lfs-matrix.net/pub/blfs/12.4/a/atk-2.38.0.tar.xz" \
+    ""
+

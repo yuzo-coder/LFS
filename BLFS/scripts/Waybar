@@ -1,0 +1,32 @@
+
+WAYBAR_DIR=$(download_extract "https://github.com/Alexays/Waybar/archive/0.11.0.tar.gz")
+
+cd "$WAYBAR_DIR"
+
+# C++20標準を強制
+#export CXXFLAGS="-std=c++20"
+
+CXXFLAGS"-std=c++20" meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release \
+    -Dlibnl=enabled \
+    -Dcpp_std=c++20 \
+    -Dtests=disabled \
+    -Dman-pages=disabled \
+    -Dcava=disabled \
+    -Dlibnl=disabled \
+    -Dlibudev=enabled > "$LOG/waybar.log" 2>&1
+
+ninja -C build -j"$JOBS" >> "$LOG/waybar.log" 2>&1
+
+ninja -C build install >> "$LOG/waybar.log" 2>&1
+
+mkdir -p "$SRC/bin"
+
+cat > "$SRC/bin/xmlto" << "EOF"
+#!/bin/sh
+exit 0
+EOF
+
+chmod +x "$SRC/bin/xmlto"
+
+export PATH="$SRC/bin:$PATH"
+

@@ -1,0 +1,19 @@
+
+cd "$SRC"
+
+rm -rf procps-ng-4.0.5
+
+wget https://downloads.sourceforge.net/project/procps-ng/Production/procps-ng-4.0.5.tar.xz
+
+tar -xf procps-ng-4.0.5.tar.xz
+
+cd procps-ng-4.0.5
+
+sed -i '62i #include <stdbool.h>' src/watch.c
+
+./configure
+
+make
+
+make install
+

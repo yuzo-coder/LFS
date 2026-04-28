@@ -1,0 +1,4 @@
+
+build_mm_lib glibmm "https://download.gnome.org/sources/glibmm/2.66/glibmm-2.66.7.tar.xz" \
+    "-Dbuild-documentation=false"
+

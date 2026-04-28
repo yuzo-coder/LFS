@@ -1,0 +1,8 @@
+
+build_autotools "libfm-extra" \
+    "https://downloads.sourceforge.net/pcmanfm/libfm-1.3.2.tar.xz" \
+    "--sysconfdir=/etc \
+     --prefix=/usr \
+     --disable-static \
+     --with-extra-only"
+

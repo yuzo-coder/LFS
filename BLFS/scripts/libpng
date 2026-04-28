@@ -1,0 +1,27 @@
+
+cd "$SRC"
+
+rm -rf libpng-1.6.45
+
+wget https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz
+
+tar -xf libpng-1.6.45.tar.xz
+
+cd libpng-1.6.45
+
+# APNG�~C~Q�~C~C�~C~A�~A��~C~@�~B��~C��~C��~C��~C~I�~H�~C~P�~C��~B��~C��~C��~AA
+~L�~Q�~A~D�~B~B�~A��~B~R使�~T��~I
+wget https://downloads.sourceforge.net/project/libpng-apng/libpng16/1.6.45/libpng-1.6.45-apng.patch.gz
+
+gunzip libpng-1.6.45-apng.patch.gz
+
+patch -p1 < libpng-1.6.45-apng.patch
+
+./configure --prefix=/usr --disable-static
+
+make
+
+make install
+
+ldconfig
+

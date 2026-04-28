@@ -1,0 +1,37 @@
+
+cd "$SRC"
+
+rm -rf ffmpeg-7.1
+
+wget https://ftp.lfs-matrix.net/pub/blfs/12.3/f/ffmpeg-7.1.tar.xz
+
+tar xf ffmpeg-7.1.tar.xz
+
+cd ffmpeg-7.1
+
+# 1. configure を手動で実行（設定を生成する）
+# ここでエラーが出ないか注視してください。
+./configure --prefix=/usr               \
+            --enable-shared             \
+            --disable-static            \
+            --enable-gpl                \
+            --enable-version3           \
+            --enable-nonfree            \
+            --enable-libvpx             \
+            --enable-libx264            \
+            --enable-vdpau              \
+            --enable-vaapi              \
+            --enable-runtime-cpudetect  \
+            --enable-libfdk-aac         \
+            --disable-debug             \
+            --disable-doc
+
+# 2. 上記が成功したら make を実行
+# (config.mak が作成されているので、今度はエラーになりません)
+make -j$(nproc)
+
+# 3. インストール
+make install
+
+ldconfig
+

@@ -1,0 +1,4 @@
+
+build_meson "xdg-desktop-portal-wlr" \
+    "https://github.com/emersion/xdg-desktop-portal-wlr.git" \
+    "-Dsd-bus-provider=libsystemd -Dc_args=-Wno-error=implicit-function-declaration" 

@@ -1,0 +1,6 @@
+
+# 2. libgcrypt (libsecret の暗号化エンジン)
+build_autotools "libgcrypt" \
+    "https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.10.3.tar.bz2" \
+    "--disable-static"
+

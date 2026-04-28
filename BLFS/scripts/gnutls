@@ -1,0 +1,6 @@
+
+# 2. GnuTLS本体 (NSPR/NSSの代わり)
+build_autotools "gnutls" \
+    "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.3.tar.xz" \
+    "--with-included-libtasn1 --with-included-unistring --without-p11-kit"
+

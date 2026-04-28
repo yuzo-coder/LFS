@@ -1,0 +1,14 @@
+
+DIR=$(download_extract "https://www.sqlite.org/2024/sqlite-autoconf-3450300.tar.gz")
+
+cd "$DIR"
+
+./configure --prefix=/usr \
+            --disable-static \
+            --enable-fts5 \
+            CPPFLAGS="-DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_ENABLE_UNLOCK_NOTIFY=1"
+
+make
+
+make install
+

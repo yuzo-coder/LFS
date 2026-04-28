@@ -1,0 +1,11 @@
+
+DIR=$(download_extract "https://duktape.org/duktape-2.7.0.tar.xz")
+
+cd "$DIR"
+# 共有ライブラリとしてビルド
+# Makefile.sharedlibrary を使用します
+make -f Makefile.sharedlibrary
+
+# インストール (PREFIXを指定)
+make -f Makefile.sharedlibrary install INSTALL_PREFIX=/usr
+

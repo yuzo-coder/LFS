@@ -1,0 +1,6 @@
+
+# 1. libtiff (画像の基礎ライブラリ)
+build_autotools "libtiff" \
+    "https://download.osgeo.org/libtiff/tiff-4.7.1.tar.gz" \
+    "--disable-static"
+

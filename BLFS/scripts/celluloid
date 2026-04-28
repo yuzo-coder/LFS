@@ -1,0 +1,5 @@
+
+build_meson "celluloid" \
+    "https://github.com/celluloid-player/celluloid/archive/refs/tags/v0.28.tar.gz" \
+    ""
+

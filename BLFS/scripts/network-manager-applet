@@ -1,0 +1,8 @@
+
+build_meson "network-manager-applet" \
+    "https://ftp.lfs-matrix.net/pub/blfs/12.4/n/network-manager-applet-1.34.0.tar.xz" \
+     "-Dwwan=false \
+     -Dselinux=false \
+     -Dappindicator=no \
+     -Dteam=false"
+

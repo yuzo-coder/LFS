@@ -1,0 +1,29 @@
+
+DIR=$(download_extract "https://ftp.lfs-matrix.net/pub/blfs/12.4/l/libblockdev-3.3.1.tar.gz")
+
+cd "$DIR"
+
+echo "int bd_nvdimm_is_vmem_enabled (void) { return 0; }" > src/plugins/nvdimm.c
+
+echo "" > src/plugins/nvdimm.h
+
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --with-loop \
+            --with-fs \
+            --with-part \
+            --with-nvme \
+            --without-lvm \
+            --without-dm \
+            --with-crypto \
+            --with-mdraid \
+            --without-mpath \
+            --without-tools \
+            --without-escrow \
+            --disable-static \
+            --disable-introspection
+
+make
+
+make install
+

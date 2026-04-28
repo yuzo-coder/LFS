@@ -1,0 +1,5 @@
+
+build_autotools "libcdio-paranoia" \
+    "https://ftp.gnu.org/gnu/libcdio/libcdio-paranoia-10.2+2.0.2.tar.bz2" \
+    "--prefix=/usr --disable-static"
+

@@ -1,0 +1,5 @@
+
+build_meson "bubblewrap" \
+    "https://github.com/containers/bubblewrap/releases/download/v0.9.0/bubblewrap-0.9.0.tar.xz" \
+    "-Dman=disabled -Dpython=python3 -Dc_std=c11"
+

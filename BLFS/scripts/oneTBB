@@ -1,0 +1,4 @@
+
+build_cmake "oneTBB" "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.11.0.tar.gz" "-DTBB_TEST=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+
+

@@ -1,0 +1,5 @@
+
+build_autotools "libnl" \
+    "https://github.com/thom311/libnl/releases/download/libnl3_9_0/libnl-3.9.0.tar.gz" \
+    "--sysconfdir=/etc --disable-static"
+

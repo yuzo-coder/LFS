@@ -1,0 +1,14 @@
+
+DIR=$(download_extract "https://github.com/lu-zero/cargo-c/archive/v0.10.15/cargo-c-0.10.15.tar.gz")
+
+cd "$DIR"
+
+# --release で最適化、--locked で依存関係を固定
+# 複数のバイナリ (cargo-cbuild, cargo-cinstall 等) が生成されます
+cargo build --release > "$LOG/cargo-c.log" 2>&1
+
+# 生成されたバイナリを /usr/bin へ配置
+cp target/release/cargo-c* "$PREFIX/bin/"
+
+ldconfig
+

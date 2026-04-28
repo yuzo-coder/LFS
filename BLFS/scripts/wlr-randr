@@ -1,0 +1,3 @@
+
+build_meson "wlr-randr" "https://github.com/emersion/wlr-randr/releases/download/v0.2.0/wlr-randr-0.2.0.tar.gz" ""
+

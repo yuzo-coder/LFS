@@ -1,0 +1,34 @@
+
+cd "$SRC"
+
+rm -rf libclc-20.1.8.src
+
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.8/libclc-20.1.8.src.tar.xz
+
+tar -xf libclc-20.1.8.src.tar.xz
+
+cd libclc-20.1.8.src
+
+mkdir -pv build
+
+cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr               \
+      -DCMAKE_INSTALL_LIBDIR=lib                \
+      -DCMAKE_BUILD_TYPE=Release                \
+      -DLLVM_ENABLE_PROJECTS="clang;lld;compiler-rt" \
+      -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
+      -DLLVM_TARGETS_TO_BUILD="X86"             \
+      -DLLVM_LINK_LLVM_DYLIB=ON                 \
+      -DLLVM_ENABLE_RTTI=ON                     \
+      -DLLVM_INCLUDE_BENCHMARKS=OFF             \
+      -DCLANG_DEFAULT_RTLIB=compiler-rt         \
+      -DCLANG_DEFAULT_UNWINDLIB=libunwind       \
+      -Wno-dev -G Ninja ..
+
+ninja
+
+ninja install 
+
+ldconfig
+

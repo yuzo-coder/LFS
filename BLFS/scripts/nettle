@@ -1,0 +1,6 @@
+
+# 1. nettle (GnuTLSの数学ライブラリ)
+build_autotools "nettle" \
+    "https://ftp.gnu.org/gnu/nettle/nettle-3.9.1.tar.gz" \
+    "--disable-static"
+

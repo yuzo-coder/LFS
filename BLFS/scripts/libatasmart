@@ -1,0 +1,6 @@
+
+# libatasmart
+build_autotools "libatasmart" \
+    "http://0pointer.de/public/libatasmart-0.19.tar.xz" \
+    "--prefix=/usr --disable-static"
+

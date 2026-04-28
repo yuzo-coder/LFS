@@ -1,0 +1,16 @@
+
+DIR=$(download_extract "https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.47.tar.bz2")
+
+cd "$DIR"
+# 'nullptr' という変数名を 'my_nullptr' に一括置換する
+sed -i 's/nullptr/my_nullptr/g' tests/t-printf.c
+
+# 【重要】Makefile を生成するために configure を実行
+./configure --prefix=/usr --disable-static > "$LOG/libgpg-error.log" 2>&1
+
+make -j$(nproc) >> "$LOG/libgpg-error.log" 2>&1 
+
+make install >> "$LOG/libgpg-error.log" 2>&1
+
+ldconfig
+

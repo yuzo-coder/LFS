@@ -53,3 +53,17 @@ systemd-machine-id-setup
 
 systemctl preset-all
 
+
+mkdir -vp /var/tmp
+
+chmod 1777 /var/tmp
+
+mkdir -p /etc/systemd/system/systemd-resolved.service.d
+
+cat <<EOF > /etc/systemd/system/systemd-resolved.service.d/override.conf
+[Service]
+PrivateTmp=no
+PrivateDevices=no
+ProtectSystem=no
+ProtectHome=no
+EOF

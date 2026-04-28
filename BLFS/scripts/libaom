@@ -1,0 +1,22 @@
+
+DIR=$(download_extract "https://storage.googleapis.com/aom-releases/libaom-3.13.2.tar.gz")
+
+cd "$DIR"
+
+rm -rf aom_build && mkdir aom_build && cd aom_build
+
+cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+      -DCMAKE_INSTALL_LIBDIR=lib \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON \
+      -DENABLE_DOCS=OFF \
+      -DENABLE_TESTS=OFF \
+      -DENABLE_EXAMPLES=OFF \
+      -DENABLE_TOOLS=OFF .. > "$LOG/libaom.log" 2>&1
+
+make >> "$LOG/libaom.log" 2>&1
+
+make install >> "$LOG/libaom.log" 2>&1
+
+ldconfig
+

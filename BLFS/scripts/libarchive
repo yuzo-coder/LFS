@@ -1,0 +1,5 @@
+
+build_autotools "libarchive" \
+    "https://github.com/libarchive/libarchive/releases/download/v3.8.1/libarchive-3.8.1.tar.xz" \
+    "--prefix=/usr --disable-static"
+

@@ -1,0 +1,12 @@
+
+groupadd -g 133 rtkit
+
+useradd -c "RealtimeKit Daemon User" -d /var/lib/rtkit -u 133 -g rtkit -s /bin/false rtkit
+
+mkdir -p /var/lib/rtkit
+
+chown rtkit:rtkit /var/lib/rtkit
+
+chmod 750 /var/lib/rtkit 
+    
+build_meson rtkit "https://github.com/heftig/rtkit/releases/download/v0.13/rtkit-0.13.tar.xz" "-Dlibsystemd=disabled"
