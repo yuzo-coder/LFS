@@ -1,0 +1,3 @@
+
+build_autotools libmd "https://libbsd.freedesktop.org/releases/libmd-1.1.0.tar.xz" ""
+

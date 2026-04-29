@@ -37,7 +37,7 @@ build_autotools() {
     [ -f Makefile ] && make distclean || true
 
     ./configure --prefix="$PREFIX" --libdir=/usr/lib --sysconfdir=/etc --disable-static > "$LOG/$NAME.log" 2>&1
-    make -j$(nproc) >> "$LOG/$NAME.log" 2>&1
+    make >> "$LOG/$NAME.log" 2>&1
     
     # インストール。既存ファイルがあっても強制(force)するように、
     # あるいはエラーでも中断しないように設定（iso-codesのようなフック対策）
@@ -63,7 +63,7 @@ build_meson() {
     cd "$DIR"
     rm -rf build
     meson setup build --prefix="$PREFIX" --libdir=/usr/lib --buildtype=release $EXTRA > "$LOG/$NAME.log" 2>&1
-    ninja -C build >> "$LOG/$NAME.log" 2>&1
+    ninja -C build -j$JOBS >> "$LOG/$NAME.log" 2>&1
     ninja -C build install >> "$LOG/$NAME.log" 2>&1
     ldconfig
     cd "$ROOT_DIR"
@@ -75,7 +75,7 @@ build_cmake() {
     cd "$DIR"
     rm -rf build && mkdir build && cd build
     cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" -DCMAKE_INSTALL_LIBDIR=lib $EXTRA .. > "$LOG/$NAME.log" 2>&1
-    make >> "$LOG/$NAME.log" 2>&1
+    make -j$JOBS >> "$LOG/$NAME.log" 2>&1
     make install >> "$LOG/$NAME.log" 2>&1
     ldconfig
     cd "$ROOT_DIR"

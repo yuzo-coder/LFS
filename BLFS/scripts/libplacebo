@@ -11,15 +11,16 @@ cd libplacebo-7.360.0
 
 mkdir -v build
 
-meson setup .. \
+meson setup build \
     --prefix=/usr \
+    --libdir=lib \
     --buildtype=release \
     -Dshaderc=disabled \
     -Dvulkan=enabled \
     -Dlcms=enabled \
     -Dopengl=enabled > "$LOG/libplacebo.log" 2>&1
 
-ninja  >> "$LOG/libplacebo.log" 2>&1
+ninja -C build >> "$LOG/libplacebo.log" 2>&1
 
-ninja install >> "$LOG/libplacebo.log" 2>&1
+ninja -C build install >> "$LOG/libplacebo.log" 2>&1
 

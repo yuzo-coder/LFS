@@ -26,7 +26,7 @@ ulimit -n 65536
 
 # PKG_CONFIG_PATH
 # ${PKG_CONFIG_PATH:-}	
-PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig
+PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig
 export PATH=$PATH:/usr/local/bin:/root/.cargo/bin
 export PKG_CONFIG_PATH
 export MAKEFLAGS="-j$(nproc)"

@@ -1,4 +1,4 @@
 
 build_meson "adwaita-icon-theme" \
-    "https://download.gnome.org/sources/adwaita-icon-theme/46/adwaita-icon-theme-46.2.tar.xz" \
+    "https://download.gnome.org/sources/adwaita-icon-theme/46/adwaita-icon-theme-46.2.tar.xz" ""
 

@@ -1,0 +1,2 @@
+
+build_autotools "libpsl" "https://ftp2.osuosl.org/pub/blfs/12.4/l/libpsl-0.21.5.tar.gz" "--prefix=/usr --disable-static"

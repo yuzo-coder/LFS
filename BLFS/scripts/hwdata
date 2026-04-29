@@ -1,0 +1,2 @@
+
+build_autotools "hwdata" "https://github.com/vcrhonek/hwdata/archive/v0.398/hwdata-0.398.tar.gz" "--prefix=/usr --sysconfdir=/etc --datadir=/usr/share"

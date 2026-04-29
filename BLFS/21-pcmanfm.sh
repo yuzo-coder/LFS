@@ -7,11 +7,12 @@ scripts=(
     "gsettings-desktop-schemas"
     "nghttp2"
     "sqlite"
+    "glib-networking"
     "libsoap"
     "libbytesize"
     "libaio"
     "lvm2"
-    "dmraid"
+#    "dmraid"
     "nspr"
     "nss"
     "keyutils"
@@ -27,8 +28,8 @@ scripts=(
     "libcdio"
     "libcdio-paranoia"
     "gvfs"
-    "menu-cache"
     "libfm"
+    "menu-cache"
     "pcmanfm"
 )
 

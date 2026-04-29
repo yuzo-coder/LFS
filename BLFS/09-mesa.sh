@@ -12,8 +12,9 @@ scripts=(
     "bindgen-cli"
     "libclc"
     "pyyaml"
-    "SPIRV-LLVM-Translator"
     "SPIRV-Headers"
+    "SPIRV-Tools"
+    "SPIRV-LLVM-Translator"
     "cbindgen"
     "mesa"
     "libglvnd"
@@ -21,7 +22,7 @@ scripts=(
 )
 
 for pkg in "${scripts[@]}"; do
-    echo "--- Building $pkg ---"
+    echo "========= Building $pkg =========="
     cd "$ROOT_DIR"
     source "./scripts/$pkg"
 done

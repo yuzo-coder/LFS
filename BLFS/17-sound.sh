@@ -13,7 +13,6 @@ scripts=(
     "alsa-utils"
     "17-pipewire"
     "lua"
-    "apluse"
 )
 
 for pkg in "${scripts[@]}"; do

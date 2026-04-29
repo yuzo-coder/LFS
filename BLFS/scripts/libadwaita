@@ -15,19 +15,20 @@ sed -i "s|subdir('docs/')|# subdir('docs/')|" subprojects/appstream/meson.build
 
 sed -i "s|subdir('docs')|# subdir('docs')|" subprojects/appstream/meson.build
 
-mkdir -p build && cd build
+mkdir -p build
 
-meson setup .. \
+meson setup build \
     --prefix=/usr \
+    --libdir=lib \
     --buildtype=release \
     -Dtests=false \
     -Dintrospection=enabled \
     --wrap-mode=nodownload \
     -Dvapi=true
 
-ninja > "$LOG/libadwaita.log" 2>&1
+ninja -C build > "$LOG/libadwaita.log" 2>&1
 
-ninja install >> "$LOG/libadwaita.log" 2>&1
+ninja -C build install >> "$LOG/libadwaita.log" 2>&1
 
 ldconfig
 

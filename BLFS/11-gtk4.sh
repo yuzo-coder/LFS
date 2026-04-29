@@ -19,8 +19,8 @@ scripts=(
     "pangomm"
     "atkmm"
     "rtkit"
-    "gtk3mm"
-    "gtk4mm"
+    "gtkmm3"
+    "gtkmm4"
 )
 
 for pkg in "${scripts[@]}"; do

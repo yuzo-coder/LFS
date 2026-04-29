@@ -1,3 +1,4 @@
 
-build_autotools "xdg-dbus-proxy" "https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz" ""
+
+build_meson "xdg-dbus-proxy" "https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz" "-Dman=disabled"
 

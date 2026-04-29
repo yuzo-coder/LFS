@@ -1,3 +1,4 @@
 
-build_autotools libxslt "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz" "--disable-static"
+
+build_autotools "libxslt" ""https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.43.tar.xz ""
 

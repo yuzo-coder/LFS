@@ -1,3 +1,5 @@
 
 cargo install bindgen-cli
 
+ln -sf $HOME/.cargo/bin/bindgen /usr/local/bin/bindgen
+

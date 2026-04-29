@@ -1,0 +1,2 @@
+
+build_autotools "vala" "https://ftp2.osuosl.org/pub/blfs/12.4/v/vala-0.56.18.tar.xz" "--prefix=/usr"

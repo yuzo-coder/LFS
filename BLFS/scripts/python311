@@ -1,0 +1,33 @@
+
+cd $SRC
+
+mkdir -p /opt/python311
+
+wget https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tar.xz
+
+tar -xf Python-3.11.0.tar.xz
+
+cd Python-3.11.0
+
+./configure --prefix=/opt/python311       \
+            --enable-shared     \
+            --without-ensurepip \
+            --without-static-libpython
+
+make
+
+make install
+
+export LD_LIBRARY_PATH=/opt/python311/lib:${LD_LIBRARY_PATH:-}
+
+ldconfig
+
+cd $ROOT_DIR
+
+
+# Rust/Cargoの準備（システムパスへ配置）
+cp /root/.cargo/bin/rustc /usr/bin/rustc
+cp /root/.cargo/bin/cargo /usr/bin/cargo
+cp /root/.cargo/bin/rustup /usr/bin/rustup
+chmod +x /usr/bin/rustup /usr/bin/rustc /usr/bin/cargo
+

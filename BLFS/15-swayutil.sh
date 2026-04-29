@@ -33,9 +33,29 @@ if ! id "greeter" &>/dev/null; then
     usermod -aG seat,video,input greeter
 fi
 
+# /etc/systemd/system/greetd.service
+cat > /etc/systemd/system/greetd.service << "EOF"
+[Unit]
+Description=Greeter daemon
+After=systemd-user-sessions.service plymouth-quit-wait.service
+After=getty@tty1.service
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/greetd
+IgnoreSIGPIPE=no
+SendSIGHUP=yes
+TimeoutStopSec=30s
+KeyringMode=shared
+
+[Install]
+WantedBy=graphical.target
+EOF
+
 mkdir -p /etc/greetd
 
-# greetd 設定
+# /etc/greetd/config.toml
 cat > /etc/greetd/config.toml <<EOF
 [terminal]
 vt = 1

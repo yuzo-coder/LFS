@@ -46,7 +46,7 @@ while read -r TARBALL; do
     fi
 
     echo "===== Checking Build System for: $NAME ====="
-    DIR=$(download_extract "$BASE_URL_LIB/$TARBALL")
+    DIR=$(download_extract "https://www.x.org/releases//individual/lib/$TARBALL")
     cd "$DIR"
 
     # --- 自動判別ロジック ---
@@ -63,7 +63,7 @@ while read -r TARBALL; do
         # Autotoolsビルドの場合
         echo "Detected Autotools build system..."
         # autogen.sh しかない場合は実行
-        if [ ! -f "configure" ]; then ./autogen.sh $XORG_CONFIG > "$LOG/$NAME.log" 2>&1; fi
+        if [ ! -f "configure" ]; then ./autogen.sh > "$LOG/$NAME.log" 2>&1; fi
         
         OPTS=""
         case "$NAME" in
@@ -72,7 +72,7 @@ while read -r TARBALL; do
             libXpm*) OPTS="--disable-open-zfile" ;;
         esac
         
-        ./configure $XORG_CONFIG $OPTS >> "$LOG/$NAME.log" 2>&1
+        ./configure --prefix="$PREFIX" --libdir=/usr/lib --sysconfdir=/etc --disable-static >> "$LOG/$NAME.log" 2>&1
         make >> "$LOG/$NAME.log" 2>&1
         sudo make install >> "$LOG/$NAME.log" 2>&1
     else

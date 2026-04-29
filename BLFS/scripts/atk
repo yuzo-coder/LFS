@@ -1,0 +1,2 @@
+
+build_meson atk "https://ftp2.osuosl.org/pub/blfs/12.4/a/atk-2.38.0.tar.xz" "-Ddocs=false"

@@ -1,0 +1,4 @@
+
+build_cmake "SPIRV-Tools" \
+    "https://github.com/KhronosGroup/SPIRV-Tools/archive/vulkan-sdk-1.4.321.0/SPIRV-Tools-vulkan-sdk-1.4.321.0.tar.gz" \
+    "-DSPIRV-Headers_SOURCE_DIR=/usr -DBUILD_SHARED_LIBS=ON"

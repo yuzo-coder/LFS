@@ -1,0 +1,4 @@
+
+build_autotools libxml2 "https://ftp2.osuosl.org/pub/blfs/12.4/l/libxml2-2.14.5.tar.xz" "--prefix=/usr --disable-static --with-history"
+
+ln -s /usr/lib/pkgconfig/libxml-2.0.pc /usr/lib/pkgconfig/libxml2.pc

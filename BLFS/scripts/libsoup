@@ -1,11 +1,2 @@
 
-build_meson "libsoup" \
-    "https://download.gnome.org/sources/libsoup/3.6/libsoup-3.6.1.tar.xz" \
-    "--prefix=/usr \
-     --buildtype=release \
-     -Dintrospection=disabled \
-     -Dvapi=disabled \
-     -Ddocs=disabled \
-     -Dtests=false \
-     -Dtls_check=false"
-
+build_meson "libsoup" "https://ftp2.osuosl.org/pub/blfs/12.4/l/libsoup-2.74.3.tar.xz" "-Dgtk_doc=false -Dintrospection=enabled"

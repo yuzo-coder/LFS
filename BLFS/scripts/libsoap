@@ -1,0 +1,3 @@
+
+build_meson libsoup "https://ftp2.osuosl.org/pub/blfs/12.4/l/libsoup-3.6.5.tar.xz" "-Dvapi=enabled -Ddocs=disabled -Dtests=false"
+

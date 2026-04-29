@@ -17,12 +17,15 @@ scripts=(
     "seatd"
     "cmake"
     "pam"
+    "libmd"
+    "libbsd"
     "shadow"
     "systemd"
 )
 
 for pkg in "${scripts[@]}"; do
-    echo "--- Building $pkg ---"
+    echo "========= Building $pkg =========="
+    cd "$ROOT_DIR"
     source "./scripts/$pkg"
 done
 
@@ -35,6 +38,40 @@ mkdir -p /etc/pam.d
 mkdir -p "$UNIT_DIR"
 mkdir -p /etc/systemd/system/multi-user.target.wants
 mkdir -p /etc/systemd/system/sockets.target.wants
+
+cat > /etc/pam.d/login << "EOF"
+#%PAM-1.0
+auth     required       pam_unix.so
+account  required       pam_unix.so
+password required       pam_unix.so
+session  required       pam_unix.so
+EOF
+
+cat > /etc/pam.d/other << "EOF"
+#%PAM-1.0
+auth     required       pam_unix.so
+account  required       pam_unix.so
+password required       pam_unix.so
+session  required       pam_unix.so
+EOF
+
+cat > /etc/pam.d/su << "EOF"
+# Begin /etc/pam.d/su
+# rootからのsuは常に許可（パスワード不要）
+auth     sufficient   pam_rootok.so
+# 環境変数の読み込み
+auth     include      system-auth
+# アカウント管理
+account  include      system-auth
+# セッション管理
+session  include      system-auth
+# X11（GUI）アプリの権限引き継ぎを許可（Firefoxなどのビルドに便利）
+session  optional     pam_xauth.so
+# End /etc/pam.d/su
+EOF
+
+
+chmod 600 /etc/shadow
 
 # D-Bus用ディレクトリ
 mkdir -p /run/dbus

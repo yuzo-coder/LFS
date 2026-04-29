@@ -1,0 +1,28 @@
+
+cd "$SRC"
+
+wget https://ftp2.osuosl.org/pub/blfs/12.4/x/xwayland-24.1.8.tar.xz
+
+rm -rf xwayland-24.1.8
+
+tar xf xwayland-24.1.8.tar.xz
+
+cd xwayland-24.1.8
+
+find . -type f \( -name "*.c" -o -name "*.h" \) -exec sed -i '/#include <epoxy\/egl.h>/ {
+    i #define GC XlibGC
+    a #undef GC
+}' {} +
+
+unset CFLAGS
+unset CXXFLAGS
+
+meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release > "$LOG/xwayland.log" 2>&1
+
+ninja -C build -j$JOBS >> "$LOG/xwayland.log" 2>&1
+
+ninja -C build install >> "$LOG/xwayland.log" 2>&1
+
+
+ldconfig
+

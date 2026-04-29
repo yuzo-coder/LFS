@@ -9,7 +9,7 @@ scripts=(
     "xcb-util"
     "xcb-util-wm"
     "xcb-imdkit"
-#    "libxkbcommon"
+    "19-libxkbcommon"
     "fcitx5"
     "fcitx5-gtk"
 )

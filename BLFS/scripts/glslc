@@ -1,0 +1,28 @@
+
+cd "$SRC"
+
+wget https://github.com/google/shaderc/archive/v2025.3/shaderc-2025.3.tar.gz
+
+rm -rf shaderc-2025.3
+
+tar -xf shaderc-2025.3.tar.gz
+
+cd shaderc-2025.3
+
+sed '/build-version/d'   -i glslc/CMakeLists.txt            &&
+sed '/third_party/d'     -i CMakeLists.txt                  &&
+sed 's|SPIRV|glslang/&|' -i libshaderc_util/src/compiler.cc &&
+echo '"2025.3"' > glslc/src/build-version.inc
+
+rm -rf build && mkdir build && cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DSHADERC_SKIP_TESTS=ON \
+      -DSHADERC_ENABLE_WERROR_COMPILE=OFF \
+      ..
+
+make
+
+sudo make install
+

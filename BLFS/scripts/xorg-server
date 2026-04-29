@@ -1,0 +1,22 @@
+
+cd "$SRC"
+
+wget https://www.x.org/pub/individual/xserver/xorg-server-21.1.18.tar.xz
+
+rm -rf xorg-server-21.1.18
+
+tar -xf xorg-server-21.1.18.tar.xz
+
+cd xorg-server-21.1.18
+
+find . -type f \( -name "*.c" -o -name "*.h" \) -exec sed -i '/#include <epoxy\/egl.h>/ {
+    i #define GC XlibGC
+    a #undef GC
+}' {} +
+
+meson setup build --prefix=/usr --libdir=/usr/lib --buildtype=release > "$LOG/xorg-server.log" 2>&1
+
+ninja -C build -j$JOBS >> "$LOG/xorg-server.log" 2>&1
+
+ninja -C build install >> "$LOG/xorg-server.log" 2>&1
+

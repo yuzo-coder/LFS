@@ -1,0 +1,14 @@
+
+cd "$SRC"
+
+wget https://ftp2.osuosl.org/pub/blfs/12.4/c/cbindgen-0.29.0.tar.gz
+
+rm -rf cbindgen-0.29.0
+
+tar -xf cbindgen-0.29.0.tar.gz
+
+cd cbindgen-0.29.0
+
+cargo build --release
+
+sudo install -Dm755 target/release/cbindgen /usr/bin/

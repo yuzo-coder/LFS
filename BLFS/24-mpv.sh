@@ -5,6 +5,7 @@ source ./functions.sh
 
 scripts=(
     "lcms2"
+    "glad2"
     "libplacebo"
     "libass"
     "luajit"

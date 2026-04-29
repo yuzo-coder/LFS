@@ -1,5 +1,4 @@
 
-# libdrm: Mesa�~A~LGPU�~A�対話�~A~Y�~B~K�~A~_�~B~A�~A��~E�| ~H
-build_meson libdrm "https://dri.freedesktop.org/libdrm/libdrm-2.4.120.tar.xz" \
+build_meson libdrm "https://ftp2.osuosl.org/pub/blfs/12.4/l/libdrm-2.4.125.tar.xz" \
     "-Dudev=true -Dvalgrind=disabled"
 

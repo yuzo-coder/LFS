@@ -10,7 +10,7 @@ cd node-v24.14.1
 ./configure --prefix=/usr \
             --shared-zlib \
             --shared-openssl \
-            --with-intl=system-icu
+            --with-intl=full-icu
 
 make
 
