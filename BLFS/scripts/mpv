@@ -1,6 +1,6 @@
 
 build_meson "mpv" \
-    "https://github.com/mpv-player/mpv/archive/refs/tags/v0.41.0.tar.gz" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/m/mpv-0.40.0.tar.gz" \
     "-Dalsa=enabled \
     -Dpulse=enabled \
     -Dpipewire=enabled \

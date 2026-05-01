@@ -23,7 +23,6 @@ meson setup build \
     --buildtype=release \
     -Dtests=false \
     -Dintrospection=enabled \
-    --wrap-mode=nodownload \
     -Dvapi=true
 
 ninja -C build > "$LOG/libadwaita.log" 2>&1

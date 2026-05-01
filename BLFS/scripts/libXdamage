@@ -1,0 +1,3 @@
+
+build_autotools libXdamage "https://www.x.org/archive//individual/lib/libXdamage-1.1.6.tar.xz" ""
+

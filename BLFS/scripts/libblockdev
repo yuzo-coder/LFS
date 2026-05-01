@@ -17,6 +17,7 @@ echo "" > src/plugins/nvdimm.h
             --without-dm \
             --with-crypto \
             --with-mdraid \
+            --without-nvdimm \
             --without-mpath \
             --without-tools \
             --without-escrow \

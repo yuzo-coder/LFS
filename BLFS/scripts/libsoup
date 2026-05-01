@@ -1,2 +1,3 @@
 
-build_meson "libsoup" "https://ftp2.osuosl.org/pub/blfs/12.4/l/libsoup-2.74.3.tar.xz" "-Dgtk_doc=false -Dintrospection=enabled"
+build_meson libsoup "https://ftp2.osuosl.org/pub/blfs/12.4/l/libsoup-3.6.5.tar.xz" "-Dvapi=enabled -Ddocs=disabled -Dtests=false -Dintrospection=enabled"
+

@@ -1,4 +1,5 @@
 
-build_meson "gtkgreet" "https://github.com/kennylevinsen/gtkgreet.git" ""
+build_rust_task "greetd" "https://github.com/kennylevinsen/greetd/archive/refs/tags/0.10.2.tar.gz" "greetd"
 
+cp "$SRC/greetd/greetd.service" /etc/systemd/system/
 

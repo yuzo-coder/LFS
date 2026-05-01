@@ -1,5 +1,5 @@
 
-LUA_DIR=$(download_extract "https://www.lua.org/ftp/lua-5.4.8.tar.gz")
+LUA_DIR=$(download_extract "https://www.lua.org/ftp/lua-5.2.0.tar.gz")
 
 cd "$LUA_DIR"
 
@@ -10,15 +10,15 @@ make install INSTALL_TOP="$PREFIX" >> "$LOG/lua.log" 2>&1
 mkdir -p "$PREFIX/lib/pkgconfig"
 
 cat << EOF > "$PREFIX/lib/pkgconfig/lua.pc"
-V=5.4
-R=5.4.8
+V=5.2
+R=5.2.0
 prefix=/usr
 exec_prefix=/usr
 libdir=/usr/lib
 includedir=/usr/include
 Name: Lua
 Description: An Extensible Extension Language
-Version: 5.4.8
+Version: 5.2.0
 Requires:
 Libs: -L/usr/lib -llua -lm -ldl
 Cflags: -I/usr/include

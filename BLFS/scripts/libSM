@@ -1,0 +1,3 @@
+
+build_autotools libSM "https://www.x.org/archive//individual/lib/libSM-1.2.6.tar.xz" ""
+

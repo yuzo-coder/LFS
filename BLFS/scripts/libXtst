@@ -1,0 +1,3 @@
+
+build_autotools libXtst "https://www.x.org/archive//individual/lib/libXtst-1.2.5.tar.xz" ""
+

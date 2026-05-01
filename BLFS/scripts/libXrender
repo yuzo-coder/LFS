@@ -1,0 +1,3 @@
+
+build_autotools libXrender "https://www.x.org/archive//individual/lib/libXrender-0.9.12.tar.xz" ""
+

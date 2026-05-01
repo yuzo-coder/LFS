@@ -1,19 +1,38 @@
 
-# 1. まずグループとユーザーを作る
 groupadd -g 27 polkitd &&
 
 useradd -c "PolicyKit Daemon User" -d /var/lib/polkit -u 27 -g polkitd -s /bin/false polkitd
 
-# 2. 次にディレクトリを作って所有権を変える
 mkdir -p /var/lib/polkit
 
 chown -v polkitd:polkitd /var/lib/polkit
 
 chmod -v 750 /var/lib/polkit
 
-# Polkit (権限管理フレームワーク)
-# 依存関係を最小限にしてビルドを通します
 build_meson "polkit" \
     "https://github.com/polkit-org/polkit/archive/refs/tags/124.tar.gz" \
-    "-Dintrospection=false -Dman=false -Dexamples=false -Dgtk_doc=false -Dtests=false"
+    "-Dintrospection=false -Dman=false -Dexamples=false -Dgtk_doc=false -Dtests=false -Dsystemdsystemunitdir=/lib/systemd/system"
+
+cat > /lib/systemd/system/polkit.service << "EOF"
+[Unit]
+Description=Authorization Manager
+After=dbus.service
+CheckUnit=dbus.service
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.PolicyKit1
+ExecStart=/usr/lib/polkit-1/polkitd --no-debug
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+
+systemctl start polkit
+
+systemctl enable polkit
+
 

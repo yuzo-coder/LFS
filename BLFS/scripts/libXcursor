@@ -1,0 +1,3 @@
+
+build_autotools libXcursor "https://www.x.org/archive//individual/lib/libXcursor-1.2.3.tar.xz" ""
+

@@ -1,5 +1,20 @@
 
-build_autotools "x264" \
-    "https://code.videolan.org/videolan/x264/-/archive/master/x264-master.tar.bz2" \
-    "--enable-shared --enable-pic --disable-cli --host=x86_64-linux"
+cd "$SRC"
+
+wget https://code.videolan.org/videolan/x264/-/archive/master/x264-master.tar.bz2
+
+rm -rf x264-master
+
+tar -xf x264-master.tar.bz2
+
+cd x264-master
+
+./configure --prefix=/usr \
+            --enable-shared \
+            --enable-pic \
+            --disable-cli
+
+make 
+
+make install-lib-shared
 

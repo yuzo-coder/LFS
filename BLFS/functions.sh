@@ -20,7 +20,7 @@ download_extract() {
     local TAR=${URL##*/}
     echo "Downloading $TAR..." >&2
     cd "$SRC"
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
+    [ -f "$TAR" ] || wget -q --show-progress "$URL" --no-check-certificate >&2
     
     local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
     rm -rf "$DIR"

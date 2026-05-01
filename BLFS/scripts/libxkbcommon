@@ -1,3 +1,4 @@
 
-build_meson libxkbcommon "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz" "-Denable-x11=false"
+build_meson libxkbcommon "https://github.com/xkbcommon/libxkbcommon/archive/ref\
+    "-Denable-x11=true -Denable-docs=false"
 

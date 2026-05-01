@@ -1,0 +1,3 @@
+
+build_autotools libXinerama "https://www.x.org/archive//individual/lib/libXinerama-1.1.6.tar.xz" ""
+
