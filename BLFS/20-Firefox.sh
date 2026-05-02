@@ -4,8 +4,13 @@ set -euo pipefail
 source ./functions.sh
 
 scripts=(
-nodejs
-firefox
+
+# python311
+# nspr
+nss
+firefox128
+
+#firefoxbin
 
 )
 

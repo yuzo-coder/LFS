@@ -4,22 +4,16 @@ set -euo pipefail
 source ./functions.sh
 
 scripts=(
-expat
-libffi
-pcre2
-libxml2
-libxslt
-libyaml
-libfyaml
-json-c
-json-glib
-jsoncpp
-libmd
-libbsd
-libpthread-stubs
-libtirpc
-sqlite
-# glib2
+
+xwayland
+wlroots
+sway
+swaybg
+Waybar
+wofi
+wlogout
+wl-clipboard
+foot
 
 )
 
@@ -29,4 +23,4 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== 02-COMPLETE ====="
+echo "===== LLVM COMPLETE ====="

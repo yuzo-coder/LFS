@@ -9,6 +9,7 @@ pam
 popt
 keyutils
 systemd
+seatd
 shared-mime-info
 
 )

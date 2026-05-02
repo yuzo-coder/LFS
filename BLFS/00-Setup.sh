@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+a
 # Preferences
 JOBS=$(nproc)
 PREFIX=/usr
@@ -13,11 +14,40 @@ mkdir -p "$SRC" "$LOG"
 
 cd "$SRC"
 
+# 1. ユーザー権限の設定
+echo "Step 1: Setting up user groups..."
+# 'user' というユーザーが存在することを確認してから実行
+if id "user" &>/dev/null; then
+    for grp in video input render seat; do
+        groupadd -f -r "$grp"
+        usermod -aG "$grp" user
+    done
+else
+    echo "Warning: User 'user' not found. skipping group assignment."
+fi
+
 # Japansene Keyboard Keymap
 localectl set-keymap jp106
 
 chown -v root:root /usr/sbin/shutdown /usr/sbin/reboot
 chmod -v 4755 /usr/sbin/shutdown /usr/sbin/reboot
+
+cat > /etc/os-release << "EOF"
+NAME="Linux From Scratch"
+VERSION="12.x-yuzo-build"
+ID=lfs
+PRETTY_NAME="Linux From Scratch 12.x-yuzo-build"
+EOF
+
+chown root:root /
+chown -h root:root /bin /lib /sbin /lib64 2>/dev/null
+mkdir -p /var/log/journal
+systemd-tmpfiles --create --prefix /var/log/journal
+
+mkdir -p /lib/firmware
+touch /lib/firmware/regulatory.db
+
+mkdir -p /var/lib/alsa
 
 # /etc/profile
 cat >> /etc/profile << "EOF"

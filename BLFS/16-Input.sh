@@ -8,8 +8,8 @@ libevdev
 mtdev
 libinput
 libdisplay-info
-libgudev
-seatd
+# libgudev
+# seatd
 
 )
 

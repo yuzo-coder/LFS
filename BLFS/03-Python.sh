@@ -4,6 +4,7 @@ set -euo pipefail
 source ./functions.sh
 
 scripts=(
+
 bash-completion
 lua
 python3
@@ -15,7 +16,9 @@ pyyaml
 mako
 dbus-python
 python-dbusmock
-gobject-introspection
+
+glib2
+# gobject-introspection
 graphviz
 vala
 doxygen

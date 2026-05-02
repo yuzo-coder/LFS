@@ -4,10 +4,11 @@ set -euo pipefail
 source ./functions.sh
 
 scripts=(
+libxkbcommon
 wayland
 wayland-protocols
 wayland-utils
-libxkbcommon
+# libxkbcommon
 xkbcomp
 Vulkan-Headers
 Vulkan-Loader
@@ -17,7 +18,9 @@ cargo-c
 
 bindgen-cli
 cbindgen
+nodejs
 
+libepoxy
 llvm
 libclc
 
@@ -28,11 +31,11 @@ glslang
 glslc
 mesa
 
-libepoxy
+# libepoxy
 
 libglvnd
 glu
-mesa-demosk
+mesa-demos
 
 )
 

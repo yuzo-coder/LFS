@@ -17,7 +17,6 @@ cat > /lib/systemd/system/polkit.service << "EOF"
 [Unit]
 Description=Authorization Manager
 After=dbus.service
-CheckUnit=dbus.service
 
 [Service]
 Type=dbus

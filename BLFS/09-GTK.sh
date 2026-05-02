@@ -14,6 +14,8 @@ at-spi2-atk
 
 cairo
 pango
+
+gobject-introspection
 librsvg
 graphene
 

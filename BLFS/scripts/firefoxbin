@@ -1,0 +1,8 @@
+
+cd "$SRC"
+
+wget "https://download.mozilla.org/?product=firefox-128.8.0esr-ssl&os=linux64&lang=ja" -O firefox-128.8.0esr.tar.bz2
+
+tar xjf firefox-128.8.0esr.tar.bz2 -C /opt/
+
+ln -sf /opt/firefox/firefox /usr/bin/firefox

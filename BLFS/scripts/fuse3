@@ -7,3 +7,4 @@ build_meson "fuse3" \
 
 chmod 4755 /usr/bin/fusermount3
 
+rm -f /etc/init.d/fuse3

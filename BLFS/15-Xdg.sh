@@ -12,7 +12,7 @@ fuse3
 #json-glib
 libpcap
 umockdev
-desktop-file-utils
+#desktop-file-utils
 inih
 xdg-desktop-portal
 xdg-desktop-portal-wlr
