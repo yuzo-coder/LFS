@@ -1,7 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-a
 # Preferences
 JOBS=$(nproc)
 PREFIX=/usr
