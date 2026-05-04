@@ -10,21 +10,6 @@ libXdmcp
 xcb-proto
 libxcb
 lib-7
-# xtrans
-# libX11
-
-# libXext
-# libXrender
-# libXrandr
-# libXcursor
-# libXdamage
-
-# libXinerama
-# libxkbfile
-
-# libXfixes
-# libXi
-# libXtst
 
 xcb-util
 xcb-util-image

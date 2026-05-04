@@ -19,7 +19,6 @@ libbsd
 libpthread-stubs
 libtirpc
 sqlite
-# glib2
 
 )
 

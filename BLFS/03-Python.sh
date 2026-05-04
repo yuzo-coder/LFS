@@ -19,9 +19,6 @@ dbus-python
 python-dbusmock
 
 glib2
-# gobject-introspection
-# graphviz
-# vala
 doxygen
 
 )

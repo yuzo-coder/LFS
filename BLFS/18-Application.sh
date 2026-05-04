@@ -6,7 +6,6 @@ source ./functions.sh
 scripts=(
 fmt
 spdlog
-#jsoncpp
 graphviz
 btop
 yazi

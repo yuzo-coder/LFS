@@ -4,7 +4,6 @@ set -euo pipefail
 source ./functions.sh
 
 scripts=(
-# libxkbcommon
 wayland
 wayland-protocols
 wayland-utils
@@ -34,7 +33,6 @@ mesa
 libepoxy
 
 glu
-# mesa-demos
 
 )
 

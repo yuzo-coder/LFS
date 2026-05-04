@@ -9,10 +9,8 @@ xdg-dbus-proxy
 bubblewrap
 fuse3
 
-#json-glib
 libpcap
 umockdev
-#desktop-file-utils
 inih
 xdg-desktop-portal
 xdg-desktop-portal-wlr
