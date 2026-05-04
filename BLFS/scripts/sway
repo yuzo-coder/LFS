@@ -1,3 +1,176 @@
 
 build_meson sway "https://github.com/swaywm/sway/releases/download/1.10.1/sway-1.10.1.tar.gz" ""
 
+echo "===== /usr/bin/start-sway ====="
+
+cat << 'EOF' > /usr/bin/start-sway
+#!/bin/bash
+# 1. ユーザー環境変数のクリーンアップと設定
+# Wayland関連の環境変数を定義
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=sway
+export MOZ_ENABLE_WAYLAND=1
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# 日本語入力 (Fcitx5) 関連の設定
+export XMODIFIERS="@im=fcitx"
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+
+# 2. XDG_RUNTIME_DIR の確認（LFSでは重要）
+# これがないとWaybarやFcitx5がソケットを作れずエラーになります
+if [ -z "$XDG_RUNTIME_DIR" ]; then
+    export XDG_RUNTIME_DIR=/run/user/$(id -u)
+    if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+        mkdir -p "$XDG_RUNTIME_DIR"
+        chmod 700 "$XDG_RUNTIME_DIR"
+        chown $(id -u):$(id -g) "$XDG_RUNTIME_DIR"
+    fi
+fi
+
+# 3. GLibスキーマのキャッシュ更新（念のための自動化）
+# 起動時の「スキーマがありません」エラーを未然に防ぎます
+if [ -d /usr/share/glib-2.0/schemas ]; then
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+fi
+
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# tty1でsway実行
+export XDG_vt=1
+
+# 4. SwayをD-Busセッション経由で起動
+# これにより Waybar, Fcitx5, Portal が互いに通信可能になります
+exec dbus-run-session sway > /home/user/sway.log 2>&1
+EOF
+
+chmod +x /usr/bin/start-sway
+
+echo "===== /etc/sway/config ====="
+
+# 既存のファイルを削除
+rm -f /etc/sway/config
+
+# $mod を Mod1 (Alt) に変更して再書き出し
+cat << 'EOF' > /etc/sway/config
+### Variables
+# Mod1 is Alt, Mod4 is Super (Windows Key)
+set $mod Mod1
+set $left h
+set $down j
+set $up k
+set $right l
+set $term foot
+set $menu dmenu_path | wmenu | xargs swaymsg exec --
+
+### Output configuration
+output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * resolution 1920x1080
+
+### Key bindings
+    bindsym $mod+Return exec $term > /tmp/foot.log 2>&1
+    bindsym $mod+Shift+q kill
+    bindsym $mod+d exec wofi --show drun
+    floating_modifier $mod normal
+    bindsym $mod+Shift+c reload
+    bindsym $mod+Shift+e exec wlogout
+
+    # Moving around
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # Move window
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+
+    # Workspaces
+    bindsym $mod+1 workspace number 1
+    bindsym $mod+2 workspace number 2
+    bindsym $mod+3 workspace number 3
+    bindsym $mod+4 workspace number 4
+    bindsym $mod+5 workspace number 5
+    bindsym $mod+Shift+1 move container to workspace number 1
+    bindsym $mod+Shift+2 move container to workspace number 2
+    bindsym $mod+Shift+3 move container to workspace number 3
+    bindsym $mod+Shift+4 move container to workspace number 4
+    bindsym $mod+Shift+5 move container to workspace number 5
+
+    # Layout stuff
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+    bindsym $mod+f fullscreen
+    bindsym $mod+Shift+space floating toggle
+    bindsym $mod+space focus mode_toggle
+    bindsym $mod+a focus parent
+
+    # Scratchpad
+    bindsym $mod+Shift+minus move scratchpad
+    bindsym $mod+minus scratchpad show
+
+# Resizing mode
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Execution & Input
+exec LANG=ja_JP.UTF-8 waybar -c /etc/xdg/waybar/config > waybar.log 2>&1
+
+input "type:keyboard" {
+    xkb_layout jp
+}
+
+input "type:tablet" {
+    map_to_output *
+}
+
+input "type:mouse" {
+    accel_profile "flat"
+    pointer_accel 0
+}
+
+# 1. Sway 自体のカーソル設定 (seatコマンドを使用)
+# 全ての入力デバイス (*) に対して Adwaita テーマのサイズ 24 を適用
+# seat * cursor_theme Adwaita 24
+
+# 2. GTKアプリ (Waybar等) への通知
+# 起動時に gsettings を使ってテーマを流し込みます
+exec_always {
+    gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'
+    gsettings set org.gnome.desktop.interface cursor-size 24
+}
+
+exec_always fcitx5 -d --replace
+
+exec pipewire
+exec wireplumber
+
+exec dbus-update-activation-environment --all
+
+include /etc/sway/config.d/*
+
+EOF

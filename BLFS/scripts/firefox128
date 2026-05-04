@@ -99,12 +99,74 @@ export PATH=/opt/python311/bin:$PATH
 # インストール先ディレクトリの作成
 mkdir -pv /usr/lib/firefox-128.0
 
-# dist/bin の中身をすべてコピー
-cp -Ruv /tmp/firefox-obj/dist/bin/* /usr/lib/firefox-128.0
+if [ -d "/tmp/firefox-obj/dist/firefox" ]; then
+    echo "Copying complete firefox distribution..."
+    cp -Ruv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox-128.0/
+else
+    echo "Fallback: Copying from dist/bin (check if omni.ja exists!)"
+    cp -Ruv /tmp/firefox-obj/dist/bin/* /usr/lib/firefox-128.0/
+fi
+
+# --- 8. 最適化（2GBのlibxul.soを軽量化） ---
+echo "Stripping debug symbols to speed up loading..."
+strip --strip-unneeded /usr/lib/firefox-128.0/libxul.so
+strip --strip-unneeded /usr/lib/firefox-128.0/firefox
+strip --strip-unneeded /usr/lib/firefox-128.0/libmoz*.so
+
+
 
 # どこからでも起動できるようにシンボリックリンクを作成
 ln -svf /usr/lib/firefox-128.0/firefox /usr/bin/firefox
 
-echo "Firefox installation complete. Try running 'firefox --version'"
+su - user -c "export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
+              cd /tmp/firefox-obj && \
+              yes '' | make package"
+
+cp -Ruv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox-128.0/
+
+echo "===== /usr/bin/start-firefox ====="
+cat << 'EOF' > /usr/bin/start-firefox
+
+#!/bin/bash
+
+# pgrepでチェック（/usr/local/bin にあるのでフルパスかパスを確認）
+if ! pgrep -x "fcitx5" > /dev/null; then
+    /usr/bin/fcitx5 -d
+    sleep 0.5
+fi
+
+# --- Wayland / Fcitx5 連携のコア設定 ---
+export MOZ_ENABLE_WAYLAND=1
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+
+# ALSAを直接使う指定
+export MOZ_ALSA_DEVICE=default
+# 念のため、サウンドバックエンドを強制
+export MOZ_PULSE_DISABLE=1
+
+# --- サンドボックスとGPU偽装（既存） ---
+# export MOZ_SANDBOX_ALLOW_SHM=1
+# export MOZ_SANDBOX_ALLOW_SYSV_SHM=1
+#export MOZ_GECKO_SANDBOX_ALLOW_PATH="/dev/dri/:/dev/shm/"
+# export MOZ_GFX_SPOOF_GL_VENDOR="NVIDIA Corporation"
+# export MOZ_GFX_SPOOF_GL_RENDERER="NVIDIA GeForce RTX 2070/PCIe/SSE2"
+
+# 環境変数でサンドボックスを無効化して起動
+export MOZ_DISABLE_CONTENT_SANDBOX=1
+export MOZ_DISABLE_RDD_SANDBOX=1
+export LD_LIBRARY_PATH=/usr/lib
+export MOZ_WEBRENDER=0
+export MOZ_ACCEL_HWA=0
+
+# Firefox 起動
+firefox > /home/user/firefox.log 2>&1 &
+# firefox --safe-mode
+EOF
+
+chmod +x /usr/bin/start-firefox
+
+
 
 

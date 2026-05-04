@@ -1,3 +1,15 @@
 
 build_meson foot "https://codeberg.org/dnkl/foot/releases/download/1.24.0/foot-1.24.0.tar.gz" "-Dterminfo=enabled -Ddocs=disabled -Dtests=false"
 
+
+# 既存のディレクトリ作成とファイル削除
+mkdir -p /etc/foot
+rm -f /etc/foot/foot.ini
+
+# 新しい設定を書き出し
+cat << 'EOF' > /etc/xdg/foot/foot.ini
+# /etc/xdg/foot/foot.ini
+[main]
+# fc-list で表示された名前と完全に一致させる必要があります
+font=JetBrainsMono Nerd Font:size=11, Noto Sans CJK JP:style=Regular:size=11
+EOF

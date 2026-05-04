@@ -17,6 +17,7 @@ echo '"2025.3"' > glslc/src/build-version.inc
 rm -rf build && mkdir build && cd build
 
 cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_INSTALL_LIBDIR=lib \
       -DCMAKE_BUILD_TYPE=Release \
       -DSHADERC_SKIP_TESTS=ON \
       -DSHADERC_ENABLE_WERROR_COMPILE=OFF \

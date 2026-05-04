@@ -1,5 +1,5 @@
 
 build_meson "gtk4" \
     "https://download.gnome.org/sources/gtk/4.18/gtk-4.18.6.tar.xz" \
-    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=enabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=enabled"
+    "-Dbuild-tests=false -Dbuild-examples=false -Dintrospection=enabled -Dvulkan=enabled -Dx11-backend=true -Dwayland-backend=true -Dmedia-gstreamer=enabled -Dwrap_mode=nodownload -Dforce_fallback_for=[]"
 

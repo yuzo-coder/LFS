@@ -1,2 +1,58 @@
 
 build_meson "wofi" "https://github.com/SimplyCEO/wofi/archive/refs/tags/v1.4.tar.gz" ""
+
+
+
+# 既存のディレクトリ作成とファイル削除
+mkdir -p /etc/wofi
+rm -f /etc/wofi/config
+
+# 新しい設定を書き出し
+cat << 'EOF' > /etc/wofi/config
+show=drun
+width=400
+height=500
+always_parse_args=true
+show_all=false
+print_command=true
+insensitive=true
+prompt=Search Apps...
+EOF
+
+
+# 既存のファイルを削除
+rm -f /etc/wofi/style.css
+
+# 新しいスタイルシートを書き出し
+cat << 'EOF' > /etc/wofi/style.css
+window {
+    margin: 5px;
+    border: 2px solid #ffffff;
+    background-color: rgba(30, 30, 30, 0.8); /* 半透明グレー */
+    border-radius: 15px;
+    font-family: "Noto Sans Mono CJK JP";
+}
+
+#input {
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+#inner-box {
+    margin: 5px;
+}
+
+#entry:selected {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+#text {
+    margin: 5px;
+    color: white;
+}
+EOF
+

@@ -17,3 +17,62 @@ ninja -C build install >> "$LOG/wlogout.log" 2>&1
 
 ldconfig
 
+
+# 既存のディレクトリ作成とファイル削除
+mkdir -p /etc/wlogout
+rm -f /etc/wlogout/style.css
+
+# 新しいスタイルシートを書き出し
+cat << 'EOF' > /etc/wlogout/style.css
+window {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 全ボタン共通のスタイル */
+button {
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+    margin: 10px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+    background-color: rgba(255, 255, 255, 0.1);
+
+    /* 文字の設定 */
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0,0,0,1);
+    
+    /* 文字の位置をアイコンの下側に調整 */
+    background-origin: padding-box;
+    background-clip: padding-box;
+    padding-top: 100px;
+}
+
+/* ホバー時の設定 */
+button:focus, button:active, button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    outline-style: none;
+}
+
+/* 各ボタンのアイコン画像定義 */
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"), url("/usr/local/share/wlogout/icons/lock.png"));
+}
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"), url("/usr/local/share/wlogout/icons/logout.png"));
+}
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"), url("/usr/local/share/wlogout/icons/suspend.png"));
+}
+#hibernate {
+    background-image: image(url("/usr/share/wlogout/icons/hibernate.png"), url("/usr/local/share/wlogout/icons/hibernate.png"));
+}
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"), url("/usr/local/share/wlogout/icons/shutdown.png"));
+}
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"), url("/usr/local/share/wlogout/icons/reboot.png"));
+}
+EOF

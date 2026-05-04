@@ -1,3 +1,20 @@
 
 build_meson seatd "https://git.sr.ht/~kennylevinsen/seatd/archive/0.8.0.tar.gz" "-Dlibseat-builtin=enabled -Dserver=enabled -Dman-pages=disabled"
 
+# 4. seatd サービスユニット作成
+echo "Step 4: Creating seatd service..."
+cat > "$UNIT_DIR/seatd.service" << "EOF"
+[Unit]
+Description=Seat management daemon
+Before=display-manager.service
+[Service]
+Type=simple
+ExecStart=/usr/bin/seatd -g video
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload 2>/dev/null || echo "Running in chroot? Skipping daemon-reload."
+systemctl start seatd dbus 2>/dev/null || true
+systemctl enable seatd dbus 2>/dev/null || true

@@ -1,0 +1,8 @@
+
+mkdir -p /usr/share/fonts/truetype/{dejavu,font-awesome}
+
+cp $ROOT_DIR/fonts/dejavu/* /usr/share/fonts/truetype/dejavu/ 2>/dev/null || true
+cp $ROOT_DIR/fonts/font-awesome/*.ttf /usr/share/fonts/truetype/font-awesome/ 2>/dev/null || true
+
+chmod 644 /usr/share/fonts/truetype/dejavu/*
+chmod 644 /usr/share/fonts/truetype/font-awesome/*

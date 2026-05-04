@@ -6,6 +6,8 @@ source ./functions.sh
 scripts=(
 shadow
 pam
+dbus
+
 popt
 keyutils
 systemd

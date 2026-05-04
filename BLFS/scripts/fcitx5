@@ -3,3 +3,52 @@ build_cmake "fcitx5" \
     "https://github.com/fcitx/fcitx5/archive/refs/tags/5.1.14.tar.gz" \
     "-DENABLE_ENCHANT=OFF"
 
+mkdir -p /etc/xdg/fcitx5/
+
+echo "===== /etc/xdg/fcitx5/profile ====="
+cat << 'EOF' > /etc/xdg/fcitx5/profile
+
+[Groups/0]
+Name=Default
+Default Layout=jp
+DefaultIMList=keyboard-jp,anthy
+
+[Groups/0/Items/0]
+Name=keyboard-jp
+Layout=
+
+[Groups/0/Items/1]
+Name=anthy
+Layout=
+
+[GroupOrder]
+0=Default
+EOF
+
+cat << 'EOF' > /home/user/.config/fcitx5/profile
+
+[Groups/0]
+Name=Default
+Default Layout=jp
+DefaultIMList=keyboard-jp,anthy
+
+[Groups/0/Items/0]
+Name=keyboard-jp
+Layout=
+
+[Groups/0/Items/1]
+Name=anthy
+Layout=
+
+[GroupOrder]
+0=Default
+EOF
+
+chattr -i /home/user/.config/fcitx5/profile
+
+cat << 'EOF' > /home/user/.bash_profile
+export XMODIFIERS=@im=fcitx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+EOF
+

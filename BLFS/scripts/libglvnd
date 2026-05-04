@@ -1,3 +1,3 @@
 
-CFLAGS="-Wno-error=array-parameter" build_autotools libglvnd "https://github.com/NVIDIA/libglvnd/releases/download/v1.2.0/libglvnd-1.2.0.tar.gz" "-Dheaders=true"
+build_meson libglvnd "https://gitlab.freedesktop.org/glvnd/libglvnd/-/archive/v1.3.2/libglvnd-v1.3.2.tar.gz" "-Dheaders=true"
 

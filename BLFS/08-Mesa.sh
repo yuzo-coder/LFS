@@ -4,11 +4,11 @@ set -euo pipefail
 source ./functions.sh
 
 scripts=(
-libxkbcommon
+# libxkbcommon
 wayland
 wayland-protocols
 wayland-utils
-# libxkbcommon
+libxkbcommon
 xkbcomp
 Vulkan-Headers
 Vulkan-Loader
@@ -20,7 +20,6 @@ bindgen-cli
 cbindgen
 nodejs
 
-libepoxy
 llvm
 libclc
 
@@ -29,13 +28,13 @@ SPIRV-Headers
 SPIRV-Tools
 glslang
 glslc
+libglvnd
 mesa
 
-# libepoxy
+libepoxy
 
-libglvnd
 glu
-mesa-demos
+# mesa-demos
 
 )
 
@@ -45,4 +44,4 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== LLVM COMPLETE ====="
+echo "===== 08 COMPLETE ====="

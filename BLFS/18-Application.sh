@@ -40,4 +40,4 @@ command = "gtkgreet -l -c sway"
 user = "greeter"
 EOF
 
-echo "===== LLVM COMPLETE ====="
+echo "===== 18 COMPLETE ====="

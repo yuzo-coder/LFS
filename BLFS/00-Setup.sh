@@ -338,4 +338,4 @@ systemctl daemon-reload
 systemctl restart sshd || true
 systemctl enable sshd || true
 
-echo "===== ALL PHASES COMPLETE: SSL & Base Tools Installed ====="
+echo "===== 00 COMPLETE ====="

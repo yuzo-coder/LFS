@@ -1,3 +1,24 @@
 # Systemd (PAM�~\~I�~J��~L~V)
 build_meson systemd "https://github.com/systemd/systemd/archive/v257.8/systemd-257.8.tar.gz" "-Dpam=enabled -Dmode=release"
 
+# 0. ディレクトリの準備
+# LFS/systemd環境ではユニットファイルは /usr/lib/systemd/system が推奨されます
+UNIT_DIR=/usr/lib/systemd/system
+mkdir -p /etc/pam.d
+mkdir -p "$UNIT_DIR"
+mkdir -p /etc/systemd/system/multi-user.target.wants
+mkdir -p /etc/systemd/system/sockets.target.wants
+
+# 5. systemd-logind の確認と有効化
+echo "Step 5: Enabling services..."
+# 手動シンボリックリンク（systemctl enableの代行）
+ln -sf "$UNIT_DIR/dbus.socket" /etc/systemd/system/sockets.target.wants/dbus.socket
+ln -sf "$UNIT_DIR/dbus.service" /etc/systemd/system/multi-user.target.wants/dbus.service
+ln -sf "$UNIT_DIR/seatd.service" /etc/systemd/system/multi-user.target.wants/seatd.service
+
+# logind が /usr/lib か /lib かを判定して有効化
+LOGIND_SRC=$(find /usr/lib/systemd /lib/systemd -name systemd-logind.service 2>/dev/null | head -n 1)
+if [ -n "$LOGIND_SRC" ]; then
+    ln -sf "$LOGIND_SRC" /etc/systemd/system/multi-user.target.wants/systemd-logind.service
+    echo "Enabled logind from $LOGIND_SRC"
+fi

@@ -10,21 +10,21 @@ libXdmcp
 xcb-proto
 libxcb
 lib-7
-xtrans
-libX11
+# xtrans
+# libX11
 
-libXext
-libXrender
-libXrandr
-libXcursor
-libXdamage
+# libXext
+# libXrender
+# libXrandr
+# libXcursor
+# libXdamage
 
-libXinerama
-libxkbfile
+# libXinerama
+# libxkbfile
 
-libXfixes
-libXi
-libXtst
+# libXfixes
+# libXi
+# libXtst
 
 xcb-util
 xcb-util-image
@@ -46,4 +46,4 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== 06-COMPLETE ====="
+echo "===== 07 COMPLETE ====="

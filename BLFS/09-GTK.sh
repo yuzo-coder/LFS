@@ -15,13 +15,23 @@ at-spi2-atk
 cairo
 pango
 
+gstreamer
+gst-plugins-base
+
+gst-plugins-good
+gst-plugins-bad
+
 gobject-introspection
 librsvg
 graphene
+graphviz
+
+vala
 
 gtk3
 gtk4
 libadwaita
+mesa-demos
 
 hicolor-icon-theme
 adwaita-icon-theme
@@ -46,4 +56,4 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== LLVM COMPLETE ====="
+echo "===== 09 COMPLETE ====="

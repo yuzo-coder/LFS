@@ -1,5 +1,5 @@
 
 build_meson "gst-plugins-base" \
     "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.26.5.tar.xz" \
-    "-Dplayback=enabled"
+    "-Dplayback=enabled -Dgl=enabled"
 

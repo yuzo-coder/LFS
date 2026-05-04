@@ -3,26 +3,23 @@ set -euo pipefail
 
 source ./functions.sh
 
-cd "$SRC"
 
-wget https://twds.dl.sourceforge.net/project/procps-ng/Production/procps-ng-4.0.5.tar.xz
+DIR=$(download_extract "https://github.com/fcitx/fcitx5-anthy/archive/refs/tags/5.1.0.tar.gz")
 
-rm -rf procps-ng-4.0.5
+cd "$SRC/fcitx5-anthy-5.1.0"
 
-tar -xf procps-ng-4.0.5.tar.xz
+mkdir -p build && cd build
 
-cd procps-ng-4.0.5
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_INSTALL_LIBDIR=/usr/lib \
+      -DCMAKE_BUILD_TYPE=Release \
+      .. > "$LOG/fcitx5-anthy.log" 2>&1
 
-sed -i '1i #include <stdbool.h>' src/watch.c
+make >> "$LOG/fcitx5-anthy.log" 2>&1
 
-./configure --prefix=/usr                           \
-            --docdir=/usr/share/doc/procps-ng-4.0.4 \
-            --disable-static                        \
-            --disable-kill
+make install >> "$LOG/fcitx5-anthy.log" 2>&1
 
-make
-
-make install
+ldconfig
 
 
 

@@ -8,6 +8,8 @@ libgpg-error
 libgcrypt
 nettle
 libunistring
+nspr
+nss
 gnutls
 nghttp2
 libpsl

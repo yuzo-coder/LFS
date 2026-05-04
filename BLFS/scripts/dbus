@@ -1,0 +1,29 @@
+
+
+# D-Bus用ディレクトリ
+mkdir -p /run/dbus
+if getent passwd dbus >/dev/null; then
+    chown dbus:dbus /run/dbus
+fi
+
+cat > "/usr/lib/systemd/system/dbus.socket" << "EOF"
+[Unit]
+Description=D-Bus System Message Bus Socket
+[Socket]
+ListenStream=/run/dbus/system_bus_socket
+EOF
+
+cat > "/usr/lib/systemd/system/dbus.service" << "EOF"
+[Unit]
+Description=D-Bus System Message Bus
+Requires=dbus.socket
+After=dbus.socket
+[Service]
+ExecStart=/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation
+ExecReload=/usr/bin/dbus-send --print-reply --system --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+[Install]
+WantedBy=multi-user.target
+Alias=dbus.service
+EOF
+
+

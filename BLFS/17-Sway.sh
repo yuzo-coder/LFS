@@ -23,4 +23,4 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== LLVM COMPLETE ====="
+echo "===== 17 COMPLETE ====="

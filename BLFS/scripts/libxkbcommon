@@ -1,4 +1,4 @@
 
-build_meson libxkbcommon "https://github.com/xkbcommon/libxkbcommon/archive/ref\
+build_meson libxkbcommon "https://ftp2.osuosl.org/pub/blfs/12.4/l/libxkbcommon-1.11.0.tar.gz" \
     "-Denable-x11=true -Denable-docs=false"
 

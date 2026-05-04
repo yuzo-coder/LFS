@@ -25,4 +25,10 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== LLVM COMPLETE ====="
+
+groupadd -f pulse
+groupadd -f pulse-access
+groupadd -f audio
+usermod -aG audio,pulse,pulse-access user
+
+echo "===== 10 COMPLETE ====="
