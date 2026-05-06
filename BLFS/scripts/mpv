@@ -6,7 +6,7 @@ build_meson "mpv" \
     -Dpipewire=enabled \
     -Dwayland=enabled \
     -Dx11=enabled \
-    -Dlua=enabled \
+    -Dlua=lua52 \
     --libdir=/usr/lib \
     -Dlibmpv=true \
     -Djavascript=disabled"

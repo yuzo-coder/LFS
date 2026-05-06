@@ -1,15 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Preferences
-JOBS=$(nproc)
-PREFIX=/usr
-ROOT_DIR=$(pwd)
-SRC=$ROOT_DIR/sources
-LOG=$ROOT_DIR/logs
-export MAKEFLAGS="-j$(nproc)"
-
-mkdir -p "$SRC" "$LOG"
+source ./functions.sh
 
 cd "$SRC"
 
@@ -162,19 +154,24 @@ ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 systemctl enable systemd-networkd
 systemctl restart systemd-networkd
 
-# --- 2. 共通関数 ---
-download_extract() {
-    local URL=$1
-    local TAR=${URL##*/}
-    echo "Downloading $TAR..." >&2
-    [ -f "$TAR" ] || wget -c "$URL" --no-check-certificate >&2
-    
-    local DIR=$(tar tf "$TAR" | head -1 | cut -d/ -f1)
-    rm -rf "$DIR"
-    tar xf "$TAR"
-    echo "$SRC/$DIR"
-}
+# グループ作成
+for grp in pulse pulse-access audio rtkit; do
+    groupadd -f "$grp"
+done
 
+# システムユーザー作成
+if ! getent passwd pulse >/dev/null; then
+    useradd -c "PulseAudio Revision" -d /var/run/pulse -u 52 -g pulse -s /bin/false pulse
+fi
+
+if ! getent passwd rtkit >/dev/null; then
+    useradd -c "RealtimeKit Daemon User" -d /var/lib/rtkit -u 133 -g rtkit -s /bin/false rtkit
+fi
+
+# 一般ユーザーの権限付与
+if getent passwd user >/dev/null; then
+    usermod -aG audio,pulse,pulse-access,rtkit user
+fi
 # --- wget ---
 echo "===== Building wget ====="
 rm -rf wget-1.25.0

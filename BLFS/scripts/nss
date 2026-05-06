@@ -6,10 +6,10 @@ cd "$DIR/nss"
 make -j$(nproc) BUILD_OPT=1 \
     NSPR_INCLUDE_DIR=/usr/include/nspr \
     USE_64=1 \
-    $( [ -f /usr/include/sqlite3.h ] && echo NSS_USE_SYSTEM_SQLITE=1 )
+    $( [ -f /usr/include/sqlite3.h ] && echo NSS_USE_SYSTEM_SQLITE=1 ) > "$LOG/nss.log" 2>&1
 
 
-install -v -m755 -d /usr/include/nss
+install -v -m755 -d /usr/include/nss >> "$LOG/nss.log" 2>&1
 
 cd ../dist
 

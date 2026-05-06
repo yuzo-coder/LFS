@@ -6,9 +6,10 @@ cd "$DIR"
 ./configure --prefix=/usr \
             --disable-static \
             --enable-fts5 \
-            CPPFLAGS="-DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_ENABLE_UNLOCK_NOTIFY=1"
+            CPPFLAGS="-DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_ENABLE_UNLOCK_NOTIFY=1" > "$LOG/sqlite.log" 2>&1
 
-make
+make >> "$LOG/sqlite.log" 2>&1
 
-make install
+make install > "$LOG/sqlite.log" 2>&1
+
 

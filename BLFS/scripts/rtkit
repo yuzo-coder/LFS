@@ -1,7 +1,8 @@
 
-groupadd -g 133 rtkit
+getent group rtkit >/dev/null || groupadd -g 133 rtkit
 
-useradd -c "RealtimeKit Daemon User" -d /var/lib/rtkit -u 133 -g rtkit -s /bin/false rtkit
+getent passwd rtkit >/dev/null || \
+  useradd -c "RealtimeKit Daemon User" -d /var/lib/rtkit -u 133 -g rtkit -s /bin/false rtkit
 
 mkdir -p /var/lib/rtkit
 

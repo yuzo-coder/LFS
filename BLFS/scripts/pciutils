@@ -3,7 +3,7 @@ cd "$SRC"
 
 rm -rf pciutils-3.14.0
 
-wget https://mj.ucw.cz/download/linux/pci/pciutils-3.14.0.tar.gz
+wget -q --show-progress https://mj.ucw.cz/download/linux/pci/pciutils-3.14.0.tar.gz
 
 tar xf pciutils-3.14.0.tar.gz
 
@@ -23,9 +23,9 @@ make PREFIX=/usr                \
      SHAREDIR=/usr/share/hwdata \
      SHARED=yes                 \
      LIBDIR=/usr/lib            \
-     install install-lib
+     install install-lib > "$LOG/pciutils.log" 2>&1
 
-ldconfig
+ldconfig 
 
 update-pciids
 

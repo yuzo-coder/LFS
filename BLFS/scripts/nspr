@@ -6,8 +6,8 @@ cd "$DIR/nspr"
 ./configure --prefix=/usr \
             --with-mozilla \
             --with-pthreads \
-            $([ $(uname -m) = x86_64 ] && echo --enable-64bit)
-make
+            $([ $(uname -m) = x86_64 ] && echo --enable-64bit) > "$LOG/nspr.log" 2>&1
+make >> "$LOG/nspr.log" 2>&1
 
-make install
+make install >> "$LOG/nspr.log" 2>&1
 

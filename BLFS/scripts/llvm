@@ -9,7 +9,7 @@ cd "$SRC"
 
 for pkg in llvm cmake third-party clang lld libunwind; do
     TAR="$pkg-$LLVM_VER.src.tar.xz"
-    [ -f "$TAR" ] || wget -c "$BASE_URL/$TAR" --no-check-certificate
+    [ -f "$TAR" ] || wget -c -q --show-progress "$BASE_URL/$TAR" --no-check-certificate
 done
 
 echo "Cleaning up old source trees..."

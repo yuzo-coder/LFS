@@ -25,6 +25,8 @@ Layout=
 0=Default
 EOF
 
+mkdir -p /home/user/.config/fcitx5/
+
 cat << 'EOF' > /home/user/.config/fcitx5/profile
 
 [Groups/0]

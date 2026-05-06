@@ -3,7 +3,7 @@ cd "$SRC"
     
 rm -rf gobject-introspection-1.84.0
 
-wget https://download.gnome.org/sources/gobject-introspection/1.84/gobject-introspection-1.84.0.tar.xz
+wget -q --show-progress https://download.gnome.org/sources/gobject-introspection/1.84/gobject-introspection-1.84.0.tar.xz
 
 tar -xf gobject-introspection-1.84.0.tar.xz
     

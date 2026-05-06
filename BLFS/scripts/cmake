@@ -10,10 +10,10 @@ export CXXFLAGS="-O2 -fpermissive -DNCURSES_NOMACROS -Wno-stack-usage"
 
 ./bootstrap \
     --prefix="$PREFIX" \
-    --libdir=/usr/lib  \
     --parallel="$JOBS" \
     --no-system-libs \
-    > "$LOG/cmake.log" 2>&1
+    -- \
+    -DCMAKE_INSTALL_LIBDIR=lib > "$LOG/cmake.log" 2>&1
         
 make -j"$JOBS" >> "$LOG/cmake.log" 2>&1
 

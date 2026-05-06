@@ -1,7 +1,7 @@
 
 cd "$SRC"
 
-wget https://github.com/sqlalchemy/mako/archive/refs/tags/rel_1_3_10.tar.gz
+wget -q --show-progress https://github.com/sqlalchemy/mako/archive/refs/tags/rel_1_3_10.tar.gz
 
 rm -rf mako-rel_1_3_10
 
