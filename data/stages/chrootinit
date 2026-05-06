@@ -31,3 +31,9 @@ ln -sfv /run/lock $LFS/var/lock
 
 install -dv -m 0750 $LFS/root
 install -dv -m 1777 $LFS/tmp $LFS/var/tmp
+
+mkdir -pv $LFS/etc/sysctl.d
+
+cat >  $LFS/etc/sysctl.d << "EOF"
+kernel.printk = 3 4 1 7
+EOF
