@@ -22,8 +22,8 @@ ac_add_options --without-wasm-sandboxed-libraries
 
 # オーディオ設定（ALSA重視）
 ac_add_options --enable-alsa
-ac_add_options --disable-pulseaudio
-ac_add_options --enable-audio-backends=alsa
+ac_add_options --enable-pulseaudio
+ac_add_options --enable-audio-backends=alsa,pulseaudio
 
 # システムライブラリの利用
 ac_add_options --enable-ffmpeg
@@ -83,7 +83,7 @@ su - user -c "
     export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
     export RUSTC=/usr/bin/rustc && \
     export CARGO=/usr/bin/cargo && \
-    ./mach build" >> "$LOG/firefox.log" 2>&1
+    ./mach build" > "$LOG/firefox.log" 2>&1
 
 # --- 7. インストール（root権限） ---
 echo "Installing Firefox..."
@@ -97,6 +97,9 @@ export PATH=/opt/python311/bin:$PATH
 # $PYTHON ./mach install >> "$LOG/firefox.log" 2>&1
 
 # インストール先ディレクトリの作成
+
+rm -rf /usr/lib/firefox-128.0
+
 mkdir -pv /usr/lib/firefox-128.0
 
 if [ -d "/tmp/firefox-obj/dist/firefox" ]; then
@@ -122,11 +125,16 @@ su - user -c "export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
               cd /tmp/firefox-obj && \
               yes '' | make package"
 
-cp -Ruv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox-128.0/
+
+# 3. 「-L」をつけて、リンク先の実体をコピーする
+cp -RLuv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox-128.0/
+
+echo "/usr/lib/firefox-128.0" > /etc/ld.so.conf.d/firefox.conf
+
+ldconfig
 
 echo "===== /usr/bin/start-firefox ====="
 cat << 'EOF' > /usr/bin/start-firefox
-
 #!/bin/bash
 
 # pgrepでチェック（/usr/local/bin にあるのでフルパスかパスを確認）
@@ -137,7 +145,6 @@ fi
 
 # --- Wayland / Fcitx5 連携のコア設定 ---
 export MOZ_ENABLE_WAYLAND=1
-export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS="@im=fcitx"
 
@@ -160,9 +167,13 @@ export LD_LIBRARY_PATH=/usr/lib
 export MOZ_WEBRENDER=0
 export MOZ_ACCEL_HWA=0
 
+# dbus-update-activation-environment --systemd --all || true
+
 # Firefox 起動
-firefox > /home/user/firefox.log 2>&1 &
+firefox > /tmp/firefox.log 2>&1 &
 # firefox --safe-mode
+
+
 EOF
 
 chmod +x /usr/bin/start-firefox

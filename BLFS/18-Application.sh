@@ -7,7 +7,7 @@ scripts=(
 fmt
 spdlog
 graphviz
-btop
+# btop
 yazi
 greetd
 gtkgreet

@@ -1,0 +1,29 @@
+
+cd "$SRC"
+
+wget -q --show-progress https://download.gimp.org/gimp/v3.0/gimp-3.0.4.tar.xz
+
+rm -rf gimp-3.0.4
+
+tar -xf gimp-3.0.4.tar.xz 
+
+cd gimp-3.0.4
+
+rm -rf /usr/{lib,share}/gimp/3.0
+rm -f  /usr/share/gir-1.0/Gimp-3.0.gir
+rm -f  /usr/lib/girepository-1.0/Gimp-3.0.typelib
+rm -f  /usr/lib/libgimp*-3.0.so*
+
+mkdir gimp-build && cd gimp-build
+
+meson setup .. --prefix=/usr --libdir=/usr/lib --buildtype=release -Djavascript=enabled -Dlua=true -Dvala=enabled -Dgi-docgen=disabled > "$LOG/gimp.log" 2>&1
+
+mkdir -p plug-ins/python/colorxhtml
+
+ninja -j$JOBS >> "$LOG/gimp.log" 2>&1
+
+ninja install >> "$LOG/gimp.log" 2>&1
+
+ldconfig
+
+

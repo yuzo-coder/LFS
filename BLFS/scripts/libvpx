@@ -3,7 +3,7 @@ cd "$SRC"
 
 rm -rf libvpx-1.16.0
 
-wget https://github.com/webmproject/libvpx/archive/v1.16.0/libvpx-1.16.0.tar.gz
+wget -q --show-progress https://github.com/webmproject/libvpx/archive/v1.16.0/libvpx-1.16.0.tar.gz
 
 tar -xf libvpx-1.16.0.tar.gz
 

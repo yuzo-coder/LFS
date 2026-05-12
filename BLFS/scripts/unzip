@@ -3,7 +3,7 @@ cd "$SRC"
 
 rm -rf unzip60
 
-wget https://downloads.sourceforge.net/infozip/unzip60.tar.gz
+wget -q --show-progress https://downloads.sourceforge.net/infozip/unzip60.tar.gz
 
 tar -xf unzip60.tar.gz
 
@@ -11,11 +11,11 @@ cd unzip60
 
 sed -i 's/struct tm \*gmtime(), \*localtime();/\/* struct tm *gmtime(), *localtime(); *\//' unix/unxcfg.h
 
-gcc -c -I. -Ibzip2 -DUNIX -O3 -DLARGE_FILE_SUPPORT -DUNICODE_SUPPORT -DHAVE_DIRENT_H -DHAVE_TERMIOS_H *.c unix/unix.c
+gcc -c -I. -Ibzip2 -DUNIX -O3 -DLARGE_FILE_SUPPORT -DUNICODE_SUPPORT -DHAVE_DIRENT_H -DHAVE_TERMIOS_H *.c unix/unix.c > "$LOG/unzip.log" 2>&1
 
 rm -f funzip.o gbloffs.o unzipstb.o unzipsfx.o
 
-gcc -o unzip *.o -lbz2
+gcc -o unzip *.o -lbz2 >> "$LOG/unzip.log" 2>&1
 
 cp -v unzip /usr/bin/
 

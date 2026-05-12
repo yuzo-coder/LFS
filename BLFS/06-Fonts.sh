@@ -38,7 +38,6 @@ localedef -i ja_JP -f UTF-8 ja_JP.UTF-8
 
 cat > /etc/profile.d/i18n.sh << "EOF"
 export LANG=ja_JP.UTF-8
-export LC_ALL=ja_JP.UTF-8
 EOF
 
 source /etc/profile.d/i18n.sh

@@ -1,0 +1,15 @@
+
+cd "$SRC"
+
+DIR=$(download_extract "https://ftp.gnu.org/gnu/which/which-2.23.tar.gz")
+
+cd "$DIR"
+
+./configure --prefix=/usr > "$LOG/which.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/which.log" 2>&1
+
+make install >> "$LOG/which.log" 2>&1
+
+cd "$SRC" && rm -rf "$DIR"
+

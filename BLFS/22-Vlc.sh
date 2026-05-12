@@ -1,0 +1,39 @@
+#!/bin/bash
+set -euo pipefail
+
+source ./functions.sh
+
+cd "$SRC"
+
+# wget https://download.videolan.org/vlc/3.0.21/vlc-3.0.21.tar.xz
+
+rm -rf vlc-3.0.21
+
+tar -xf vlc-3.0.21.tar.xz
+
+cd vlc-3.0.21
+
+# 1. Taglib パッチ（オーディオタグ情報の処理用）
+wget https://www.linuxfromscratch.org/patches/blfs/12.4/vlc-3.0.21-taglib-1.patch
+patch -Np1 -i vlc-3.0.21-taglib-1.patch
+
+# 2. FFmpeg 7 パッチ（これがあの audio.c のエラーを直します）
+wget https://www.linuxfromscratch.org/patches/blfs/12.4/vlc-3.0.21-fedora_ffmpeg7-1.patch
+patch -Np1 -i vlc-3.0.21-fedora_ffmpeg7-1.patch
+
+# ビルド用ディレクトリ作成
+mkdir build && cd build
+
+# Configure（LFSでよくある欠落を考慮した設定）
+BUILDCC=gcc ../configure --prefix=/usr \
+             --disable-qt \
+             --disable-skins2 \
+             --enable-libgcrypt \
+             --enable-lua \
+             --disable-a52
+
+make
+
+make install
+
+echo "===== COMPLETE ====="

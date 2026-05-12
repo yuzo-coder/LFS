@@ -22,9 +22,9 @@ echo "" > src/plugins/nvdimm.h
             --without-tools \
             --without-escrow \
             --disable-static \
-            --disable-introspection
+            --disable-introspection > "$LOG/libblockdev.log" 2>&1
 
-make
+make >> "$LOG/libblockdev.log" 2>&1
 
-make install
+make install >> "$LOG/libblockdev.log" 2>&1
 

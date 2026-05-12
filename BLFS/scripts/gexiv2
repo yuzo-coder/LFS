@@ -1,0 +1,3 @@
+
+build_meson gexiv2 "https://download.gnome.org/sources/gexiv2/0.14/gexiv2-0.14.6.tar.xz" ""
+

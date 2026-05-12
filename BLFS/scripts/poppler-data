@@ -1,0 +1,13 @@
+
+cd "$SRC"
+
+wget -q --show-progress https://poppler.freedesktop.org/poppler-data-0.4.12.tar.gz
+
+rm -rf poppler-data-0.4.12
+
+tar -xf poppler-data-0.4.12.tar.gz
+
+cd poppler-data-0.4.12
+
+make install prefix=/usr
+

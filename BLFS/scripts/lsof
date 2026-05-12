@@ -3,17 +3,17 @@ cd "$SRC"
 
 rm -rf lsof-4.99.6
 
-wget https://github.com/lsof-org/lsof/releases/download/4.99.6/lsof-4.99.6.tar.gz
+wget -q --show-progress https://github.com/lsof-org/lsof/releases/download/4.99.6/lsof-4.99.6.tar.gz
 
 tar -xf lsof-4.99.6.tar.gz
 
 cd lsof-4.99.6
 
-./configure
+./configure > "$LOG/lsof.log" 2>&1
 
-make
+make >> "$LOG/lsof.log" 2>&1
 
-install -v -m0755 -s lsof /usr/bin
+install -v -m0755 -s lsof /usr/bin >> "$LOG/lsof.log" 2>&1
 
-install -v -m0644 Lsof.8 /usr/share/man/man8
+install -v -m0644 Lsof.8 /usr/share/man/man8 >> "$LOG/lsof.log" 2>&1
 

@@ -3,7 +3,7 @@ source ./functions.sh
 
 cd "$SRC"
 
-wget https://twds.dl.sourceforge.net/project/procps-ng/Production/procps-ng-4.0.5.tar.xz
+wget -q --show-progress https://twds.dl.sourceforge.net/project/procps-ng/Production/procps-ng-4.0.5.tar.xz
 
 rm -rf procps-ng-4.0.5
 
@@ -16,9 +16,9 @@ sed -i '1i #include <stdbool.h>' src/watch.c
 ./configure --prefix=/usr                           \
             --docdir=/usr/share/doc/procps-ng-4.0.4 \
             --disable-static                        \
-            --disable-kill
+            --disable-kill > "$LOG/procps-ng.log" 2>&1
 
-make
+make >> "$LOG/procps-ng.log" 2>&1
 
-make install
+make install >> "$LOG/procps-ng.log" 2>&1
 

@@ -1,4 +1,0 @@
-
-build_autotools freetype "https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.xz" \
-    "--disable-static"
-

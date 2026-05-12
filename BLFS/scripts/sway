@@ -5,46 +5,41 @@ echo "===== /usr/bin/start-sway ====="
 
 cat << 'EOF' > /usr/bin/start-sway
 #!/bin/bash
-# 1. ユーザー環境変数のクリーンアップと設定
-# Wayland関連の環境変数を定義
+
+# 1. ユーザー環境変数の設定
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=sway
 export MOZ_ENABLE_WAYLAND=1
 export _JAVA_AWT_WM_NONREPARENTING=1
+export WLR_NO_HARDWARE_CURSORS=1
 
-# 日本語入力 (Fcitx5) 関連の設定
+# 日本語入力 (Fcitx5)
 export XMODIFIERS="@im=fcitx"
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 
-# 2. XDG_RUNTIME_DIR の確認（LFSでは重要）
-# これがないとWaybarやFcitx5がソケットを作れずエラーになります
+# 2. XDG_RUNTIME_DIR の確認
+# ※PAMが正しく機能していればここは自動でパスされますが、保険として残すのはアリです。
 if [ -z "$XDG_RUNTIME_DIR" ]; then
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
-    if [ ! -d "$XDG_RUNTIME_DIR" ]; then
-        mkdir -p "$XDG_RUNTIME_DIR"
-        chmod 700 "$XDG_RUNTIME_DIR"
-        chown $(id -u):$(id -g) "$XDG_RUNTIME_DIR"
-    fi
 fi
 
-# 3. GLibスキーマのキャッシュ更新（念のための自動化）
-# 起動時の「スキーマがありません」エラーを未然に防ぎます
-if [ -d /usr/share/glib-2.0/schemas ]; then
-    glib-compile-schemas /usr/share/glib-2.0/schemas
-fi
+# 3. GLibスキーマ（必要に応じて）
+# 毎回実行すると起動がわずかに遅れるので、ビルド時以外は外してもOKです。
 
-dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+# 4. PipeWire などのユーザーサービス起動
+# --now をつけることで、まだ動いていなければ起動し、既に動いていれば何もしません。
+systemctl --user start pipewire pipewire-pulse wireplumber
 
-# tty1でsway実行
-export XDG_vt=1
+# 5. DBus 連携の準備
+# セッション開始前に環境変数を DBus に教えてあげます。
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 
-# 4. SwayをD-Busセッション経由で起動
-# これにより Waybar, Fcitx5, Portal が互いに通信可能になります
-exec dbus-run-session sway > /home/user/sway.log 2>&1
+# 6. Sway の実行
+# dbus-run-session を使って Sway を起動するのが最もクリーンです。
+# これにより、Sway 内で起動するアプリが正しく DBus を見つけられます。
+exec dbus-run-session sway > /tmp/sway.log 2>&1
 EOF
-
-chmod +x /usr/bin/start-sway
 
 echo "===== /etc/sway/config ====="
 
@@ -66,6 +61,9 @@ set $menu dmenu_path | wmenu | xargs swaymsg exec --
 ### Output configuration
 output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 output * resolution 1920x1080
+
+exec dbus-update-activation-environment --all
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 ### Key bindings
     bindsym $mod+Return exec $term > /tmp/foot.log 2>&1
@@ -164,13 +162,9 @@ exec_always {
     gsettings set org.gnome.desktop.interface cursor-size 24
 }
 
-exec_always fcitx5 -d --replace
-
-exec pipewire
-exec wireplumber
+exec_always /usr/bin/pgrep -x fcitx5 > /dev/null || /usr/bin/fcitx5 -d
 
 exec dbus-update-activation-environment --all
 
 include /etc/sway/config.d/*
-
 EOF

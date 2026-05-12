@@ -27,6 +27,8 @@ EOF
 
 mkdir -p /home/user/.config/fcitx5/
 
+chown -R user:user /home/user/.config
+
 cat << 'EOF' > /home/user/.config/fcitx5/profile
 
 [Groups/0]

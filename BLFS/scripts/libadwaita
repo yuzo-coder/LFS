@@ -1,7 +1,7 @@
 
 cd "$SRC"
 
-wget https://download.gnome.org/sources/libadwaita/1.7/libadwaita-1.7.6.tar.xz
+wget -q --show-progress https://download.gnome.org/sources/libadwaita/1.7/libadwaita-1.7.6.tar.xz
 
 rm -rf libadwaita-1.7.6
 
@@ -23,9 +23,9 @@ meson setup build \
     --buildtype=release \
     -Dtests=false \
     -Dintrospection=enabled \
-    -Dvapi=true
+    -Dvapi=true > "$LOG/libadwaita.log" 2>&1
 
-ninja -C build > "$LOG/libadwaita.log" 2>&1
+ninja -C build >> "$LOG/libadwaita.log" 2>&1
 
 ninja -C build install >> "$LOG/libadwaita.log" 2>&1
 

@@ -1,5 +1,0 @@
-
-build_meson "pipewire" \
-    "https://github.com/PipeWire/pipewire/archive/refs/tags/1.0.7.tar.gz" \
-    "-Dsession-managers=[] -Dalsa=enabled -Draop=disabled -Dbluez5=disabled -Dgstreamer=disabled -Dsystemd=disabled"
-

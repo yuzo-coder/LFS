@@ -1,7 +1,7 @@
 
 cd "$SRC"
 
-wget https://code.videolan.org/videolan/x264/-/archive/master/x264-master.tar.bz2
+wget -q --show-progress https://code.videolan.org/videolan/x264/-/archive/master/x264-master.tar.bz2
 
 rm -rf x264-master
 
@@ -12,9 +12,9 @@ cd x264-master
 ./configure --prefix=/usr \
             --enable-shared \
             --enable-pic \
-            --disable-cli
+            --disable-cli > "$LOG/x264.log" 2>&1
 
-make 
+make >> "$LOG/x264.log" 2>&1
 
-make install-lib-shared
+make install-lib-shared >> "$LOG/x264.log" 2>&1
 

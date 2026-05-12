@@ -1,3 +1,9 @@
 
-build_meson "wireplumber" "https://ftp2.osuosl.org/pub/blfs/12.4/w/wireplumber-0.5.10.tar.bz2" "-Ddoc=disabled -Dsystem-lua=true -Dintrospection=disabled"
+build_meson "wireplumber" \
+    "https://ftp2.osuosl.org/pub/blfs/12.4/w/wireplumber-0.5.10.tar.bz2" \
+    "-Ddoc=disabled \
+     -Dsystem-lua=true \
+     -Dintrospection=disabled \
+     -Dsystemd=enabled \
+     -Dsystemd-user-unit-dir=/usr/lib/systemd/user"
 

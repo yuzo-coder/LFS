@@ -1,0 +1,3 @@
+
+build_meson appstream-glib "http://people.freedesktop.org/~hughsient/appstream-glib/releases/appstream-glib-0.8.3.tar.xz" "-Drpm=false -Dman=false"
+

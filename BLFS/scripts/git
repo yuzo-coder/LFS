@@ -1,0 +1,15 @@
+
+cd "$SRC"
+
+DIR=$(download_extract "https://www.kernel.org/pub/software/scm/git/git-2.50.1.tar.xz")
+
+cd "$DIR"
+
+./configure --prefix=/usr --with-curl --with-openssl --with-python=python3 --sysconfdir=/etc > "$LOG/git.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/git.log" 2>&1
+
+make install >> "$LOG/git.log" 2>&1
+
+cd "$SRC" && rm -rf "$DIR"
+

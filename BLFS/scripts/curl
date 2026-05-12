@@ -1,0 +1,19 @@
+
+cd "$SRC"
+
+DIR=$(download_extract "https://curl.se/download/curl-8.15.0.tar.xz")
+
+cd "$DIR"
+
+./configure --prefix=/usr \
+            --with-openssl \
+            --enable-threaded-resolver \
+            --with-ca-path=/etc/ssl/certs \
+            --without-libpsl > "$LOG/curl.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/curl.log" 2>&1
+
+make install >> "$LOG/curl.log" 2>&1
+
+cd "$SRC" && rm -rf "$DIR"
+

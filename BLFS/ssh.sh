@@ -1,0 +1,29 @@
+#!/bin/bash
+set -euo pipefail
+
+source ./functions.sh
+
+ln -s /usr/include/security /usr/include/pam
+
+DIR=$(download_extract "https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.2p1.tar.gz")
+
+cd "$DIR"
+
+./configure --prefix=/usr --sysconfdir=/etc/ssh --with-privsep-path=/var/lib/sshd --with-pam > "$LOG/openssh.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/openssh.log" 2>&1
+
+make install >> "$LOG/openssh.log" 2>&1
+
+# SSH Config (Root許可)
+cat > /etc/ssh/sshd_config << "EOF"
+Port 22
+PasswordAuthentication yes
+PermitRootLogin yes
+Subsystem sftp internal-sftp
+UsePAM yes
+EOF
+
+systemctl restart sshd || true
+
+echo "===== COMPLETE ====="

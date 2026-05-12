@@ -1,0 +1,3 @@
+
+build_cmake exiv2 "https://github.com/Exiv2/exiv2/archive/v0.27.7/exiv2-0.27.7.tar.gz" ""
+

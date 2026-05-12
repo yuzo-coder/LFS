@@ -5,11 +5,17 @@ source ./functions.sh
 
 scripts=(
 
-# python311
-
-firefox
-
-binary-firefox
+babl
+gegl
+exiv2
+gexiv2
+libmypaint
+mypaint-brushes
+appstream-glib
+poppler
+poppler-data
+pygobject
+gimp
 
 )
 
@@ -19,4 +25,5 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
-echo "===== 20 COMPLETE ====="
+echo "===== 03-COMPLETE ====="
+

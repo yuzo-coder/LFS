@@ -1,0 +1,15 @@
+
+cd "$SRC"
+
+DIR=$(download_extract "https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.19.0.tar.gz")
+
+cd "$DIR"
+
+./configure --prefix=/usr --disable-static > "$LOG/libtasn1.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/libtasn1.log" 2>&1
+
+make install >> "$LOG/libtasn1.log" 2>&1
+
+cd "$SRC" && rm -rf "$DIR"
+

@@ -1,7 +1,19 @@
 
-build_rust_task "greetd" "https://github.com/kennylevinsen/greetd/archive/refs/tags/0.10.2.tar.gz" "greetd"
+cd "$SRC"
 
-cp "$SRC/greetd/greetd.service" /etc/systemd/system/
+wget -q --show-progress https://github.com/kennylevinsen/greetd/archive/refs/tags/0.10.2.tar.gz
+
+rm -rf greetd-0.10.2
+
+tar -xf 0.10.2.tar.gz
+
+cd greetd-0.10.2
+
+cargo build --release --locked > "$LOG/greetd.log" 2>&1
+
+cp target/release/greetd /usr/bin/
+
+cp "$SRC/greetd-0.10.2/greetd.service" /etc/systemd/system/
 
 # greetd 用のユーザー・ディレクトリ設定
 if ! id "greeter" &>/dev/null; then

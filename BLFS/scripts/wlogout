@@ -1,7 +1,7 @@
 
 cd "$SRC"
 
-wget https://github.com/ArtsyMacaw/wlogout/releases/download/1.2.2/wlogout.tar.gz
+wget -q --show-progress https://github.com/ArtsyMacaw/wlogout/releases/download/1.2.2/wlogout.tar.gz
 
 rm -rf wlogout
 

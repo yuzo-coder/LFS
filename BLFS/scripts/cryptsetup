@@ -6,11 +6,11 @@ cd "$DIR"
 ./configure --prefix=/usr \
             --disable-static \
             --disable-ssh-token \
-            --with-crypto_backend=openssl # または nss
+            --with-crypto_backend=openssl >> "$LOG/cryptsetup.log" 2>&1
 
-make
+make >> "$LOG/cryptsetup.log" 2>&1
 
-make install
+make install >> "$LOG/cryptsetup.log" 2>&1
 
 ldconfig
 

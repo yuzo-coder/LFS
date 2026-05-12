@@ -1,0 +1,18 @@
+
+cd "$SRC"
+
+DIR=$(download_extract "https://github.com/lfs-book/make-ca/archive/v1.15/make-ca-1.15.tar.gz")
+
+cd "$DIR"
+
+make install >> "$LOG/make-ca.log" 2>&1
+
+# Mozillaの最新証明書データ取得
+wget https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt --no-check-certificate
+
+cp certdata.txt /etc/ssl/
+
+/usr/sbin/make-ca -r >> "$LOG/make-ca.log" 2>&1
+
+cd "$SRC" && rm -rf "$DIR"
+

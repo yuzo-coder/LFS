@@ -1,7 +1,7 @@
 
 cd "$SRC"
 
-wget https://downloads.sourceforge.net/pcmanfm/libfm-1.3.2.tar.xz
+wget -q --show-progress https://downloads.sourceforge.net/pcmanfm/libfm-1.3.2.tar.xz
 
 rm -rf libfm-1.3.2
 
@@ -13,9 +13,9 @@ CFLAGS="-Wno-error=incompatible-pointer-types" ./configure --prefix=/usr       \
             --sysconfdir=/etc   \
             --with-extra-only   \
             --disable-static    \
-            --with-gtk=3
+            --with-gtk=3 > "$LOG/libfm-1.log" 2>&1
 
-make 
+make >> "$LOG/libfm-1.log" 2>&1
 
-make install
+make install >> "$LOG/libfm-1.log" 2>&1
 

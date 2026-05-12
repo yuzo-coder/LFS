@@ -1,0 +1,50 @@
+
+getent group sshd >/dev/null || groupadd -g 50 sshd
+
+getent passwd sshd >/dev/null || useradd -c 'sshd PrivSep' -d /var/lib/sshd -g sshd -s /bin/false -u 50 sshd
+
+install -v -m700 -d /var/lib/sshd
+
+DIR=$(download_extract "https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.2p1.tar.gz")
+
+cd "$DIR"
+
+./configure --prefix=/usr --sysconfdir=/etc/ssh --with-privsep-path=/var/lib/sshd > "$LOG/openssh.log" 2>&1
+
+make -j"$JOBS" >> "$LOG/openssh.log" 2>&1
+
+make install >> "$LOG/openssh.log" 2>&1
+
+[ -f /etc/ssh/ssh_host_rsa_key ] || ssh-keygen -A >> "$LOG/openssh.log" 2>&1
+
+# Systemd Unit
+mkdir -p /usr/lib/systemd/system
+
+cat > /usr/lib/systemd/system/sshd.service << "EOF"
+[Unit]
+Description=OpenSSH Daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/sshd -D
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# SSH Config (Root許可)
+cat > /etc/ssh/sshd_config << "EOF"
+Port 22
+PasswordAuthentication yes
+PermitRootLogin yes
+Subsystem sftp internal-sftp
+EOF
+
+systemctl daemon-reload
+systemctl restart sshd || true
+systemctl enable sshd || true
+

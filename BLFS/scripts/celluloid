@@ -3,3 +3,12 @@ build_meson "celluloid" \
     "https://github.com/celluloid-player/celluloid/archive/refs/tags/v0.28.tar.gz" \
     ""
 
+cat > /usr/local/bin/celluloid << "EOF"
+#!/bin/sh
+# QEMU環境でのプロトコルエラー回避のためX11バックエンドを強制
+export GDK_BACKEND=x11
+exec /usr/bin/celluloid "$@"
+EOF
+
+chmod 755 /usr/local/bin/celluloid
+
