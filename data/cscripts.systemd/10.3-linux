@@ -135,6 +135,8 @@ scripts/config --enable CONFIG_NET_CORE
 scripts/config --enable CONFIG_IP_NF_IPTABLES
 scripts/config --enable CONFIG_NET_SCHED
 scripts/config --enable CONFIG_NET_CLS_BPF
+scripts/config --enable CONFIG_BPF_SYSCALL
+scripts/config --enable CONFIG_NETFILTER_XT_MATCH_BPF
 
 # systemd のセキュリティ機能 (RestrictAddressFamilies など) に必須
 scripts/config --enable CONFIG_AF_UNIX
@@ -271,6 +273,14 @@ scripts/config --enable CONFIG_UDMABUF             # VirtIO GPU でのメモリ�
 
 # --- ネットワーク (Firefox の名前解決や IPv6 安定化) ---
 scripts/config --enable CONFIG_DNS_RESOLVER
+
+# --- bpf(2)syscall コマンド BPF_PROG_ATTACH を使用して、eBPF プログラムを cgroup にアタッチできるようにします。
+scripts/config --enable CONFIG_MULTIUSER
+
+# --- cfg80211 is the Linux wireless LAN (802.11) configuration API. 
+scripts/config --enable CONFIG_CFG80211
+scripts/config --enable CONFIG_CFG80211_CERTIFICATION_ONUS
+scripts/config --enable CONFIG_CFG80211_INTERNAL_REGDB
 
 # 依存関係自動解決
 make olddefconfig
