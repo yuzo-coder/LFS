@@ -1,0 +1,3 @@
+
+build_meson libgedit-gtksourceview "https://gitlab.gnome.org/World/gedit/libgedit-gtksourceview/-/archive/299.5.0/libgedit-gtksourceview-299.5.0.tar.bz2" "-Dgtk_doc=false"
+

@@ -3,13 +3,13 @@ cd "$SRC"
 
 rm -rf libpng-1.6.45
 
-wget https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz
+wget -q --show-progress https://downloads.sourceforge.net/libpng/libpng-1.6.45.tar.xz
 
 tar -xf libpng-1.6.45.tar.xz
 
 cd libpng-1.6.45
 
-wget https://downloads.sourceforge.net/project/libpng-apng/libpng16/1.6.45/libpng-1.6.45-apng.patch.gz
+wget -q --show-progress https://downloads.sourceforge.net/project/libpng-apng/libpng16/1.6.45/libpng-1.6.45-apng.patch.gz
 
 gunzip libpng-1.6.45-apng.patch.gz
 
@@ -17,9 +17,9 @@ patch -p1 < libpng-1.6.45-apng.patch
 
 ./configure --prefix=/usr --disable-static
 
-make
+make > "$LOG/libpng.log" 2>&1
 
-make install
+make install > "$LOG/libpng.log" 2>&1
 
 ldconfig
 

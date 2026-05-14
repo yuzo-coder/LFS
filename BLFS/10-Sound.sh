@@ -12,7 +12,7 @@ alsa-utils
 
 pipewire
 wireplumber
-pulseaudio
+# pulseaudio
 pavucontrol
 rtkit
 libcanberra
@@ -25,10 +25,8 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+systemctl --user enable pipewire.socket pipewire-pulse.socket wireplumber.service
 
-groupadd -f pulse
-groupadd -f pulse-access
-groupadd -f audio
-usermod -aG audio,pulse,pulse-access user
+systemctl --user start pipewire.socket pipewire-pulse.socket wireplumber.service
 
 echo "===== 10 COMPLETE ====="

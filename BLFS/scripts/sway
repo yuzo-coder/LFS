@@ -1,45 +1,27 @@
 
 build_meson sway "https://github.com/swaywm/sway/releases/download/1.10.1/sway-1.10.1.tar.gz" ""
 
-echo "===== /usr/bin/start-sway ====="
-
 cat << 'EOF' > /usr/bin/start-sway
 #!/bin/bash
 
 # 1. ユーザー環境変数の設定
-export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=sway
 export MOZ_ENABLE_WAYLAND=1
-export _JAVA_AWT_WM_NONREPARENTING=1
 export WLR_NO_HARDWARE_CURSORS=1
 
 # 日本語入力 (Fcitx5)
 export XMODIFIERS="@im=fcitx"
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
 
-# 2. XDG_RUNTIME_DIR の確認
-# ※PAMが正しく機能していればここは自動でパスされますが、保険として残すのはアリです。
-if [ -z "$XDG_RUNTIME_DIR" ]; then
-    export XDG_RUNTIME_DIR=/run/user/$(id -u)
-fi
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-# 3. GLibスキーマ（必要に応じて）
-# 毎回実行すると起動がわずかに遅れるので、ビルド時以外は外してもOKです。
-
-# 4. PipeWire などのユーザーサービス起動
-# --now をつけることで、まだ動いていなければ起動し、既に動いていれば何もしません。
-systemctl --user start pipewire pipewire-pulse wireplumber
-
-# 5. DBus 連携の準備
-# セッション開始前に環境変数を DBus に教えてあげます。
-dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
 # 6. Sway の実行
 # dbus-run-session を使って Sway を起動するのが最もクリーンです。
-# これにより、Sway 内で起動するアプリが正しく DBus を見つけられます。
 exec dbus-run-session sway > /tmp/sway.log 2>&1
 EOF
+
+chmod +x /usr/bin/start-sway
 
 echo "===== /etc/sway/config ====="
 

@@ -23,4 +23,8 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+systemctl --user enable xdg-desktop-portal xdg-desktop-portal-wlr
+
+systemctl --user start xdg-desktop-portal xdg-desktop-portal-wlr
+
 echo "===== 15 COMPLETE ====="

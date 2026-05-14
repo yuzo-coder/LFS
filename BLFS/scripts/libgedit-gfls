@@ -1,0 +1,3 @@
+
+build_meson libgedit-gfls "https://gitlab.gnome.org/World/gedit/libgedit-gfls/-/archive/0.3.0/libgedit-gfls-0.3.0.tar.bz2" "-Dgtk_doc=false"
+

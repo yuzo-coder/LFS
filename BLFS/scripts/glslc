@@ -1,7 +1,7 @@
 
 cd "$SRC"
 
-wget https://github.com/google/shaderc/archive/v2025.3/shaderc-2025.3.tar.gz
+wget -q --show-progress  https://github.com/google/shaderc/archive/v2025.3/shaderc-2025.3.tar.gz
 
 rm -rf shaderc-2025.3
 
@@ -21,9 +21,9 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_BUILD_TYPE=Release \
       -DSHADERC_SKIP_TESTS=ON \
       -DSHADERC_ENABLE_WERROR_COMPILE=OFF \
-      ..
+      .. > "$LOG/glslc.log" 2>&1
 
-make
+make >> "$LOG/glslc.log" 2>&1
 
-sudo make install
+sudo make install >> "$LOG/glslc.log" 2>&1
 

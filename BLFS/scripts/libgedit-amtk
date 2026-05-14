@@ -1,0 +1,2 @@
+
+build_meson libgedit-amtk "https://gitlab.gnome.org/World/gedit/libgedit-amtk/-/archive/5.9.1/libgedit-amtk-5.9.1.tar.bz2" "-Dgtk_doc=false"

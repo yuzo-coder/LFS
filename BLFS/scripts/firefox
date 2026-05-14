@@ -98,23 +98,23 @@ export PATH=/opt/python311/bin:$PATH
 
 # インストール先ディレクトリの作成
 
-rm -rf /usr/lib/firefox-128.0
+rm -rf /usr/lib/firefox
 
-mkdir -pv /usr/lib/firefox-128.0
+mkdir -pv /usr/lib/firefox
 
 if [ -d "/tmp/firefox-obj/dist/firefox" ]; then
     echo "Copying complete firefox distribution..."
-    cp -Ruv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox-128.0/
+    cp -Ruv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox/
 else
     echo "Fallback: Copying from dist/bin (check if omni.ja exists!)"
-    cp -Ruv /tmp/firefox-obj/dist/bin/* /usr/lib/firefox-128.0/
+    cp -Ruv /tmp/firefox-obj/dist/bin/* /usr/lib/firefox/
 fi
 
 # --- 8. 最適化（2GBのlibxul.soを軽量化） ---
 echo "Stripping debug symbols to speed up loading..."
-strip --strip-unneeded /usr/lib/firefox-128.0/libxul.so
-strip --strip-unneeded /usr/lib/firefox-128.0/firefox
-strip --strip-unneeded /usr/lib/firefox-128.0/libmoz*.so
+strip --strip-unneeded /usr/lib/firefox/libxul.so
+strip --strip-unneeded /usr/lib/firefox/firefox
+strip --strip-unneeded /usr/lib/firefox/libmoz*.so
 
 
 
@@ -127,9 +127,9 @@ su - user -c "export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
 
 
 # 3. 「-L」をつけて、リンク先の実体をコピーする
-cp -RLuv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox-128.0/
+cp -RLuv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox/
 
-echo "/usr/lib/firefox-128.0" > /etc/ld.so.conf.d/firefox.conf
+echo "/usr/lib/firefox" > /etc/ld.so.conf.d/firefox.conf
 
 ldconfig
 
@@ -137,43 +137,12 @@ echo "===== /usr/bin/start-firefox ====="
 cat << 'EOF' > /usr/bin/start-firefox
 #!/bin/bash
 
-# pgrepでチェック（/usr/local/bin にあるのでフルパスかパスを確認）
-if ! pgrep -x "fcitx5" > /dev/null; then
-    /usr/bin/fcitx5 -d
-    sleep 0.5
-fi
+# fcitx5がなければ起動
+pgrep -x "/usr/bin/fcitx5" > /dev/null || /usr/bin/fcitx5 -d
 
-# --- Wayland / Fcitx5 連携のコア設定 ---
 export MOZ_ENABLE_WAYLAND=1
-export QT_IM_MODULE=fcitx
-export XMODIFIERS="@im=fcitx"
 
-# ALSAを直接使う指定
-export MOZ_ALSA_DEVICE=default
-# 念のため、サウンドバックエンドを強制
-export MOZ_PULSE_DISABLE=1
-
-# --- サンドボックスとGPU偽装（既存） ---
-# export MOZ_SANDBOX_ALLOW_SHM=1
-# export MOZ_SANDBOX_ALLOW_SYSV_SHM=1
-#export MOZ_GECKO_SANDBOX_ALLOW_PATH="/dev/dri/:/dev/shm/"
-# export MOZ_GFX_SPOOF_GL_VENDOR="NVIDIA Corporation"
-# export MOZ_GFX_SPOOF_GL_RENDERER="NVIDIA GeForce RTX 2070/PCIe/SSE2"
-
-# 環境変数でサンドボックスを無効化して起動
-export MOZ_DISABLE_CONTENT_SANDBOX=1
-export MOZ_DISABLE_RDD_SANDBOX=1
-export LD_LIBRARY_PATH=/usr/lib
-export MOZ_WEBRENDER=0
-export MOZ_ACCEL_HWA=0
-
-# dbus-update-activation-environment --systemd --all || true
-
-# Firefox 起動
-firefox > /tmp/firefox.log 2>&1 &
-# firefox --safe-mode
-
-
+/usr/lib/firefox/firefox > /tmp/firefox.log 2>&1 &
 EOF
 
 chmod +x /usr/bin/start-firefox

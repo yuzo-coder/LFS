@@ -5,7 +5,7 @@ mkdir -p $FONT_DIR
 
 cd $SRC
 
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
+wget -q --show-progress https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
 
 if [ $? -eq 0 ]; then
     unzip JetBrainsMono.zip -d $FONT_DIR

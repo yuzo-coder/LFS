@@ -5,11 +5,11 @@ source ./functions.sh
 
 scripts=(
 
-# python311
+python311
 
 firefox
 
-binary-firefox
+# binary-firefox
 
 )
 

@@ -3,9 +3,9 @@ DIR=$(download_extract "https://git.kernel.org/pub/scm/linux/kernel/git/dhowells
 
 cd "$DIR"
 
-make
+make > "$LOG/keyutils.log" 2>&1
 
-make DESTDIR=/ install
+make DESTDIR=/ install >> "$LOG/keyutils.log" 2>&1
 
 ldconfig
 

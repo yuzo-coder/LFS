@@ -1,0 +1,3 @@
+
+build_autotools enchant "https://github.com/rrthomas/enchant/releases/download/v2.8.12/enchant-2.8.12.tar.gz" ""
+

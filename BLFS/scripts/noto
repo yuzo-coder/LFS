@@ -3,7 +3,7 @@ mkdir -p /usr/share/fonts/noto
 
 cd "$SRC"
 
-wget https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf
+wget -q --show-progress https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf
 
 mv NotoSansCJKjp-Regular.otf /usr/share/fonts/noto/
 

@@ -9,10 +9,13 @@ cd "$SRC"
 echo "Step 1: Setting up user groups..."
 # 'user' というユーザーが存在することを確認してから実行
 if id "user" &>/dev/null; then
-    for grp in video input render seat; do
+    # 作成するグループのリスト
+    # pulse 関連を削除し、不足しがちな wheel (sudo用) や cdrom を追加検討
+    for grp in video input render seat audio sgx wheel; do
         groupadd -f -r "$grp"
         usermod -aG "$grp" user
     done
+    echo "User 'user' has been added to groups: video, input, render, seat, audio, sgx, wheel."
 else
     echo "Warning: User 'user' not found. skipping group assignment."
 fi
@@ -165,11 +168,11 @@ EOF
 
 scripts=(
 
-wget-1
+wget
 libtasn1
 p11-kit
 make-ca
-wget-2
+wget
 curl
 git
 which

@@ -1,0 +1,18 @@
+
+cd "$SRC"
+
+wget -q --show-progress https://github.com/unicode-org/icu/releases/download/release-77-1/icu4c-77_1-src.tgz
+
+rm -rf icu
+
+tar -xf icu4c-77_1-src.tgz
+
+cd icu/source
+
+./configure --prefix=/usr > "$LOG/icu4u.log" 2>&1
+
+make >> "$LOG/icu4u.log" 2>&1
+
+make install >> "$LOG/icu4u.log" 2>&1
+
+

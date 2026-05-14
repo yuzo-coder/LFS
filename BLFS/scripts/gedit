@@ -1,0 +1,2 @@
+
+build_meson gedit "https://download.gnome.org/sources/gedit/48/gedit-48.1.tar.xz" "-Dgtk_doc=false"
