@@ -1,4 +1,4 @@
-grub-install /dev/sdb
+grub-install --target=i386-pc /dev/sdb
 
 #cd /tmp
 #grub-mkrescue --output=grub-img.iso
