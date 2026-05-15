@@ -2,6 +2,7 @@
 set -euo pipefail
 
 PARTITION="sdb1"
+DISK=$(echo "$PARTITION" | sed -E 's/(p[0-9]+|[0-9]+)$//')
 
 ########################################
 # root実行禁止
@@ -62,9 +63,8 @@ fi
 cat > "$BUILD_DIR/env.sh" << EOF
 LFS="$LFS"
 MAKEFLAGS="-j$(nproc)"
-
-DISK=$(echo $PARTITION | sed -E 's/(p[0-9]+|[0-9]+)$//')
-
+PARTITION="$PARTITION"
+DISK="$DISK"
 export LFS MAKEFLAGS PARTITION DISK
 EOF
 
