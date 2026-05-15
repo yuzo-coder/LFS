@@ -1,6 +1,5 @@
 . env.sh
 
-./chrootcmd grub-install /dev/sdb
 ./chrootcmd passwd -d root
 
 rm -rfv $LFS/tmp/*
