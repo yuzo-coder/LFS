@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+PARTITION="sdb1"
+
 ########################################
 # root実行禁止
 ########################################
@@ -8,8 +10,6 @@ if [ "$(id -u)" -eq 0 ]; then
     echo "Do NOT run this script as root."
     exit 1
 fi
-
-PARTITION="sdb1"
 
 ########################################
 # 安全な基準ディレクトリ確定
