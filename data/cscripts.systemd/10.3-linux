@@ -278,9 +278,8 @@ scripts/config --enable CONFIG_DNS_RESOLVER
 scripts/config --enable CONFIG_MULTIUSER
 
 # --- cfg80211 is the Linux wireless LAN (802.11) configuration API. 
-scripts/config --enable CONFIG_CFG80211
-scripts/config --enable CONFIG_CFG80211_CERTIFICATION_ONUS
-scripts/config --enable CONFIG_CFG80211_INTERNAL_REGDB
+scripts/config --disable CONFIG_CFG80211
+scripts/config --disable CONFIG_MAC80211
 
 # 依存関係自動解決
 make olddefconfig
