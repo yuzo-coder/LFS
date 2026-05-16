@@ -117,21 +117,30 @@ strip --strip-unneeded /usr/lib/firefox/firefox
 strip --strip-unneeded /usr/lib/firefox/libmoz*.so
 
 
+# 上記の su コマンドが成功したか（戻り値 0 か）を厳密にチェック
+if [ $? -ne 0 ]; then
+    echo "ERROR: 'make package' failed!"
+    exit 1
+fi
 
-# どこからでも起動できるようにシンボリックリンクを作成
-ln -svf /usr/lib/firefox-128.0/firefox /usr/bin/firefox
-
-su - user -c "export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
-              cd /tmp/firefox-obj && \
-              yes '' | make package"
-
+# 2. インストール先ディレクトリの事前準備（root権限）
+echo "===> Installing Firefox to /usr/lib/firefox/..."
+mkdir -p /usr/lib/firefox
 
 # 3. 「-L」をつけて、リンク先の実体をコピーする
-cp -RLuv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox/
+# コピー元（/tmp/firefox-obj/dist/firefox/*）が本当に存在するか確認
+if [ -d "/tmp/firefox-obj/dist/firefox" ]; then
+    cp -RLuv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox/
+else
+    echo "ERROR: Build artifact directory not found! Check if 'make package' really succeeded."
+    exit 1
+fi
 
+# 4. 共有ライブラリのパス通しとキャッシュ更新
 echo "/usr/lib/firefox" > /etc/ld.so.conf.d/firefox.conf
-
 ldconfig
+
+echo "===> Firefox installation completed successfully!"
 
 echo "===== /usr/bin/start-firefox ====="
 cat << 'EOF' > /usr/bin/start-firefox

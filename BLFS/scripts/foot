@@ -14,4 +14,4 @@ cat << 'EOF' > /etc/xdg/foot/foot.ini
 font=JetBrainsMono Nerd Font:size=11, Noto Sans CJK JP:style=Regular:size=11
 EOF
 
-systemctl --user enable foot-server
+systemctl --global enable foot-server
