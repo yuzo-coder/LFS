@@ -15,11 +15,11 @@ gunzip libpng-1.6.45-apng.patch.gz
 
 patch -p1 < libpng-1.6.45-apng.patch
 
-./configure --prefix=/usr --disable-static
+./configure --prefix=/usr --disable-static > "$LOG/libpng.log" 2>&1
 
-make > "$LOG/libpng.log" 2>&1
+make >> "$LOG/libpng.log" 2>&1
 
-make install > "$LOG/libpng.log" 2>&1
+make install >> "$LOG/libpng.log" 2>&1
 
 ldconfig
 

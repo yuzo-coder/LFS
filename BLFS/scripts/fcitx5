@@ -25,11 +25,11 @@ Layout=
 0=Default
 EOF
 
-mkdir -p /home/user/.config/fcitx5/
+mkdir -p /home/$TARGET_USER/.config/fcitx5/
 
-chown -R user:user /home/user/.config
+chown -R $TARGET_USER:$TARGET_USER /home/$TARGET_USER/.config
 
-cat << 'EOF' > /home/user/.config/fcitx5/profile
+cat << 'EOF' > /home/$TARGET_USER/.config/fcitx5/profile
 
 [Groups/0]
 Name=Default
@@ -48,9 +48,9 @@ Layout=
 0=Default
 EOF
 
-chattr -i /home/user/.config/fcitx5/profile
+chattr -i /home/$TARGET_USER/.config/fcitx5/profile
 
-cat << 'EOF' > /home/user/.bash_profile
+cat << 'EOF' > /home/$TARGET_USER/.bash_profile
 export XMODIFIERS=@im=fcitx
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx

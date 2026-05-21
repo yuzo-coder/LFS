@@ -14,7 +14,15 @@ export XMODIFIERS="@im=fcitx"
 
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# (A) 裏でSwayの起動を監視し、立ち上がったタイミングでPipeWireをスタートさせる部隊
+(
+    # Swayが画面を作り終えるのをほんの少しだけ待つ（安全策）
+    sleep 1
+    # ページャーなしで静かにサービスを起動
+    systemctl --user start pipewire pipewire-pulse wireplumber >/dev/null 2>&1
+) &
 
 # 6. Sway の実行
 # dbus-run-session を使って Sway を起動するのが最もクリーンです。

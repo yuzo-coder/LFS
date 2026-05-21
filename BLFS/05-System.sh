@@ -10,7 +10,7 @@ echo "==                   05   START                        =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
-echo "
+echo "                                                         "
 
 scripts=(
 pam
@@ -101,8 +101,6 @@ Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%i/bus"
 EOF
 
 systemctl daemon-reload
-systemctl stop user@1000.service
-systemctl start user@1000.service
 
 echo "                                                         "
 echo "========================================================="
@@ -111,5 +109,4 @@ echo "==                   05   COMPLETE                     =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
-echo "
-
+echo "                                                         "

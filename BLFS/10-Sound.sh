@@ -10,7 +10,7 @@ echo "==                   10   START                        =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
-echo "
+echo "                                                         "
 
 scripts=(
 libogg
@@ -38,6 +38,18 @@ systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.serv
 
 # systemctl --user start pipewire.socket pipewire-pulse.socket wireplumber.service
 
+cat << 'EOF' > /etc/asound.conf
+pcm.!default {
+    type pulse
+    fallback "sysdefault"
+}
+
+ctl.!default {
+    type pulse
+}
+EOF
+
+
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="
@@ -45,5 +57,4 @@ echo "==                   10   COMPLETE                     =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
-echo "
-
+echo "                                                         "

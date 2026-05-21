@@ -10,7 +10,7 @@ echo "==                   00   START                        =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
-echo "  
+echo "                                                         "
 
 cd "$SRC"
 
@@ -98,12 +98,6 @@ fi
 source /etc/profile
 echo "===== Bash Color Setup Complete ====="
 
-
-# ---  systemd-networkd 設定 (追加分) ---
-echo "===== Configuring Network (systemd-networkd) ====="
-
-# 物理インターフェースの有効化
-# ループバック(lo)以外の、物理または仮想インターフェース名を取得
 INTERFACES=$(ip -o link show | awk -F': ' '{print $2}' | grep -E '^e(n|t)' | head -n 1)
 
 mkdir -p /etc/systemd/network
@@ -155,29 +149,28 @@ fi
 
 # 3. 一般ユーザー（user）への権限一括付与
 #    前半と後半のグループをすべて統合し、1回のusermodで完結させる
-TARGET_USER="user"
+
+USER_GROUPS="video,input,render,seat,audio,sgx,wheel,pulse,pulse-access,rtkit"
 
 if id "$TARGET_USER" &>/dev/null; then
-    echo "Assigning groups to '${TARGET_USER}'..."
-    # カンマ区切りで一発で追加可能
-    USER_GROUPS="video,input,render,seat,audio,sgx,wheel,pulse,pulse-access,rtkit"
+    echo "Assigning groups to existing '${TARGET_USER}'..."
     usermod -aG "$USER_GROUPS" "$TARGET_USER"
-    echo "Success: '${TARGET_USER}' added to [${USER_GROUPS}]."
+    echo "Success: Groups added to existing user."
 else
-    echo "Warning: User '${TARGET_USER}' not found. Skipping group assignment."
+    echo "Creating '${TARGET_USER}' with pre-defined groups..."
+    # ユーザーを作成しつつ、初期状態でこれらのグループに所属させる（LFSおなじみの仕様）
+    useradd -m -s /bin/bash -G "$USER_GROUPS" "$TARGET_USER"
+    echo "Success: '${TARGET_USER}' created with [${USER_GROUPS}]."
 fi
-
-
-
-
 
 rm -rf /var/log/journal/*
 
-cat > /etc/systemd/journald.conf << 'EOF'
+mkdir -p /etc/systemd/journald.conf.d/
+
+cat > /etc/systemd/journald.conf.d/storage-volatile.conf << 'EOF'
 [Journal]
 Storage=volatile
 EOF
-
 
 # mkdir -p /usr/lib/firmware
 
@@ -216,5 +209,4 @@ echo "==                   00   COMPLETE                     =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
-echo "
-
+echo "                                                         "

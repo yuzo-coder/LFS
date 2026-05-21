@@ -4,7 +4,7 @@ FIREFOX_URL="https://archive.mozilla.org/pub/firefox/releases/128.1.0esr/source/
 TAR_NAME="firefox-128.1.0esr.source.tar.xz"
 NAME="firefox-128.1.0"
 
-su - user -c "rustup default stable"
+su - $TARGET_USER -c "rustup default stable"
 
 echo "===== Preparing $NAME ====="
 cd "$SRC"
@@ -63,23 +63,23 @@ export CXXFLAGS="-march=native -DSYS_SECCOMP=317"
 export BINDGEN_EXTRA_CLANG_ARGS="-march=native -target x86_64-unknown-linux-gnu"
 
 # 所有権を user に一括変更
-chown -R user:user .
+chown -R $TARGET_USER:$TARGET_USER .
 
 # --- 6. ビルド実行 ---
 echo "Starting build with $JOBS cores..."
 rm -rf obj-firefox
 
 mkdir -p /tmp/firefox-obj
-chown -R user:user /tmp/firefox-obj
+chown -R $TARGET_USER:$TARGET_USER /tmp/firefox-obj
 ln -s /tmp/firefox-obj $SRC/firefox-128.1.0/obj-firefox
-chown -h user:user $SRC/firefox-128.1.0/obj-firefox
+chown -h $TARGET_USER:$TARGET_USER $SRC/firefox-128.1.0/obj-firefox
 echo "/tmp/firefox-obj: " "$SRC/firefox-128.1.0/obj-firefox"
 
-su - user -c "
+su - $TARGET_USER -c "
     cd $SRC/$NAME && \
     export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig && \
     export PYTHON=/opt/python311/bin/python3.11 && \
-    export PATH=/opt/python311/bin:\$PATH:/home/user/.cargo/bin && \
+    export PATH=/opt/python311/bin:\$PATH:/home/$TARGET_USER/.cargo/bin && \
     export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
     export RUSTC=/usr/bin/rustc && \
     export CARGO=/usr/bin/cargo && \
@@ -125,14 +125,22 @@ fi
 
 # 2. インストール先ディレクトリの事前準備（root権限）
 echo "===> Installing Firefox to /usr/lib/firefox/..."
+
+rm -rf /usr/lib/firefox
+
 mkdir -p /usr/lib/firefox
 
-# 3. 「-L」をつけて、リンク先の実体をコピーする
-# コピー元（/tmp/firefox-obj/dist/firefox/*）が本当に存在するか確認
-if [ -d "/tmp/firefox-obj/dist/firefox" ]; then
-    cp -RLuv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox/
+DIST_FIREFOX="/tmp/firefox-obj/dist/firefox"
+DIST_BIN="/tmp/firefox-obj/dist/bin"
+
+if [ -d "$DIST_FIREFOX" ]; then
+    echo "===> Copying from dist/firefox..."
+    cp -RLfuv "$DIST_FIREFOX"/* /usr/lib/firefox/
+elif [ -d "$DIST_BIN" ]; then
+    echo "===> dist/firefox requested but not found. Fallback to dist/bin..."
+    cp -RLfuv "$DIST_BIN"/* /usr/lib/firefox/
 else
-    echo "ERROR: Build artifact directory not found! Check if 'make package' really succeeded."
+    echo "ERROR: Neither dist/firefox nor dist/bin exists! Build definitely failed."
     exit 1
 fi
 

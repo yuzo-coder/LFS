@@ -8,7 +8,7 @@ cd $SRC
 wget -q --show-progress https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
 
 if [ $? -eq 0 ]; then
-    unzip JetBrainsMono.zip -d $FONT_DIR
+    unzip -o JetBrainsMono.zip -d $FONT_DIR
     fc-cache -fv
     echo "Font installed and cache updated."
 else
