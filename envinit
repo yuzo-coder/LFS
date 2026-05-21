@@ -130,9 +130,7 @@ chmod 755 "$LFS" "$BUILD_DIR/log" "$BUILD_DIR/tmp"
 chmod 755 "$BUILD_DIR/env.sh" "$BUILD_DIR/userenv.sh"
 chmod 755 "$BUILD_DIR/cscripts.config/"*.sh
 
-export LFS
-
 echo -e "\nBuild directory initialized successfully.\n"
-echo "PARTITION = $PARTITION"
 echo "DISK = $DISK"
+echo "PARTITION = $PARTITION"
 echo "LFS = $LFS"
