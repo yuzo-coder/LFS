@@ -34,11 +34,12 @@ install -dv -m 1777 $LFS/tmp $LFS/var/tmp
 
 mkdir -pv $LFS/etc/sysctl.d
 
-cat >  $LFS/etc/sysctl.d << "EOF"
+cat >  $LFS/etc/sysctl.d/99-sysctl.conf << "EOF"
 kernel.printk = 3 4 1 7
 EOF
 
-cat > /etc/os-release << "EOF"
+
+cat > $LFS/etc/os-release << "EOF"
 NAME="Linux From Scratch"
 VERSION="12.4-systemd"
 ID=lfs
