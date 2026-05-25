@@ -107,7 +107,6 @@ scripts/config --enable CONFIG_FANOTIFY
 # フリーズ回避
 scripts/config --enable CONFIG_HZ_1000
 scripts/config --enable CONFIG_HIGH_RES_TIMERS
-scripts/config --enable CONFIG_PREEMPT_VOLUNTARY
 
 # 黒画面対策
 scripts/config --enable CONFIG_EARLY_PRINTK
@@ -280,6 +279,17 @@ scripts/config --enable CONFIG_MULTIUSER
 # --- cfg80211 is the Linux wireless LAN (802.11) configuration API. 
 scripts/config --disable CONFIG_CFG80211
 scripts/config --disable CONFIG_MAC80211
+
+# 1. QEMUの標準VGAカードをDRMデバイスとして認識させる（-vga std）
+scripts/config --enable CONFIG_DRM_BOCHS
+
+# 2. Linuxカーネルが古い画面仕様で固定するのを防ぎ、Mesaへの橋渡しをスムーズにする
+scripts/config --disable CONFIG_FB_EFI
+scripts/config --disable CONFIG_FB_VESA
+scripts/config --enable CONFIG_SYSFB_SIMPLEFB
+
+# 3. /dev/dri/card0 を systemd や Sway が正常に扱えるようにする必須フラグ
+scripts/config --enable CONFIG_DRM_FBDEV_EMULATION
 
 # 依存関係自動解決
 make olddefconfig
