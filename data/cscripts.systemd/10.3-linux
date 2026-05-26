@@ -291,6 +291,8 @@ scripts/config --enable CONFIG_SYSFB_SIMPLEFB
 # 3. /dev/dri/card0 を systemd や Sway が正常に扱えるようにする必須フラグ
 scripts/config --enable CONFIG_DRM_FBDEV_EMULATION
 
+scripts/config --enable CONFIG_SND_VIRTIO
+
 # 依存関係自動解決
 make olddefconfig
 
