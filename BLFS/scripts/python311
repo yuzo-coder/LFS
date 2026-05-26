@@ -1,4 +1,6 @@
 
+rm -rf /tmp/*
+
 cd $SRC
 
 mkdir -p /opt/python311
@@ -12,11 +14,11 @@ cd Python-3.11.0
 ./configure --prefix=/opt/python311       \
             --enable-shared     \
             --without-ensurepip \
-            --without-static-libpython
+            --without-static-libpython > "$LOG/python311.log" 2>&1
 
-make
+make >> "$LOG/python311.log" 2>&1
 
-make install
+make install >> "$LOG/python311.log" 2>&1
 
 export LD_LIBRARY_PATH=/opt/python311/lib:${LD_LIBRARY_PATH:-}
 

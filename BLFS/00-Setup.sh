@@ -172,6 +172,8 @@ cat > /etc/systemd/journald.conf.d/storage-volatile.conf << 'EOF'
 Storage=volatile
 EOF
 
+systemctl restart systemd-journald
+
 # mkdir -p /usr/lib/firmware
 
 # 上流（kernel.org）から本物のデータベースと証明書をダウンロードして配置

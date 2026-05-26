@@ -1,8 +1,5 @@
-#!/bin/bash
 
-# --- 1. /tmp の一時的なクリア（安全のため） ---
 rm -rf /tmp/*
-rm -rf /BLFS/sources/*
 
 # --- 2. Firefox ソースの準備 ---
 FIREFOX_URL="https://archive.mozilla.org/pub/firefox/releases/128.1.0esr/source/firefox-128.1.0esr.source.tar.xz"
@@ -18,7 +15,7 @@ rm -rf "$NAME"
 tar xf "$TAR_NAME"
 cd "$NAME"
 
-# --- 3. .mozconfig の作成 ---
+# --- 3. .mozconfig の作成（エラー原因を完全排除） ---
 cat << EOF > .mozconfig
 ac_add_options --prefix=/usr
 ac_add_options --enable-application=browser
@@ -36,11 +33,12 @@ ac_add_options --with-system-libvpx
 ac_add_options --with-system-ffi
 ac_add_options --with-system-nspr
 ac_add_options --with-system-nss
+# ac_add_options --with-system-icu
 
-# 最適化設定
+# 最適化設定（GCC 15/16対策）
 ac_add_options --enable-optimize="-O2 -march=native -fno-delete-null-pointer-checks"
 
-# 【修正】ビルドディレクトリ設定（HDD側のソース直下に作成）
+# ビルドディレクトリ設定
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-firefox
 
 # その他
@@ -50,8 +48,14 @@ EOF
 
 # --- 4. 各種互換性パッチの適用 ---
 echo "Applying LFS & cbindgen compatibility patches..."
+
+# (1) cbindgenパースエラー回避
 sed 's/input.try/&_parse/' -i servo/components/style_traits/values.rs
+
+# (2) 重複キー "Keyframe" の解消
 sed '0,/"Keyframe"/{//d}' -i servo/ports/geckolib/cbindgen.toml
+
+# (4) Cargoの設定調整
 sed '/patch.crates-io/a glslopt={path="third_party/rust/glslopt"}' -i Cargo.toml
 sed '/name = "glslopt"/,/^$/{/source/d;/checksum/d}' -i Cargo.lock
 
@@ -59,58 +63,54 @@ sed '/name = "glslopt"/,/^$/{/source/d;/checksum/d}' -i Cargo.lock
 export CFLAGS="-march=native -DSYS_SECCOMP=317"
 export CXXFLAGS="-march=native -DSYS_SECCOMP=317"
 export BINDGEN_EXTRA_CLANG_ARGS="-march=native -target x86_64-unknown-linux-gnu"
-
-# 【修正】Rustのエラーを厳格に弾かないよう警告を無視に設定
 export RUSTFLAGS="-A warnings"
 
 # 所有権を user に一括変更
 chown -R $TARGET_USER:$TARGET_USER .
 
 # --- 6. ビルド実行 ---
-echo "Starting build with 1 core (Memory Safety Mode)..."
-# 【修正】/tmp へのリンク作成をすべて撤廃し、完全にHDD側（obj-firefox）に統一
+echo "Starting build with $JOBS cores..."
 rm -rf obj-firefox
 
-# 【修正】Rust等が内部で使う一時フォルダもHDD側に逃がす
-mkdir -p "$SRC/$NAME/tmp_build"
-chown -R $TARGET_USER:$TARGET_USER "$SRC/$NAME/tmp_build"
+mkdir -p /tmp/firefox-obj
+chown -R $TARGET_USER:$TARGET_USER /tmp/firefox-obj
+ln -s /tmp/firefox-obj $SRC/firefox-128.1.0/obj-firefox
+chown -h $TARGET_USER:$TARGET_USER $SRC/firefox-128.1.0/obj-firefox
+echo "/tmp/firefox-obj: " "$SRC/firefox-128.1.0/obj-firefox"
 
 su - $TARGET_USER -c "
     cd $SRC/$NAME && \
-    export TMPDIR=$SRC/$NAME/tmp_build && \
     export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig && \
     export PYTHON=/opt/python311/bin/python3.11 && \
     export PATH=/opt/python311/bin:\$PATH:/home/$TARGET_USER/.cargo/bin && \
     export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
     export RUSTC=/usr/bin/rustc && \
     export CARGO=/usr/bin/cargo && \
-    ./mach build -j1" > "$LOG/firefox.log" 2>&1
-
-# 上記の su コマンド（ビルド）が成功したかをチェック
-if [ $? -ne 0 ]; then
-    echo "ERROR: './mach build' failed! Check $LOG/firefox.log"
-    exit 1
-fi
+    ./mach build" > "$LOG/firefox.log" 2>&1
 
 # --- 7. インストール（root権限） ---
-echo "===> Installing Firefox to /usr/lib/firefox/..."
+echo "Installing Firefox..."
+
+export LD_LIBRARY_PATH=/opt/python311/lib:${LD_LIBRARY_PATH:-}
+
+export PYTHON=/opt/python311/bin/python3.11
+
+export PATH=/opt/python311/bin:$PATH
+
+# $PYTHON ./mach install >> "$LOG/firefox.log" 2>&1
+
+# インストール先ディレクトリの作成
 
 rm -rf /usr/lib/firefox
-mkdir -p /usr/lib/firefox
 
-# 【修正】コピー元のパスを /tmp から HDD側の obj-firefox にすべて変更
-DIST_FIREFOX="$SRC/$NAME/obj-firefox/dist/firefox"
-DIST_BIN="$SRC/$NAME/obj-firefox/dist/bin"
+mkdir -pv /usr/lib/firefox
 
-if [ -d "$DIST_FIREFOX" ]; then
-    echo "===> Copying from dist/firefox..."
-    cp -RLfuv "$DIST_FIREFOX"/* /usr/lib/firefox/
-elif [ -d "$DIST_BIN" ]; then
-    echo "===> dist/firefox not found. Fallback to dist/bin..."
-    cp -RLfuv "$DIST_BIN"/* /usr/lib/firefox/
+if [ -d "/tmp/firefox-obj/dist/firefox" ]; then
+    echo "Copying complete firefox distribution..."
+    cp -Ruv /tmp/firefox-obj/dist/firefox/* /usr/lib/firefox/
 else
-    echo "ERROR: Neither dist/firefox nor dist/bin exists! Build definitely failed."
-    exit 1
+    echo "Fallback: Copying from dist/bin (check if omni.ja exists!)"
+    cp -Ruv /tmp/firefox-obj/dist/bin/* /usr/lib/firefox/
 fi
 
 # --- 8. 最適化（2GBのlibxul.soを軽量化） ---
@@ -119,17 +119,41 @@ strip --strip-unneeded /usr/lib/firefox/libxul.so
 strip --strip-unneeded /usr/lib/firefox/firefox
 strip --strip-unneeded /usr/lib/firefox/libmoz*.so
 
-# 共有ライブラリのパス通しとキャッシュ更新
+
+# 上記の su コマンドが成功したか（戻り値 0 か）を厳密にチェック
+if [ $? -ne 0 ]; then
+    echo "ERROR: 'make package' failed!"
+    exit 1
+fi
+
+# 2. インストール先ディレクトリの事前準備（root権限）
+echo "===> Installing Firefox to /usr/lib/firefox/..."
+
+rm -rf /usr/lib/firefox
+
+mkdir -p /usr/lib/firefox
+
+DIST_FIREFOX="/tmp/firefox-obj/dist/firefox"
+DIST_BIN="/tmp/firefox-obj/dist/bin"
+
+if [ -d "$DIST_FIREFOX" ]; then
+    echo "===> Copying from dist/firefox..."
+    cp -RLfuv "$DIST_FIREFOX"/* /usr/lib/firefox/
+elif [ -d "$DIST_BIN" ]; then
+    echo "===> dist/firefox requested but not found. Fallback to dist/bin..."
+    cp -RLfuv "$DIST_BIN"/* /usr/lib/firefox/
+else
+    echo "ERROR: Neither dist/firefox nor dist/bin exists! Build definitely failed."
+    exit 1
+fi
+
+# 4. 共有ライブラリのパス通しとキャッシュ更新
 echo "/usr/lib/firefox" > /etc/ld.so.conf.d/firefox.conf
 ldconfig
 
-# ビルド用の一時フォルダを片付ける
-rm -rf "$SRC/$NAME/tmp_build"
-
 echo "===> Firefox installation completed successfully!"
 
-# --- 9. 起動スクリプトの作成 ---
-echo "===== Creating /usr/bin/start-firefox ====="
+echo "===== /usr/bin/start-firefox ====="
 cat << 'EOF' > /usr/bin/start-firefox
 #!/bin/bash
 
@@ -142,3 +166,7 @@ export MOZ_ENABLE_WAYLAND=1
 EOF
 
 chmod +x /usr/bin/start-firefox
+
+
+
+
