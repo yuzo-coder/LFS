@@ -55,9 +55,9 @@ scripts/config --enable CONFIG_UNIX
 # DRM / Wayland（sway動作用）
 scripts/config --enable CONFIG_DRM
 scripts/config --enable CONFIG_DRM_KMS_HELPER
+scripts/config --enable CONFIG_DRM_GEM_SHMEM
 scripts/config --enable CONFIG_DRM_VIRTIO_GPU
 scripts/config --enable CONFIG_DRM_FBDEV_EMULATION
-scripts/config --enable CONFIG_DRM_SIMPLEDRM
 scripts/config --enable CONFIG_FRAMEBUFFER_CONSOLE
 scripts/config --enable CONFIG_FB
 scripts/config --enable CONFIG_VT
@@ -213,12 +213,7 @@ scripts/config --enable CONFIG_MEMCG
 scripts/config --enable CONFIG_SND_HRTIMER
 scripts/config --enable CONFIG_SND_SEQ_HRTIMER_DEFAULT
 
-# 将来の拡張性（USBオーディオ等）
-scripts/config --enable CONFIG_SND_USB_AUDIO
-
 # メモリ管理の最適化（動画・ブラウザ用）
-scripts/config --enable CONFIG_CMA
-scripts/config --enable CONFIG_DMA_CMA
 scripts/config --enable CONFIG_MEMCG
 scripts/config --enable CONFIG_TRANSPARENT_HUGEPAGE
 
@@ -282,16 +277,21 @@ scripts/config --disable CONFIG_MAC80211
 
 # 1. QEMUの標準VGAカードをDRMデバイスとして認識させる（-vga std）
 scripts/config --enable CONFIG_DRM_BOCHS
+scripts/config --enable CONFIG_VGA_ARB
 
-# 2. Linuxカーネルが古い画面仕様で固定するのを防ぎ、Mesaへの橋渡しをスムーズにする
+# 2. 古い汎用画面ドライバーを完全に黙らせ、高性能なVirtIO/Bochsに画面を100%任せる（黒画面・競合対策）
 scripts/config --disable CONFIG_FB_EFI
 scripts/config --disable CONFIG_FB_VESA
-scripts/config --enable CONFIG_SYSFB_SIMPLEFB
+scripts/config --disable CONFIG_DRM_SIMPLEDRM
+scripts/config --disable CONFIG_SYSFB_SIMPLEFB   # 🔥矛盾を防ぐためdisableに変更！
 
-# 3. /dev/dri/card0 を systemd や Sway が正常に扱えるようにする必須フラグ
+# 3. /dev/dri/card0 を systemd や Sway が正常に扱えるようにする必須フラグ ＆ VirtIO GPUの依存関係補強
 scripts/config --enable CONFIG_DRM_FBDEV_EMULATION
+scripts/config --enable CONFIG_DRM_GEM_SHMEM     # 🔥VirtIO GPUを確実に覚醒させるための依存関係を追加！
 
+# 4. サウンドを最先端のVirtIOに直結（YouTube遅延解消の大本命）
 scripts/config --enable CONFIG_SND_VIRTIO
+scripts/config --enable CONFIG_SND_JACK
 
 # 依存関係自動解決
 make olddefconfig
