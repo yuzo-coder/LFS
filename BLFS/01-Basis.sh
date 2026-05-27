@@ -33,6 +33,19 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+if swapon --show | grep -q /swapfile; then
+    swapoff "$SWAP_FILE"
+fi
+
+dd if=/dev/zero of=/swapfile bs=1M count=8192
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
+if ! grep -q  /swapfile /etc/fstab; then
+    echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+fi
+
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="
