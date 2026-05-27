@@ -283,11 +283,11 @@ scripts/config --enable CONFIG_VGA_ARB
 scripts/config --disable CONFIG_FB_EFI
 scripts/config --disable CONFIG_FB_VESA
 scripts/config --disable CONFIG_DRM_SIMPLEDRM
-scripts/config --disable CONFIG_SYSFB_SIMPLEFB   # 🔥矛盾を防ぐためdisableに変更！
+scripts/config --disable CONFIG_SYSFB_SIMPLEFB
 
 # 3. /dev/dri/card0 を systemd や Sway が正常に扱えるようにする必須フラグ ＆ VirtIO GPUの依存関係補強
 scripts/config --enable CONFIG_DRM_FBDEV_EMULATION
-scripts/config --enable CONFIG_DRM_GEM_SHMEM     # 🔥VirtIO GPUを確実に覚醒させるための依存関係を追加！
+scripts/config --enable CONFIG_DRM_GEM_SHMEM
 
 # 4. サウンドを最先端のVirtIOに直結（YouTube遅延解消の大本命）
 scripts/config --enable CONFIG_SND_VIRTIO
