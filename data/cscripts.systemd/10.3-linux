@@ -275,8 +275,8 @@ scripts/config --enable CONFIG_MULTIUSER
 scripts/config --disable CONFIG_CFG80211
 scripts/config --disable CONFIG_MAC80211
 
-# 1. QEMUの標準VGAカードをDRMデバイスとして認識させる（-vga std）
-scripts/config --enable CONFIG_DRM_BOCHS
+# 1. QEMUの標準VGAカード（Bochs）を完全に無効化し、競合を排除する！
+scripts/config --disable CONFIG_DRM_BOCHS
 scripts/config --enable CONFIG_VGA_ARB
 
 # 2. 古い汎用画面ドライバーを完全に黙らせ、高性能なVirtIO/Bochsに画面を100%任せる（黒画面・競合対策）
