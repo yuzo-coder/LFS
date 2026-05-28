@@ -8,6 +8,7 @@ cat << 'EOF' > /usr/bin/start-sway
 export XDG_CURRENT_DESKTOP=sway
 export MOZ_ENABLE_WAYLAND=1
 export WLR_NO_HARDWARE_CURSORS=1
+# export WLR_RENDERER_ALLOW_SOFTWARE=1
 
 export WLR_RENDERER=pixman
 export WLR_SCENE_DISABLE_DIRECT_SCANOUT=1
