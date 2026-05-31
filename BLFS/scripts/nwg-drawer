@@ -1,0 +1,14 @@
+
+cd "$SRC"
+
+wget https://github.com/nwg-piotr/nwg-drawer/archive/refs/tags/v0.7.5.tar.gz
+
+rm -rf nwg-drawer-0.7.5
+
+tar -xf v0.7.5.tar.gz
+
+cd nwg-drawer-0.7.5/
+
+make build
+
+make install

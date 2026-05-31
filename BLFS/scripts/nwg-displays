@@ -1,0 +1,53 @@
+
+cd "$SRC"
+
+wget https://github.com/nwg-piotr/nwg-displays/archive/refs/tags/v0.4.2.tar.gz
+
+rm -rf nwg-displays-0.4.2
+
+tar -xf v0.4.2.tar.gz
+
+cd nwg-displays-0.4.2/
+
+# 2. Pythonの正規のモジュール検索パスへソースコード（フォルダごと）を直接コピー
+SITE_PACKAGES="$(python3 -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")"
+echo "Installing python module to: $SITE_PACKAGES"
+cp -r nwg_displays "$SITE_PACKAGES/"
+
+# 3. /usr/bin/ に必要な3つの起動スクリプトを直接生成
+
+# (1) メインのGUIツール
+cat > /usr/bin/nwg-displays << "EOF"
+#!/usr/bin/env python3
+import sys
+from nwg_displays.main import main
+if __name__ == '__main__':
+    sys.exit(main())
+EOF
+
+# (2) ディスプレイ設定適用ツール
+cat > /usr/bin/nwg-displays-apply << "EOF"
+#!/usr/bin/env python3
+import sys
+from nwg_displays.apply import main
+if __name__ == '__main__':
+    sys.exit(main())
+EOF
+
+# (3) 壁紙トグルツール
+cat > /usr/bin/nwg-displays-toggle-wallpapers << "EOF"
+#!/usr/bin/env python3
+import sys
+from nwg_displays.toggle_wallpapers import main
+if __name__ == '__main__':
+    sys.exit(main())
+EOF
+
+# 4. 生成したすべてのスクリプトに実行権限を付与
+chmod +x /usr/bin/nwg-displays /usr/bin/nwg-displays-apply /usr/bin/nwg-displays-toggle-wallpapers
+
+# 5. デスクトップファイル、アイコン、ライセンス等を配置（install.shの挙動を完全再現）
+install -Dm 644 -t "/usr/share/applications" "nwg-displays.desktop"
+install -Dm 644 -t "/usr/share/pixmaps" "nwg-displays.svg"
+install -Dm 644 -t "/usr/share/licenses/nwg-displays" LICENSE
+install -Dm 644 -t "/usr/share/doc/nwg-displays" README.md

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- 1. /tmp の一時的なクリア（安全のため） ---
-rm -rf /tmp/*
-rm -rf /BLFS/sources/*
+# rm -rf /tmp/*
+# rm -rf /BLFS/sources/*
 
 # --- 2. Firefox ソースの準備 ---
 FIREFOX_URL="https://archive.mozilla.org/pub/firefox/releases/128.1.0esr/source/firefox-128.1.0esr.source.tar.xz"
@@ -64,10 +64,12 @@ export BINDGEN_EXTRA_CLANG_ARGS="-march=native -target x86_64-unknown-linux-gnu"
 export RUSTFLAGS="-A warnings"
 
 # 所有権を user に一括変更
-chown -R $TARGET_USER:$TARGET_USER .
+chown -R "$TARGET_USER":"$TARGET_USER" "/home/$TARGET_USER"
+
+chown -R "$TARGET_USER":"$TARGET_USER" /BLFS/sources/firefox-128.1.0
 
 # --- 6. ビルド実行 ---
-echo "Starting build with 1 core (Memory Safety Mode)..."
+echo "Starting build Firefox ..."
 # 【修正】/tmp へのリンク作成をすべて撤廃し、完全にHDD側（obj-firefox）に統一
 rm -rf obj-firefox
 
@@ -84,7 +86,7 @@ su - $TARGET_USER -c "
     export LD_LIBRARY_PATH=/opt/python311/lib:\$LD_LIBRARY_PATH && \
     export RUSTC=/usr/bin/rustc && \
     export CARGO=/usr/bin/cargo && \
-    ./mach build -j1" > "$LOG/firefox.log" 2>&1
+    ./mach build -j${JOBS}" > "$LOG/firefox.log" 2>&1
 
 # 上記の su コマンド（ビルド）が成功したかをチェック
 if [ $? -ne 0 ]; then

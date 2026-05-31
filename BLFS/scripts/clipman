@@ -1,0 +1,14 @@
+
+cd "$SRC"
+
+wget https://github.com/chmouel/clipman/archive/refs/tags/v1.6.5.tar.gz
+
+rm -rf clipman-1.6.5
+
+tar -xf v1.6.5.tar.gz
+
+cd clipman-1.6.5
+
+go build
+
+install -v -m755 clipman /usr/bin/

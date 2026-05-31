@@ -1,0 +1,4 @@
+
+cd /tmp
+
+GOBIN=/usr/bin go install go.senan.xyz/cliphist@latest

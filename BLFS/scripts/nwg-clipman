@@ -1,0 +1,34 @@
+
+cd "$SRC"
+
+wget https://github.com/nwg-piotr/nwg-clipman/archive/refs/tags/v0.2.8.tar.gz
+
+rm -rf nwg-clipman-0.2.8
+
+tar -xf v0.2.8.tar.gz
+
+cd nwg-clipman-0.2.8/
+
+# 2. Pythonの正規のモジュール検索パス（site-packages）を取得し、そこへ直接コピー
+SITE_PACKAGES="$(python3 -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")"
+echo "Installing python module to: $SITE_PACKAGES"
+cp -r nwg_clipman "$SITE_PACKAGES/"
+
+# 3. /usr/bin/nwg-clipman 起動スクリプトを直接生成
+cat > /usr/bin/nwg-clipman << "EOF"
+#!/usr/bin/env python3
+import sys
+# コピーしたモジュール内からメイン処理を呼び出す
+from nwg_clipman.main import main
+if __name__ == '__main__':
+    sys.exit(main())
+EOF
+
+# 4. 起動スクリプトに実行権限を付与
+chmod +x /usr/bin/nwg-clipman
+
+# 5. アイコンやデスクトップエントリーなどの付随ファイルを配置
+install -Dm 644 -t "/usr/share/pixmaps" "nwg-clipman.svg"
+install -Dm 644 -t "/usr/share/applications" "nwg-clipman.desktop"
+install -Dm 644 -t "/usr/share/licenses/nwg-clipman" LICENSE
+install -Dm 644 -t "/usr/share/doc/nwg-clipman" README.md

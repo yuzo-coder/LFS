@@ -1,0 +1,13 @@
+
+cd "$SRC"
+
+wget https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl
+
+rm -rf six.py
+
+unzip -o six-1.17.0-py2.py3-none-any.whl
+
+# 4. 解凍されて出てきた `six.py` (単一ファイル) を Pythonの site-packages へ直接コピー！
+SITE_PACKAGES="$(python3 -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")"
+
+cp six.py "$SITE_PACKAGES/"

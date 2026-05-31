@@ -1,0 +1,34 @@
+
+cd "$SRC"
+
+wget https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.xz
+
+rm -rf emacs-30.2
+
+tar -xf emacs-30.2.tar.xz
+
+cd emacs-30.2
+
+# 2. コンフィグ（環境に合わせた最適化設定）
+# ※ Sway/Wayland環境向けに '--with-pgtk' を有効化します。
+# ※ jansson (JSON高速化) や gnutls (パッケージ管理のセキュリティ) も連動させます。
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --localstatedir=/var \
+            --with-pgtk \
+            --with-modules \
+            --with-harfbuzz \
+            --with-cairo \
+            --with-gnutls \
+            --with-json \
+            --with-mailutils
+
+make
+
+make install
+
+# 5. アイコンなどのシステムキャッシュを更新
+update-desktop-database -q /usr/share/applications || true
+
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor || true
+

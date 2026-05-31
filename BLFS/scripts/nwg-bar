@@ -1,0 +1,42 @@
+
+cd "$SRC"
+
+wget https://github.com/nwg-piotr/nwg-bar/releases/download/v0.1.6/nwg-bar-v0.1.6_x86_64.tar.gz
+
+tar -xf nwg-bar-v0.1.6_x86_64.tar.gz --one-top-level=nwg-bar-v0.1.6_x86_64
+
+cd nwg-bar-v0.1.6_x86_64/
+
+cp bin/nwg-bar /usr/bin/
+
+mkdir -p /usr/share/nwg-bar
+
+cp -r config/style.css /usr/share/nwg-bar/
+
+cat > /usr/share/nwg-bar/bar.json << 'EOF'
+[
+  {
+    "label": "Lock",
+    "exec": "swaylock -f -c 000000",
+    "icon": "/usr/share/nwg-bar/images/system-lock-screen.svg"
+  },
+  {
+    "label": "Logout",
+    "exec": "loginctl kill-session self",
+    "icon": "/usr/share/nwg-bar/images/system-log-out.svg"
+  },
+  {
+    "label": "Reboot",
+    "exec": "systemctl reboot",
+    "icon": "/usr/share/nwg-bar/images/system-reboot.svg"
+  },
+  {
+    "label": "Shutdown",
+    "exec": "systemctl -i poweroff",
+    "icon": "/usr/share/nwg-bar/images/system-shutdown.svg"
+  }
+]
+mkdir -p /usr/share/nwg-bar/images/
+
+cp images/*.svg /usr/share/nwg-bar/images/
+

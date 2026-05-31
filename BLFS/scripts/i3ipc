@@ -1,0 +1,12 @@
+
+cd "$SRC"
+
+wget https://files.pythonhosted.org/packages/de/30/294b07ddeccb58855c890c3ef3a951c3b0c1e2d089666d548b6a9edc39fb/i3ipc-2.2.1-py3-none-any.whl
+
+rm -rf i3ipc
+
+unzip -o i3ipc-2.2.1-py3-none-any.whl
+
+SITE_PACKAGES="$(python3 -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")"
+
+cp -r i3ipc "$SITE_PACKAGES/"

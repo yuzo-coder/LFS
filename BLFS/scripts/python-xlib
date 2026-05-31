@@ -1,0 +1,13 @@
+
+cd "$SRC"
+
+wget https://github.com/python-xlib/python-xlib/releases/download/0.33/python_xlib-0.33-py2.py3-none-any.whl
+
+rm -rf Xlib
+
+unzip -o python_xlib-0.33-py2.py3-none-any.whl
+
+# 4. 解凍されて出てきた `Xlib` フォルダを、Pythonの site-packages へ丸ごとコピー
+SITE_PACKAGES="$(python3 -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")"
+
+cp -r Xlib "$SITE_PACKAGES/"
