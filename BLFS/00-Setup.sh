@@ -12,6 +12,9 @@ echo "========================================================="
 echo "========================================================="
 echo "                                                         "
 
+# clear LFS programs
+rm -rf /sources/*
+
 cd "$SRC"
 
 # Japansene Keyboard Keymap
@@ -130,6 +133,8 @@ ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 systemctl enable systemd-networkd
 systemctl restart systemd-networkd
 
+USER_GROUPS="video,input,render,seat,audio,sgx,wheel,pulse,pulse-access,rtkit"
+
 # 1. 必要なグループの一括作成（重複を排除したマスターリスト）
 #    -f: 存在すれば何もしない、-r: システムグループ
 echo "Creating system groups..."
@@ -137,7 +142,19 @@ for grp in video input render seat audio sgx wheel pulse pulse-access rtkit; do
     groupadd -f -r "$grp"
 done
 
-# 2. システムユーザーの作成
+# 🌟 追加：一般ユーザーと同名のプライベートグループ（UPG）を安全に作成
+echo "Ensuring user private group for '${TARGET_USER}'..."
+if ! getent group "$TARGET_USER" &>/dev/null; then
+    if id "$TARGET_USER" &>/dev/null; then
+        # 既存ユーザーがいる場合はそのGIDを引き継ぐ
+        CURRENT_GID=$(id -g "$TARGET_USER")
+        groupadd -g "$CURRENT_GID" "$TARGET_USER"
+    else
+        # 新規作成時は標準のGID 1000で作成
+        groupadd -g 1000 "$TARGET_USER"
+    fi
+fi
+
 echo "Creating system users..."
 if ! getent passwd pulse >/dev/null; then
     useradd -c "PulseAudio Revision" -d /var/run/pulse -u 52 -g pulse -s /bin/false pulse
@@ -147,20 +164,16 @@ if ! getent passwd rtkit >/dev/null; then
     useradd -c "RealtimeKit Daemon User" -d /var/lib/rtkit -u 133 -g rtkit -s /bin/false rtkit
 fi
 
-# 3. 一般ユーザー（user）への権限一括付与
-#    前半と後半のグループをすべて統合し、1回のusermodで完結させる
-
-USER_GROUPS="video,input,render,seat,audio,sgx,wheel,pulse,pulse-access,rtkit"
-
+# 3. 一般ユーザー（user）への権限一括付与とプライマリグループ設定
+echo "Configuring target user '${TARGET_USER}'..."
 if id "$TARGET_USER" &>/dev/null; then
     echo "Assigning groups to existing '${TARGET_USER}'..."
-    usermod -aG "$USER_GROUPS" "$TARGET_USER"
-    echo "Success: Groups added to existing user."
+    usermod -g "$TARGET_USER" -aG "$USER_GROUPS" "$TARGET_USER"
+    echo "Success: Groups and Primary Group updated for existing user."
 else
     echo "Creating '${TARGET_USER}' with pre-defined groups..."
-    # ユーザーを作成しつつ、初期状態でこれらのグループに所属させる（LFSおなじみの仕様）
-    useradd -m -s /bin/bash -G "$USER_GROUPS" "$TARGET_USER"
-    echo "Success: '${TARGET_USER}' created with [${USER_GROUPS}]."
+    useradd -m -s /bin/bash -g "$TARGET_USER" -G "$USER_GROUPS" "$TARGET_USER"
+    echo "Success: '${TARGET_USER}' created with primary group and [${USER_GROUPS}]."
 fi
 
 rm -rf /var/log/journal/*

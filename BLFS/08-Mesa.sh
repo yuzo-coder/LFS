@@ -42,7 +42,8 @@ mesa
 libepoxy
 
 glu
-
+libva
+libva-utils
 )
 
 for pkg in "${scripts[@]}"; do

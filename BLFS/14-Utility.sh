@@ -23,6 +23,7 @@ libfm-1
 menu-cache
 libfm-2
 pcmanfm
+emacs
 
 )
 

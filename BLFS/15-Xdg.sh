@@ -32,6 +32,8 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+su - $TARGET_USER -c "LANG=C LC_ALL=C xdg-user-dirs-update --force"
+
 # systemctl --global enable xdg-desktop-portal xdg-desktop-portal-wlr
 
 

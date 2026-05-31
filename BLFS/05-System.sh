@@ -102,6 +102,35 @@ EOF
 
 systemctl daemon-reload
 
+TARGET_FILE="/lib/systemd/system/tmp.mount"
+
+# 1. 対象ファイルが存在するかチェック
+if [ ! -f "$TARGET_FILE" ]; then
+    echo "ERROR: ${TARGET_FILE} が見つかりません。"
+    exit 1
+fi
+
+echo "Modifying ${TARGET_FILE}..."
+
+# 2. sed を使って「After=swap.target」の先頭に「#」を付与
+#    -i.bak により、変更前のオリジナルが tmp.mount.bak として自動保存されます
+sed -i.bak 's/^After=swap.target/#After=swap.target/' "$TARGET_FILE"
+
+# 3. 変更が成功したか確認（systemdに設定を再読み込みさせる）
+if [ $? -eq 0 ]; then
+    echo "Success: 'After=swap.target' has been commented out."
+    echo "Original file backed up as ${TARGET_FILE}.bak"
+    
+    # systemd環境がすでに動いている場合はデーモンをリロード
+    if pidof systemd >/dev/null; then
+        echo "Reloading systemd manager configuration..."
+        systemctl daemon-reload
+    fi
+else
+    echo "ERROR: Failed to modify the file."
+    exit 1
+fi
+
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="
