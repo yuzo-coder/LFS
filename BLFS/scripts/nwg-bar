@@ -15,7 +15,7 @@ cat > /usr/share/nwg-bar/style.css << 'EOF'
 /* 全体の外側ウィンドウ */
 window {
     /* 背景を完全な黒ではなく、少し透過（0.6）させてモダンに。不要なら 1.0 にしてください */
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0);
 }
 
 /* 外側のボックスコンテナ */
