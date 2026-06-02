@@ -14,13 +14,13 @@ echo "                                                         "
 
 scripts=(
 
-#babl
-#gegl
-#exiv2
-#gexiv2
-#libmypaint
-#mypaint-brushes
-#appstream-glib
+babl
+gegl
+exiv2
+gexiv2
+libmypaint
+mypaint-brushes
+appstream-glib
 poppler
 poppler-data
 pygobject

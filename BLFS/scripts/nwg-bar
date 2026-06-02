@@ -11,7 +11,77 @@ cp bin/nwg-bar /usr/bin/
 
 mkdir -p /usr/share/nwg-bar
 
-cp -r config/style.css /usr/share/nwg-bar/
+cat > /usr/share/nwg-bar/style.css << 'EOF'
+/* 全体の外側ウィンドウ */
+window {
+    /* 背景を完全な黒ではなく、少し透過（0.6）させてモダンに。不要なら 1.0 にしてください */
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* 外側のボックスコンテナ */
+#outer-box {
+    margin: 0px;
+}
+
+/* ボタンを囲む内側のコンテナ（ここをメインのパネルにします） */
+#inner-box {
+    /* 背景をしっかり重ための黒（0.9）にして文字を引き立たせる */
+    background-color: rgba(0, 0, 0, 0.9);
+    
+    /* 🌟 外側の角を丸くする */
+    border-radius: 20px;
+    
+    /* 枠線を薄いグレーで入れて、境界線をはっきりさせる */
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.2);
+    
+    padding: 15px;
+    margin: 20px;
+}
+
+/* ボタンと画像とテキストの基本設定 */
+button, image, label {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* 🌟 ボタン内のテキスト（文字）の設定 */
+button label {
+    /* はっきり目立つ白 */
+    color: #ffffff;
+    
+    /* 文字を太字にしてさらに目立たせる */
+    font-weight: bold;
+    
+    /* 文字サイズを少し大きく（お好みで調整してください） */
+    font-size: 14px;
+    
+    /* 文字の視認性を上げるためにかすかに影を落とす */
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 1.0);
+}
+
+/* ボタン単体の余白設定 */
+button {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 5px;
+    /* 角丸の枠に合わせるため、ボタン自体も軽く角丸に */
+    border-radius: 10px;
+}
+
+/* 🌟 マウスホバー（選択中）の時のエフェクト */
+button:hover {
+    /* マウスが乗ったボタンの後ろを明るいグレーに */
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* マウスホバー時に文字色をキープ、またはさらに強調 */
+button:hover label {
+    color: #ffffff;
+}
+EOF
 
 cat > /usr/share/nwg-bar/bar.json << 'EOF'
 [
@@ -36,6 +106,8 @@ cat > /usr/share/nwg-bar/bar.json << 'EOF'
     "icon": "/usr/share/nwg-bar/images/system-shutdown.svg"
   }
 ]
+EOF
+
 mkdir -p /usr/share/nwg-bar/images/
 
 cp images/*.svg /usr/share/nwg-bar/images/
