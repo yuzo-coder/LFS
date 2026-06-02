@@ -23,21 +23,20 @@ Vulkan-Loader
 libdrm
 cargo
 cargo-c
-
 bindgen-cli
 cbindgen
 nodejs
-
 llvm
 libclc
-
 SPIRV-LLVM-Translator
 SPIRV-Headers
 SPIRV-Tools
 glslang
 glslc
+
+mesa-1
 libglvnd
-mesa
+mesa-2
 
 libepoxy
 

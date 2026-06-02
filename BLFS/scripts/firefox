@@ -2,7 +2,7 @@
 
 # --- 1. /tmp の一時的なクリア（安全のため） ---
 # rm -rf /tmp/*
-# rm -rf /BLFS/sources/*
+rm -rf $SRC/*
 
 # --- 2. Firefox ソースの準備 ---
 FIREFOX_URL="https://archive.mozilla.org/pub/firefox/releases/128.1.0esr/source/firefox-128.1.0esr.source.tar.xz"
@@ -66,7 +66,7 @@ export RUSTFLAGS="-A warnings"
 # 所有権を user に一括変更
 chown -R "$TARGET_USER":"$TARGET_USER" "/home/$TARGET_USER"
 
-chown -R "$TARGET_USER":"$TARGET_USER" /BLFS/sources/firefox-128.1.0
+chown -R "$TARGET_USER":"$TARGET_USER" $SRC/firefox-128.1.0
 
 # --- 6. ビルド実行 ---
 echo "Starting build Firefox ..."

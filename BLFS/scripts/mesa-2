@@ -1,0 +1,28 @@
+
+build_meson mesa "https://mesa.freedesktop.org/archive/mesa-25.1.8.tar.xz" \
+    "-Dplatforms=x11,wayland -Dglx=dri -Dgles1=disabled -Dgles2=enabled -Degl=enabled -Dgbm=enabled -Dgallium-drivers=virgl,iris,zink,llvmpipe -Dvulkan-drivers=intel,swrast -Dllvm=enabled -Dglvnd=enabled -Dshared-llvm=enabled -Dglvnd=true -Dglx-direct=true"
+
+ln -sfv /usr/lib/pkgconfig/gl.pc /usr/lib/pkgconfig/opengl.pc || true
+
+cd "$SRC/mesa-25.1.8/"
+
+cp -rv include/EGL /usr/include/
+cp -rv include/GLES /usr/include/
+cp -rv include/GLES2 /usr/include/
+cp -rv include/GLES3 /usr/include/
+cp -rv include/KHR /usr/include/
+
+cat > /usr/lib/pkgconfig/egl.pc << "EOF"
+prefix=/usr
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: egl
+Description: Mesa EGL Library (Manual for LFS)
+Version: 25.1.8
+Requires.private: libglvnd >= 1.2.0
+Libs: -L${libdir} -lEGL
+Cflags: -I${includedir}
+EOF
+
+ldconfig

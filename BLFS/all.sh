@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# bash 00-Setup.sh
+#bash 00-Setup.sh
 #bash 01-Basis.sh
 #bash 02-CoreLibrary.sh
 #bash 03-Python.sh
@@ -19,10 +19,11 @@ set -euo pipefail
 #bash 15-Xdg.sh
 #bash 16-Input.sh
 #bash 17-Sway.sh
-#bash 18-Application.sh
-#bash 19-Japanese.sh
-bash 20-Firefox.sh
-bash 21-Gimp.sh
-bash 22-Vlc.sh
-bash 23-Gedit.sh
-bash 24-Nsxiv.sh
+#bash 18-Nwg.sh
+#bash 19-Application.sh
+#bash 20-Japanese.sh
+#bash 21-Firefox.sh
+bash 22-Gimp.sh
+bash 23-Vlc.sh
+bash 24-Gedit.sh
+bash 25-Nsxiv.sh

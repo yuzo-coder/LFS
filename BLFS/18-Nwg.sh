@@ -7,7 +7,7 @@ source ./functions.sh
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="
-echo "==                   26 START                          =="
+echo "==                   18 START                          =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="
@@ -16,20 +16,20 @@ echo "                                                         "
 
 
 scripts=(
-#gtk-layer-shell
-#nwg-bar
-#go
+gtk-layer-shell
+nwg-bar
+go
 
-#cliphist
+cliphist
 clipman
-#nwg-clipman
+nwg-clipman
 
-#i3ipc
-#python-xlib
-#six
-#nwg-displays
-#nwg-drawer
-#nwg-look
+i3ipc
+python-xlib
+six
+nwg-displays
+nwg-drawer
+nwg-look
 nwg-wrapper
 
 
@@ -50,7 +50,7 @@ chown -R $TARGET_USER:$TARGET_USER /home/$TARGET_USER/.config/sway
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="
-echo "==                   26   COMPLETE                     =="
+echo "==                   18   COMPLETE                     =="
 echo "==                                                     =="
 echo "========================================================="
 echo "========================================================="

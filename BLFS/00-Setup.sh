@@ -30,7 +30,15 @@ cat >> /etc/profile << "EOF"
 # loadkeys jp106
 ulimit -n 65536
 
-PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig
+if [ -z "$PKG_CONFIG_PATH" ]; then
+    # 空なら、コロンを挟ずにそのまま代入
+    export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig"
+else
+    # すでに値があるなら、後ろにコロンで繋ぐ
+    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig:/usr/local/lib/pkgconfig"
+fi
+
+
 export PATH=/usr/local/bin:$PATH:/root/.cargo/bin
 export PKG_CONFIG_PATH
 export MAKEFLAGS="-j$(nproc)"

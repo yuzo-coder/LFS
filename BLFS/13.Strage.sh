@@ -13,8 +13,8 @@ echo "========================================================="
 echo "                                                         "
 
 scripts=(
-libatasmart
-libaio
+#libatasmart
+#libaio
 lvm2
 cryptsetup
 libblockdev
