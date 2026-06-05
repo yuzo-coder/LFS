@@ -16,4 +16,3 @@ make CC=gcc PREFIX=/usr
 # インストール
 make CC=gcc PREFIX=/usr install
 
-

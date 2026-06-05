@@ -1,0 +1,3 @@
+
+build_meson libgweather "https://download.gnome.org/sources/libgweather/4.4/libgweather-4.4.4.tar.xz" "-Dgtk_doc=false -Dintrospection=true"
+

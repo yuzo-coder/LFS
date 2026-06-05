@@ -36,6 +36,31 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+# polkit rule
+cat > /etc/polkit-1/rules.d/10-enable-shutdown.rules << "EOF"
+polkit.addRule(function(action, subject) {
+    if ((action.id == "org.freedesktop.login1.reboot" ||
+         action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
+         action.id == "org.freedesktop.login1.power-off" ||
+         action.id == "org.freedesktop.login1.power-off-multiple-sessions" ||
+         action.id == "org.freedesktop.login1.suspend" ||
+         action.id == "org.freedesktop.login1.hibernate") &&
+        subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+
+systemctl daemon-reload
+
+systemctl start polkit
+
+systemctl enable polkit
+
+systemctl start NetworkManager
+
+systemctl enable NetworkManager
+
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="

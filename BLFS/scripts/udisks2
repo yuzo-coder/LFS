@@ -18,11 +18,11 @@ sed -i 's/blockdev-mdraid >=/disable-mdraid-check >=/g' configure
             --disable-introspection \
             --disable-vapi \
             --without-bash-completion \
-            --with-systemdsystemunitdir=no
+            --with-systemdsystemunitdir=/lib/systemd/system > "$LOG/udisks2.log" 2>&1
 
-make
+make >> "$LOG/udisks2.log" 2>&1
 
-make install
+make install >> "$LOG/udisks2.log" 2>&1
 
 ldconfig
 

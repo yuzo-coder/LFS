@@ -7,7 +7,6 @@ mkdir -p /etc/xdg/fcitx5/
 
 echo "===== /etc/xdg/fcitx5/profile ====="
 cat << 'EOF' > /etc/xdg/fcitx5/profile
-
 [Groups/0]
 Name=Default
 Default Layout=jp
@@ -30,7 +29,6 @@ mkdir -p /home/$TARGET_USER/.config/fcitx5/
 chown -R $TARGET_USER:$TARGET_USER /home/$TARGET_USER/.config
 
 cat << 'EOF' > /home/$TARGET_USER/.config/fcitx5/profile
-
 [Groups/0]
 Name=Default
 Default Layout=jp

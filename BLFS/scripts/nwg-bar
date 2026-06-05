@@ -106,8 +106,6 @@ cat > /usr/share/nwg-bar/bar.json << 'EOF'
     "icon": "/usr/share/nwg-bar/images/system-shutdown.svg"
   }
 ]
-EOF
-
 mkdir -p /usr/share/nwg-bar/images/
 
 cp images/*.svg /usr/share/nwg-bar/images/

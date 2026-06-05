@@ -13,48 +13,32 @@ echo "========================================================="
 echo "========================================================="
 echo "                                                         "
 
-cd "$SRC"
+DIR=$(download_extract "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.1/udisks-2.10.1.tar.bz2")
 
-wget https://github.com/nwg-piotr/nwg-bar/releases/download/v0.1.6/nwg-bar-v0.1.6_x86_64.tar.gz
+cd "$DIR"
 
-tar -xf nwg-bar-v0.1.6_x86_64.tar.gz --one-top-level=nwg-bar-v0.1.6_x86_64
+sed -i 's/blockdev-mdraid >=/disable-mdraid-check >=/g' configure
 
-cd nwg-bar-v0.1.6_x86_64/
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --localstatedir=/var \
+            --disable-static \
+            --enable-daemon \
+            --disable-man \
+            --disable-btrfs \
+            --disable-lvm2 \
+            --disable-zram \
+            --disable-encryption \
+            --disable-introspection \
+            --disable-vapi \
+            --without-bash-completion \
+            --with-systemdsystemunitdir=/lib/systemd/system
 
-cp bin/nwg-bar /usr/bin/
+make
 
-mkdir -p /usr/share/nwg-bar
+make install
 
-cp -r config/style.css /usr/share/nwg-bar/
-
-cat > /usr/share/nwg-bar/bar.json << 'EOF'
-[
-  {
-    "label": "Lock",
-    "exec": "swaylock -f -c 000000",
-    "icon": "/usr/share/nwg-bar/images/system-lock-screen.svg"
-  },
-  {
-    "label": "Logout",
-    "exec": "loginctl kill-session self",
-    "icon": "/usr/share/nwg-bar/images/system-log-out.svg"
-  },
-  {
-    "label": "Reboot",
-    "exec": "systemctl reboot",
-    "icon": "/usr/share/nwg-bar/images/system-reboot.svg"
-  },
-  {
-    "label": "Shutdown",
-    "exec": "systemctl -i poweroff",
-    "icon": "/usr/share/nwg-bar/images/system-shutdown.svg"
-  }
-]
-EOF
-
-mkdir -p /usr/share/nwg-bar/images/
-
-cp images/*.svg /usr/share/nwg-bar/images/
+ldconfig
 
 
 echo "===== COMPLETE ====="

@@ -253,7 +253,7 @@ cat << 'EOF' > /etc/xdg/waybar/config
         }
     },
     "custom/menu": {
-        "format": "",
+        "format": "", //f135
         "on-click": "exec nwg-drawer",
         "tooltip": false
     },

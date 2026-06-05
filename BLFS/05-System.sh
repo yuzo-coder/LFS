@@ -93,6 +93,15 @@ password        required        pam_unix.so
 session         required        pam_unix.so
 EOF
 
+cat > /etc/pam.d/greetd << "EOF"
+#%PAM-1.0
+auth      requisite    pam_nologin.so
+auth      include      system-auth
+account   include      system-auth
+password  include      system-auth
+session   include      system-session
+EOF
+
 mkdir -p /etc/systemd/system/user@.service.d
 cat > /etc/systemd/system/user@.service.d/10-environment.conf << "EOF"
 [Service]

@@ -15,29 +15,3 @@ cp target/release/greetd /usr/bin/
 
 cp "$SRC/greetd-0.10.2/greetd.service" /etc/systemd/system/
 
-# greetd 用のユーザー・ディレクトリ設定
-if ! id "greeter" &>/dev/null; then
-    useradd -M -G video greeter
-    usermod -aG seat,video,input greeter
-fi
-mkdir -p /etc/greetd
-
-# greetd 設定
-cat > /etc/greetd/config.toml <<EOF
-[terminal]
-vt = 1
-[default_session]
-command = "gtkgreet -l -c sway"
-user = "greeter"
-EOF
-
-# gtkgreet用の専用Sway設定 (ログイン画面用)
-cat > /etc/greetd/sway-config <<EOF
-input * xkb_layout "jp"
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-exec "gtkgreet -l -c sway; swaymsg exit"
-include /etc/sway/config.d/*
-EOF
-
-ldconfig
-

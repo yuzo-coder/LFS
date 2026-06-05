@@ -1,0 +1,3 @@
+
+build_meson loupe "https://download.gnome.org/sources/loupe/49/loupe-49.2.tar.xz" ""
+

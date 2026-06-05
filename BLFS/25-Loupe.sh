@@ -12,11 +12,16 @@ echo "========================================================="
 echo "========================================================="
 echo "                                                         "
 
-
 scripts=(
+
 libexif
 imlib2
 nsxiv
+
+geocode-glib
+libgweather
+libseccomp
+loupe
 
 )
 
@@ -25,7 +30,6 @@ for pkg in "${scripts[@]}"; do
     cd "$ROOT_DIR"
     source "./scripts/$pkg"
 done
-
 
 echo "                                                         "
 echo "========================================================="

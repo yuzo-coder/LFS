@@ -28,6 +28,12 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+systemctl daemon-reload
+
+systemctl start udisks2
+
+systemctl enable udisks2
+
 echo "                                                         "
 echo "========================================================="
 echo "========================================================="
