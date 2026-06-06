@@ -213,6 +213,7 @@ cat << 'EOF' > /etc/xdg/waybar/config
     "spacing": 4,
     "modules-left": [
         "custom/menu",
+		"custom/wofi",
         "sway/workspaces",
         "sway/window",
         "custom/foot",
@@ -255,6 +256,11 @@ cat << 'EOF' > /etc/xdg/waybar/config
     "custom/menu": {
         "format": "", //f135
         "on-click": "exec nwg-drawer",
+        "tooltip": false
+    },
+	"custom/wofi": {
+        "format": "\uf192",
+        "on-click": "exec wofi --show drun -I",
         "tooltip": false
     },
     "sway/window": {
