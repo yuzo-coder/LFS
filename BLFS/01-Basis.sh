@@ -34,7 +34,7 @@ for pkg in "${scripts[@]}"; do
 done
 
 if swapon --show | grep -q /swapfile; then
-    swapoff "$SWAP_FILE"
+    swapoff "/swapfile"
 fi
 
 dd if=/dev/zero of=/swapfile bs=1M count=12288

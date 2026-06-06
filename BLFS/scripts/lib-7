@@ -46,7 +46,7 @@ while read -r TARBALL; do
     fi
 
     echo "===== Checking Build System for: $NAME ====="
-    DIR=$(download_extract "https://www.x.org/releases//individual/lib/$TARBALL")
+    DIR=$(download_extract "https://xorg.freedesktop.org/archive/individual/lib/$TARBALL")
     cd "$DIR"
 
     # --- 自動判別ロジック ---

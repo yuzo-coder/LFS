@@ -1,3 +1,3 @@
 
-build_autotools "libXau"   "https://www.x.org/pub/individual/lib/libXau-1.0.11.tar.xz" ""
+build_autotools "libXau"   "https://xorg.freedesktop.org/archive/individual/lib/libXau-1.0.11.tar.xz" ""
 

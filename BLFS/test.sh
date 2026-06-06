@@ -13,32 +13,19 @@ echo "========================================================="
 echo "========================================================="
 echo "                                                         "
 
-DIR=$(download_extract "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.1/udisks-2.10.1.tar.bz2")
+if swapon --show | grep -q /swapfile; then
+    swapoff "/swapfile"
+fi
 
-cd "$DIR"
+dd if=/dev/zero of=/swapfile bs=1M count=12288
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
 
-sed -i 's/blockdev-mdraid >=/disable-mdraid-check >=/g' configure
+if ! grep -q  /swapfile /etc/fstab; then
+    echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+fi
 
-./configure --prefix=/usr \
-            --sysconfdir=/etc \
-            --localstatedir=/var \
-            --disable-static \
-            --enable-daemon \
-            --disable-man \
-            --disable-btrfs \
-            --disable-lvm2 \
-            --disable-zram \
-            --disable-encryption \
-            --disable-introspection \
-            --disable-vapi \
-            --without-bash-completion \
-            --with-systemdsystemunitdir=/lib/systemd/system
-
-make
-
-make install
-
-ldconfig
 
 
 echo "===== COMPLETE ====="

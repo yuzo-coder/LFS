@@ -1,2 +1,2 @@
 
-build_meson "libxcvt" "https://www.x.org/pub/individual/lib/libxcvt-0.1.3.tar.xz" ""
+build_meson "libxcvt" "https://xorg.freedesktop.org/archive/individual/lib/libxcvt-0.1.3.tar.xz" ""
