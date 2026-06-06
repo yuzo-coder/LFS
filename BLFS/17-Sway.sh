@@ -513,6 +513,25 @@ button:hover {
     border-color: #ffffff;
 }
 
+#custom-wofi {
+    background-color: #ffffff;
+    color: #274a78;   
+    font-size: 16px;                    /* アイコンがはっきり見えるサイズ */
+    font-weight: bold;
+    padding: 0 12px;                    /* 左右の絶妙な余白 */
+    margin: 4px 2px 4px 6px;            /* バーの内側での位置調整 */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* うっすら白い外枠 */
+    border-radius: 6px;                 /* 少し角を丸めてモダンに */
+    transition: all 0.15s ease-in-out;
+}
+
+/* メニューボタンにマウスを乗せたとき */
+#custom-wofi:hover {
+    background-color: #ffffff;          /* 背景を白に反転 */
+    color: #274a78;                   /* アイコンを黒に反転 */
+    border-color: #ffffff;
+}
+
 /* 2. アクティブウィンドウ名表示 (sway/window) */
 #window {
     background-color: rgba(15, 15, 15, 0.75); /* タイトル背景は少し透過した黒 */
