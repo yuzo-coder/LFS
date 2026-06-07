@@ -12,9 +12,6 @@ echo "========================================================="
 echo "========================================================="
 echo "                                                         "
 
-# clear LFS programs
-rm -rf /sources/*
-
 cd "$SRC"
 
 # Japansene Keyboard Keymap
@@ -224,6 +221,8 @@ for pkg in "${scripts[@]}"; do
     source "./scripts/$pkg"
 done
 
+# clear LFS programs
+rm -rf /sources/*
 
 echo "                                                         "
 echo "========================================================="
