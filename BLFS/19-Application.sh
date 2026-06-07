@@ -48,11 +48,12 @@ mkdir -p /etc/greetd
 # greetd 設定
 cat > /etc/greetd/config.toml <<EOF
 [terminal]
+# ログイン画面を表示するTTY（通常は1）
 vt = 1
 [default_session]
 # 【超安全モード】Swayをそのままシンプルに呼び出します
-command = "sway --config /etc/greetd/sway.config"
-# ログイン画面を動かす専用のシステムユーザー（greeter）
+command = "env WLR_NO_HARDWARE_CURSORS=1 sway --config /etc/greetd/sway.config"
+# ログイン画面を動かす専用のシステムユーザー（greeterまたはgreetd）
 user = "greeter"
 EOF
 
@@ -60,7 +61,7 @@ EOF
 cat > /etc/greetd/sway.config <<EOF
 exec "dbus-update-activation-environment --all"
 #exec "gtkgreet -l -c /usr/bin/sway; swaymsg exit"
-exec "gtkgreet -l -s /etc/greetd/style.css -c 'dbus-run-session /usr/bin/sway'; swaymsg exit"
+exec "gtkgreet -l -s /etc/greetd/style.css -c 'dbus-run-session env WLR_NO_HARDWARE_CURSORS=1 /usr/bin/sway'; swaymsg exit"
 include /etc/sway/config.d/*
 EOF
 
