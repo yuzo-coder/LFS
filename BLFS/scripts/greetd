@@ -11,7 +11,7 @@ cd greetd-0.10.2
 
 cargo build --release --locked > "$LOG/greetd.log" 2>&1
 
-cp target/release/greetd /usr/bin/
+cp -f target/release/greetd /usr/bin/
 
-cp "$SRC/greetd-0.10.2/greetd.service" /etc/systemd/system/
+cp -f "$SRC/greetd-0.10.2/greetd.service" /etc/systemd/system/
 
