@@ -139,6 +139,9 @@ cat << 'EOF' > /usr/bin/start-firefox
 pgrep -x "/usr/bin/fcitx5" > /dev/null || /usr/bin/fcitx5 -d
 
 export MOZ_ENABLE_WAYLAND=1
+# export MOZ_GECKO_SANDBOX_ALLOW_PATH="/dev/dri/:/dev/shm/"
+# export MOZ_GFX_SPOOF_GL_VENDOR="NVIDIA Corporation"
+#export MOZ_GFX_SPOOF_GL_RENDERER="NVIDIA GeForce RTX 2070/PCIe/SSE2"
 
 /usr/lib/firefox/firefox > /tmp/firefox.log 2>&1 &
 EOF
