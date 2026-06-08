@@ -130,6 +130,20 @@ rm -rf "$SRC/$NAME/tmp_build"
 
 echo "===> Firefox installation completed successfully!"
 
+cat > /usr/share/applications/firefox.desktop << 'EOF'
+[Desktop Entry]
+Name=Firefox
+Comment=Web Browser
+Exec=/usr/bin/start-firefox
+Icon=firefox
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
+StartupNotify=true
+EOF
+
+cp -f $SRC/$NAME/browser/branding/official/default128.png /usr/share/pixmaps/firefox.png
+
 # --- 9. 起動スクリプトの作成 ---
 echo "===== Creating /usr/bin/start-firefox ====="
 cat << 'EOF' > /usr/bin/start-firefox
