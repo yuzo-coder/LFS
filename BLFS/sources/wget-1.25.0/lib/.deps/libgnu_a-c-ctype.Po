@@ -1,0 +1,5 @@
+libgnu_a-c-ctype.o: c-ctype.c /usr/include/stdc-predef.h ../src/config.h \
+ c-ctype.h
+/usr/include/stdc-predef.h:
+../src/config.h:
+c-ctype.h:

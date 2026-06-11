@@ -1,0 +1,5 @@
+libgnu_a-sockets.o: sockets.c /usr/include/stdc-predef.h ../src/config.h \
+ sockets.h
+/usr/include/stdc-predef.h:
+../src/config.h:
+sockets.h:
