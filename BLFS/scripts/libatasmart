@@ -1,6 +1,6 @@
 
 # libatasmart
 build_autotools "libatasmart" \
-    "http://0pointer.de/public/libatasmart-0.19.tar.xz" \
+    "https://ftp2.osuosl.org/pub/blfs/conglomeration/libatasmart/libatasmart-0.19.tar.xz" \
     "--prefix=/usr --disable-static"
 
